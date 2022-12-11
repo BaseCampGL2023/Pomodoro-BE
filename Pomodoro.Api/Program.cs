@@ -1,14 +1,14 @@
 using Microsoft.OpenApi.Models;
 
-var PomodoroSpecificOrigins = "_pomodoroSpecificOrigins";
+var pomodoroSpecificOrigins = "_pomodoroSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: PomodoroSpecificOrigins,
+    options.AddPolicy(
+        name: pomodoroSpecificOrigins,
         policy =>
         {
             policy.WithOrigins("http://localhost:4200");
@@ -17,8 +17,8 @@ builder.Services.AddCors(options =>
         });
 });
 
-//setup Serilog
-//builder.Host.UseSerilog((ctx, lc) => lc
+// setup Serilog
+// builder.Host.UseSerilog((ctx, lc) => lc
 //    .ReadFrom.Configuration(ctx.Configuration)
 //    .WriteTo.MSSqlServer(connectionString:
 //        ctx.Configuration.GetConnectionString("PomodoroBE"),
@@ -30,8 +30,7 @@ builder.Services.AddCors(options =>
 //        }
 //        )
 //    .WriteTo.Console()
-//);
-
+// );
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -42,19 +41,17 @@ builder.Services.AddSwaggerGen(option =>
     {
         Title = "Pomodoro",
         Version = "v1",
-        Description = "Time tracker"
+        Description = "Time tracker",
     });
     option.EnableAnnotations();
 });
-
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
-//uncomment, if want logging HTTP requests
-//app.UseSerilogRequestLogging();
-
+// uncomment, if want logging HTTP requests
+// app.UseSerilogRequestLogging();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -62,7 +59,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors(PomodoroSpecificOrigins);
+app.UseCors(pomodoroSpecificOrigins);
 
 app.UseAuthorization();
 
