@@ -1,0 +1,31 @@
+{
+   "tasks": [
+      {
+         "name": "clean task",
+         "command": "dotnet",
+         "args": [ "clean" ],
+         "windows": {
+            "command": "dotnet",
+            "args": ["clean" ]
+         }
+      },
+      {
+         "name": "build task",
+         "command": "dotnet",
+         "args": [ "build" ],
+         "windows": {
+            "command": "dotnet",
+            "args": ["build" ]
+         }
+      },
+      {
+         "name": "test task",
+         "command": "dotnet",
+         "args": [ "test" ],
+         "windows": {
+            "command": "dotnet",
+            "args": ["test" ]
+         }
+      }
+   ]
+}
