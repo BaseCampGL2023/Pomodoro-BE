@@ -1,12 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <AdditionalFiles Include="stylecop.json" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.11" />
@@ -28,8 +32,8 @@
 		</PackageReference>
 	</ItemGroup>
 
-	<!--<PropertyGroup Condition="'$(BuildingInsideVisualStudio)' != 'true'">-->
-	<!--<TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
-	<!--</PropertyGroup>-->
+	<PropertyGroup Condition="'$(BuildingInsideVisualStudio)' != 'true'">
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	</PropertyGroup>
 
 </Project>
