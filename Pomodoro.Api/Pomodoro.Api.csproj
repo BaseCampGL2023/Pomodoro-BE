@@ -8,6 +8,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<AdditionalFiles Include="stylecop.json" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
 		<PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
 		<PackageReference Include="Serilog.Sinks.MSSQlServer" Version="6.0.0" />
@@ -20,11 +24,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Controllers\" />
+	  <Folder Include="Controllers\" />
 	</ItemGroup>
 
-	<!--<PropertyGroup Condition="'$(BuildingInsideVisualStudio)' != 'true'">-->
-	<!--<TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
-	<!--</PropertyGroup>-->
+	<PropertyGroup Condition="'$(BuildingInsideVisualStudio)' != 'true'">
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	</PropertyGroup>
 
 </Project>
