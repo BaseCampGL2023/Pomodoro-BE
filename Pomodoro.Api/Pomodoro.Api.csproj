@@ -24,11 +24,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Controllers\" />
+		<Folder Include="Controllers\" />
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(BuildingInsideVisualStudio)' != 'true'">
-	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="Pomodoro.Tests" />
+	</ItemGroup>
 
 </Project>
