@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pomodoro.Api", "Pomodoro.Ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pomodoro.Tests", "Pomodoro.Tests\Pomodoro.Tests.csproj", "{B184E51F-FE80-49D2-B3DF-EA23CCEDFDAE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pomodoro.Dal", "Pomodoro.Dal\Pomodoro.Dal.csproj", "{45C6C0BB-431C-45D9-BEE5-40B8620CA90D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{B184E51F-FE80-49D2-B3DF-EA23CCEDFDAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B184E51F-FE80-49D2-B3DF-EA23CCEDFDAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B184E51F-FE80-49D2-B3DF-EA23CCEDFDAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45C6C0BB-431C-45D9-BEE5-40B8620CA90D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45C6C0BB-431C-45D9-BEE5-40B8620CA90D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45C6C0BB-431C-45D9-BEE5-40B8620CA90D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45C6C0BB-431C-45D9-BEE5-40B8620CA90D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
