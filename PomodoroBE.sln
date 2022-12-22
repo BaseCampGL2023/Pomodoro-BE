@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pomodoro.Api", "Pomodoro.Ap
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pomodoro.Tests", "Pomodoro.Tests\Pomodoro.Tests.csproj", "{B184E51F-FE80-49D2-B3DF-EA23CCEDFDAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pomodoro.Core", "Pomodoro.Core\Pomodoro.Core.csproj", "{4A8B35E8-1496-4D5A-8211-B86E60D2673F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pomodoro.Core", "Pomodoro.Core\Pomodoro.Core.csproj", "{4A8B35E8-1496-4D5A-8211-B86E60D2673F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pomodoro.Infrastructure", "Pomodoro.Infrastructure\Pomodoro.Infrastructure.csproj", "{53D3952F-EED5-4B49-932D-FB577F2089F0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pomodoro.DataAccess", "Pomodoro.DataAccess\Pomodoro.DataAccess.csproj", "{C4195EB9-771B-4EED-8AB1-54E5F5EAB0EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pomodoro.Services", "Pomodoro.Services\Pomodoro.Services.csproj", "{17B4F872-AA34-450D-A9AB-0DAE9BD99983}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +31,14 @@ Global
 		{4A8B35E8-1496-4D5A-8211-B86E60D2673F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A8B35E8-1496-4D5A-8211-B86E60D2673F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A8B35E8-1496-4D5A-8211-B86E60D2673F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{53D3952F-EED5-4B49-932D-FB577F2089F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{53D3952F-EED5-4B49-932D-FB577F2089F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{53D3952F-EED5-4B49-932D-FB577F2089F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{53D3952F-EED5-4B49-932D-FB577F2089F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4195EB9-771B-4EED-8AB1-54E5F5EAB0EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4195EB9-771B-4EED-8AB1-54E5F5EAB0EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4195EB9-771B-4EED-8AB1-54E5F5EAB0EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4195EB9-771B-4EED-8AB1-54E5F5EAB0EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17B4F872-AA34-450D-A9AB-0DAE9BD99983}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17B4F872-AA34-450D-A9AB-0DAE9BD99983}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17B4F872-AA34-450D-A9AB-0DAE9BD99983}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17B4F872-AA34-450D-A9AB-0DAE9BD99983}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
