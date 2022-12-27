@@ -4,6 +4,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using Pomodoro.DataAccess.Entities;
+using Pomodoro.DataAccess.Extensions;
 
 namespace Pomodoro.DataAccess.EF
 {
@@ -22,6 +23,7 @@ namespace Pomodoro.DataAccess.EF
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+            modelBuilder.Seed();
         }
     }
 }
