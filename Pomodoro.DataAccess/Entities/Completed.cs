@@ -6,7 +6,7 @@ namespace Pomodoro.DataAccess.Entities
 {
     internal class Completed : BaseEntity
     {
-        public int? TaskId { get; set; }
+        public int TaskId { get; set; }
         public DateTime ActualDate { get; set; }
         public float TimeSpent { get; set; }
         public float PomodorosCount { get; set; }
@@ -14,7 +14,7 @@ namespace Pomodoro.DataAccess.Entities
         //
         public Task? Task { get; set; }
 
-        public Completed(int id, DateTime actualDate, float timeSpent, float pomodorosCount, int? taskId = null)
+        public Completed(int id, int taskId, DateTime actualDate, float timeSpent, float pomodorosCount)
             : base(id)
         {
             ActualDate = actualDate;
