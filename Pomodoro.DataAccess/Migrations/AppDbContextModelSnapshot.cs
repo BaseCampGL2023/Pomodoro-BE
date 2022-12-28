@@ -49,40 +49,6 @@ namespace Pomodoro.DataAccess.Migrations
                     b.HasIndex("TaskId");
 
                     b.ToTable("CompletedTasks");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ActualDate = new DateTime(2022, 12, 27, 14, 59, 44, 291, DateTimeKind.Utc).AddTicks(4945),
-                            PomodorosCount = 4f,
-                            TaskId = 1,
-                            TimeSpent = 120f
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ActualDate = new DateTime(2022, 12, 27, 14, 59, 44, 291, DateTimeKind.Utc).AddTicks(4949),
-                            PomodorosCount = 5.3f,
-                            TaskId = 2,
-                            TimeSpent = 160f
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ActualDate = new DateTime(2022, 12, 27, 14, 59, 44, 291, DateTimeKind.Utc).AddTicks(4950),
-                            PomodorosCount = 1.7f,
-                            TaskId = 3,
-                            TimeSpent = 100f
-                        },
-                        new
-                        {
-                            Id = 4,
-                            ActualDate = new DateTime(2022, 12, 27, 14, 59, 44, 291, DateTimeKind.Utc).AddTicks(4951),
-                            PomodorosCount = 1f,
-                            TaskId = 4,
-                            TimeSpent = 60f
-                        });
                 });
 
             modelBuilder.Entity("Pomodoro.DataAccess.Entities.Frequency", b =>
@@ -249,28 +215,6 @@ namespace Pomodoro.DataAccess.Migrations
                         .IsUnique();
 
                     b.ToTable("Settings");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AutostartEnabled = true,
-                            LongBreak = (byte)10,
-                            PomodoroDuration = (byte)30,
-                            PomodorosBeforeLongBreak = (byte)2,
-                            ShortBreak = (byte)5,
-                            UserId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AutostartEnabled = false,
-                            LongBreak = (byte)20,
-                            PomodoroDuration = (byte)60,
-                            PomodorosBeforeLongBreak = (byte)3,
-                            ShortBreak = (byte)10,
-                            UserId = 2
-                        });
                 });
 
             modelBuilder.Entity("Pomodoro.DataAccess.Entities.Task", b =>
@@ -307,44 +251,6 @@ namespace Pomodoro.DataAccess.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Tasks");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AllocatedTime = (short)100,
-                            FrequencyId = 1,
-                            InitialDate = new DateTime(2022, 12, 27, 14, 59, 44, 291, DateTimeKind.Utc).AddTicks(4925),
-                            Title = "Investigate Docker",
-                            UserId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AllocatedTime = (short)200,
-                            FrequencyId = 3,
-                            InitialDate = new DateTime(2022, 12, 27, 14, 59, 44, 291, DateTimeKind.Utc).AddTicks(4929),
-                            Title = "Cleaning",
-                            UserId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AllocatedTime = (short)120,
-                            FrequencyId = 1,
-                            InitialDate = new DateTime(2022, 12, 27, 14, 59, 44, 291, DateTimeKind.Utc).AddTicks(4931),
-                            Title = "Generate DB",
-                            UserId = 2
-                        },
-                        new
-                        {
-                            Id = 4,
-                            AllocatedTime = (short)60,
-                            FrequencyId = 2,
-                            InitialDate = new DateTime(2022, 12, 27, 14, 59, 44, 291, DateTimeKind.Utc).AddTicks(4932),
-                            Title = "Workout",
-                            UserId = 2
-                        });
                 });
 
             modelBuilder.Entity("Pomodoro.DataAccess.Entities.User", b =>
@@ -372,20 +278,6 @@ namespace Pomodoro.DataAccess.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Email = "bob@gmail.com",
-                            Name = "Bob"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Email = "jane@gmail.com",
-                            Name = "Jane"
-                        });
                 });
 
             modelBuilder.Entity("Pomodoro.DataAccess.Entities.Completed", b =>

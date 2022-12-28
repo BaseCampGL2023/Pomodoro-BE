@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Pomodoro.DataAccess.Migrations
 {
-    public partial class Init : Migration
+    public partial class InitWithCorrections : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -116,7 +116,7 @@ namespace Pomodoro.DataAccess.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TaskId = table.Column<int>(type: "int", nullable: true),
+                    TaskId = table.Column<int>(type: "int", nullable: false),
                     ActualDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getutcdate()"),
                     TimeSpent = table.Column<float>(type: "real", nullable: false),
                     PomodorosCount = table.Column<float>(type: "real", nullable: false)
@@ -128,7 +128,36 @@ namespace Pomodoro.DataAccess.Migrations
                         name: "FK_CompletedTasks_Tasks_TaskId",
                         column: x => x.TaskId,
                         principalTable: "Tasks",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "FrequencyTypes",
+                columns: new[] { "Id", "Value" },
+                values: new object[,]
+                {
+                    { 1, "None" },
+                    { 2, "Day" },
+                    { 3, "Week" },
+                    { 4, "Month" },
+                    { 5, "Year" },
+                    { 6, "Workday" },
+                    { 7, "Weekend" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Frequencies",
+                columns: new[] { "Id", "Every", "FrequencyTypeId", "IsCustom" },
+                values: new object[,]
+                {
+                    { 1, (short)0, 1, false },
+                    { 2, (short)1, 2, false },
+                    { 3, (short)1, 3, false },
+                    { 4, (short)1, 4, false },
+                    { 5, (short)1, 5, false },
+                    { 6, (short)1, 6, false },
+                    { 7, (short)1, 7, false }
                 });
 
             migrationBuilder.CreateIndex(
