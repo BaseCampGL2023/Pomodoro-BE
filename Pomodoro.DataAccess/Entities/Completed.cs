@@ -13,14 +13,5 @@ namespace Pomodoro.DataAccess.Entities
 
         //
         public Task? Task { get; set; }
-
-        public Completed(int id, int taskId, DateTime actualDate, float timeSpent, float pomodorosCount)
-            : base(id)
-        {
-            ActualDate = actualDate;
-            TimeSpent = timeSpent;
-            PomodorosCount = pomodorosCount;
-            TaskId = taskId;
-        }
     }
 }

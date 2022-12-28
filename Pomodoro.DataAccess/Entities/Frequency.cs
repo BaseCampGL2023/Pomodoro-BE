@@ -12,13 +12,5 @@ namespace Pomodoro.DataAccess.Entities
 
         //
         public FrequencyType? FrequencyType { get; set; }
-
-        public Frequency(int id, int frequencyTypeId, short every, bool isCustom = false)
-            : base(id)
-        {
-            FrequencyTypeId = frequencyTypeId;
-            Every = every;
-            IsCustom = isCustom;
-        }
     }
 }

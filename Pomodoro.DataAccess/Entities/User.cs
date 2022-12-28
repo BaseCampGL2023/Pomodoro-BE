@@ -11,22 +11,15 @@ namespace Pomodoro.DataAccess.Entities
     public class User : BaseEntity
     {
         [MaxLength(50)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [EmailAddress]
         [MaxLength(50)]
         [Unicode(false)]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         //
         public Settings? Settings { get; set; }
         public ICollection<Task>? Tasks { get; set; }
-
-        public User(int id, string name, string email)
-            : base(id)
-        {
-            Name = name;
-            Email = email;
-        }
     }
 }

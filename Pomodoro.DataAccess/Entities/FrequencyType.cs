@@ -16,11 +16,5 @@ namespace Pomodoro.DataAccess.Entities
 
         //
         public ICollection<Frequency>? Frequencies { get; set; }
-
-        public FrequencyType(int id, FrequencyValue value)
-            : base(id)
-        {
-            Value = value;
-        }
     }
 }

@@ -15,19 +15,5 @@ namespace Pomodoro.DataAccess.Entities
 
         //
         public User? User { get; set; }
-
-        public Settings(
-            int id, int userId,
-            byte pomodoroDuration, byte shortBreak, byte longBreak,
-            byte pomodorosBeforeLongBreak, bool autostartEnabled = false)
-            : base(id)
-        {
-            UserId = userId;
-            PomodoroDuration = pomodoroDuration;
-            ShortBreak = shortBreak;
-            LongBreak = longBreak;
-            PomodorosBeforeLongBreak = pomodorosBeforeLongBreak;
-            AutostartEnabled = autostartEnabled;
-        }
     }
 }
