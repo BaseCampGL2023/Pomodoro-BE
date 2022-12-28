@@ -4,7 +4,7 @@
 
 namespace Pomodoro.DataAccess.Entities
 {
-    internal class Completed : BaseEntity
+    public class Completed : BaseEntity
     {
         public int TaskId { get; set; }
         public DateTime ActualDate { get; set; }

@@ -4,7 +4,7 @@
 
 namespace Pomodoro.DataAccess.Entities
 {
-    internal class Settings : BaseEntity
+    public class Settings : BaseEntity
     {
         public int UserId { get; set; }
         public byte PomodoroDuration { get; set; }

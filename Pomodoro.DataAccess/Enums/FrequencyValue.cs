@@ -4,7 +4,7 @@
 
 namespace Pomodoro.DataAccess.Enums
 {
-    internal enum FrequencyValue
+    public enum FrequencyValue
     {
         None,
         Day,

@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Pomodoro.DataAccess.Entities
 {
     [Index(nameof(Email), IsUnique = true)]
-    internal class User : BaseEntity
+    public class User : BaseEntity
     {
         [MaxLength(50)]
         public string Name { get; set; }

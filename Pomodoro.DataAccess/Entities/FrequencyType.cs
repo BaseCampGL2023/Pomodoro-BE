@@ -9,7 +9,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Pomodoro.DataAccess.Entities
 {
     [Index(nameof(Value), IsUnique = true)]
-    internal class FrequencyType : BaseEntity
+    public class FrequencyType : BaseEntity
     {
         [Column(TypeName = "varchar(7)")]
         public FrequencyValue Value { get; set; }
