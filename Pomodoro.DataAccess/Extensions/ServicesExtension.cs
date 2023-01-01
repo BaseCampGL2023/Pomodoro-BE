@@ -1,4 +1,4 @@
-﻿// <copyright file="AppDbContextExtension.cs" company="PomodoroGroup_GL_BaseCamp">
+﻿// <copyright file="ServicesExtension.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
@@ -8,7 +8,7 @@ using Pomodoro.DataAccess.EF;
 
 namespace Pomodoro.DataAccess.Extensions
 {
-    public static class AppDbContextExtension
+    public static class ServicesExtension
     {
         public static IServiceCollection AddAppDbContext(
             this IServiceCollection services,

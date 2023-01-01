@@ -6,13 +6,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Pomodoro.DataAccess.Entities
 {
-    internal class Task : BaseEntity
+    public class Task : BaseEntity
     {
         public int UserId { get; set; }
         public int FrequencyId { get; set; }
 
         [MaxLength(50)]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
         public DateTime InitialDate { get; set; }
         public short AllocatedTime { get; set; }
 
@@ -20,17 +20,5 @@ namespace Pomodoro.DataAccess.Entities
         public User? User { get; set; }
         public Frequency? Frequency { get; set; }
         public ICollection<Completed>? CompletedTasks { get; set; }
-
-        public Task(
-            int id, int userId, int frequencyId,
-            string title, DateTime initialDate, short allocatedTime)
-            : base(id)
-        {
-            UserId = userId;
-            FrequencyId = frequencyId;
-            Title = title;
-            InitialDate = initialDate;
-            AllocatedTime = allocatedTime;
-        }
     }
 }

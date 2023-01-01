@@ -10,9 +10,11 @@ namespace Pomodoro.DataAccess.EF
 {
     internal class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     {
+        private const string LocalDb = "LocalDB";
+
         public AppDbContext CreateDbContext(string[] args)
         {
-            var connectionString = GetConnectionString("LocalDB");
+            var connectionString = GetConnectionString(LocalDb);
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
             optionsBuilder.UseSqlServer(connectionString);
 
@@ -22,9 +24,9 @@ namespace Pomodoro.DataAccess.EF
         private static string GetConnectionString(string connStrName)
         {
             var configuration = new ConfigurationBuilder()
-               .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "..", "Pomodoro.Api"))
-               .AddJsonFile("appsettings.json")
-               .Build();
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("db.config.json")
+                .Build();
 
             return configuration.GetConnectionString(connStrName);
         }

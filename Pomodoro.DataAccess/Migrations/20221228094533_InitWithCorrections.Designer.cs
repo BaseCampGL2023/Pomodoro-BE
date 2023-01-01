@@ -12,8 +12,8 @@ using Pomodoro.DataAccess.EF;
 namespace Pomodoro.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20221227130611_Init")]
-    partial class Init
+    [Migration("20221228094533_InitWithCorrections")]
+    partial class InitWithCorrections
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -40,7 +40,7 @@ namespace Pomodoro.DataAccess.Migrations
                     b.Property<float>("PomodorosCount")
                         .HasColumnType("real");
 
-                    b.Property<int?>("TaskId")
+                    b.Property<int>("TaskId")
                         .HasColumnType("int");
 
                     b.Property<float>("TimeSpent")
@@ -75,6 +75,57 @@ namespace Pomodoro.DataAccess.Migrations
                     b.HasIndex("FrequencyTypeId");
 
                     b.ToTable("Frequencies");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Every = (short)0,
+                            FrequencyTypeId = 1,
+                            IsCustom = false
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Every = (short)1,
+                            FrequencyTypeId = 2,
+                            IsCustom = false
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Every = (short)1,
+                            FrequencyTypeId = 3,
+                            IsCustom = false
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Every = (short)1,
+                            FrequencyTypeId = 4,
+                            IsCustom = false
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Every = (short)1,
+                            FrequencyTypeId = 5,
+                            IsCustom = false
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Every = (short)1,
+                            FrequencyTypeId = 6,
+                            IsCustom = false
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Every = (short)1,
+                            FrequencyTypeId = 7,
+                            IsCustom = false
+                        });
                 });
 
             modelBuilder.Entity("Pomodoro.DataAccess.Entities.FrequencyType", b =>
@@ -95,6 +146,43 @@ namespace Pomodoro.DataAccess.Migrations
                         .IsUnique();
 
                     b.ToTable("FrequencyTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Value = "None"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Value = "Day"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Value = "Week"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Value = "Month"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Value = "Year"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Value = "Workday"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Value = "Weekend"
+                        });
                 });
 
             modelBuilder.Entity("Pomodoro.DataAccess.Entities.Settings", b =>
@@ -198,7 +286,9 @@ namespace Pomodoro.DataAccess.Migrations
                 {
                     b.HasOne("Pomodoro.DataAccess.Entities.Task", "Task")
                         .WithMany("CompletedTasks")
-                        .HasForeignKey("TaskId");
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Task");
                 });

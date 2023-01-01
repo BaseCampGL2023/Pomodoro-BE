@@ -4,7 +4,7 @@
 
 namespace Pomodoro.DataAccess.Entities
 {
-    internal class Frequency : BaseEntity
+    public class Frequency : BaseEntity
     {
         public int FrequencyTypeId { get; set; }
         public short Every { get; set; }
@@ -12,13 +12,5 @@ namespace Pomodoro.DataAccess.Entities
 
         //
         public FrequencyType? FrequencyType { get; set; }
-
-        public Frequency(int id, int frequencyTypeId, short every, bool isCustom = false)
-            : base(id)
-        {
-            FrequencyTypeId = frequencyTypeId;
-            Every = every;
-            IsCustom = isCustom;
-        }
     }
 }
