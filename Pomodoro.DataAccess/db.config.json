@@ -1,11 +1,4 @@
 {
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "AllowedHosts": "*",
   "ConnectionStrings": {
     "LocalDB": "Data Source=(LocalDB)\\MSSQLLocalDB;Initial Catalog=Pomodoro;Integrated Security=True;Connect Timeout=30"
   }

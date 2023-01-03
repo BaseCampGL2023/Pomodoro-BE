@@ -35,4 +35,8 @@
 		<InternalsVisibleTo Include="Pomodoro.Tests" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Pomodoro.DataAccess\Pomodoro.DataAccess.csproj" />
+	</ItemGroup>
+
 </Project>
