@@ -2,6 +2,7 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
+using System.Reflection;
 using Microsoft.OpenApi.Models;
 using Pomodoro.DataAccess.Extensions;
 using Serilog;
@@ -59,6 +60,9 @@ builder.Services.AddSwaggerGen(option =>
         Description = "Time tracker",
     });
     option.EnableAnnotations();
+
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    option.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
 var app = builder.Build();
