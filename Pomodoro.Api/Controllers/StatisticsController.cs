@@ -57,7 +57,7 @@ namespace Pomodoro.Api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<DailyStatisticsViewModel>> GetDailyStatistics(DateTime day)
         {
-            int userId = this.securityContextService.GetCurrentUserId();
+            var userId = this.securityContextService.GetCurrentUserId();
             var result = await this.statisticsService.GetDailyStatisticsAsync(userId, DateOnly.FromDateTime(day));
 
             if (result is null)
@@ -90,7 +90,7 @@ namespace Pomodoro.Api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<MonthlyStatisticsViewModel>> GetMonthlyStatistics(int year, int month)
         {
-            int userId = this.securityContextService.GetCurrentUserId();
+            var userId = this.securityContextService.GetCurrentUserId();
             var result = await this.statisticsService.GetMonthlyStatisticsAsync(userId, year, month);
 
             if (result is null)
@@ -121,7 +121,7 @@ namespace Pomodoro.Api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<AnnualStatisticsViewModel>> GetAnnualStatistics(int year)
         {
-            int userId = this.securityContextService.GetCurrentUserId();
+            var userId = this.securityContextService.GetCurrentUserId();
             var result = await this.statisticsService.GetAnnualStatisticsAsync(userId, year);
 
             if (result is null)

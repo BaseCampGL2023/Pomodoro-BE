@@ -12,6 +12,6 @@ namespace Pomodoro.Api.ViewModels
         /// <summary>
         /// Gets or sets the id of the user for whom data is gathered.
         /// </summary>
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
     }
 }

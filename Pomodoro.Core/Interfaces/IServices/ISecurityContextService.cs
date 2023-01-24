@@ -2,6 +2,6 @@
 {
     public interface ISecurityContextService
     {
-        int GetCurrentUserId();
+        Guid GetCurrentUserId();
     }
 }
