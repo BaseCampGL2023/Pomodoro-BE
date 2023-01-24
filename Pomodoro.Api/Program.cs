@@ -4,6 +4,7 @@
 
 using System.Reflection;
 using Microsoft.OpenApi.Models;
+using Pomodoro.Api.ActionFilterAttributes;
 using Pomodoro.DataAccess.Extensions;
 using Serilog;
 using Serilog.Events;
@@ -44,7 +45,10 @@ builder.Services.AddCors(options =>
  //       ) //
  //   .WriteTo.Console() //
  // ); //
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ValidateModelAttribute>();
+});
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
