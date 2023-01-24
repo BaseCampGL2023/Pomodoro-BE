@@ -2,6 +2,8 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
+using Pomodoro.Core.Enums;
+
 namespace Pomodoro.Api.ViewModels.Statistics
 {
     /// <summary>
@@ -15,9 +17,9 @@ namespace Pomodoro.Api.ViewModels.Statistics
         public int Year { get; set; }
 
         /// <summary>
-        /// Gets or sets a month number (1-12) for which statistics is gathered.
+        /// Gets or sets a <see cref="Core.Enums.Month"/> for which statistics is gathered.
         /// </summary>
-        public int Month { get; set; }
+        public Month Month { get; set; }
 
         /// <summary>
         /// Gets or sets a number of tasks completed during the <see cref="Month"/> of the <see cref="Year"/>.
