@@ -12,7 +12,7 @@ namespace Pomodoro.Api.Middleware
     /// </summary>
     public class ExceptionMiddleware
     {
-        private readonly RequestDelegate _next;
+        private readonly RequestDelegate next;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExceptionMiddleware"/> class.
@@ -20,7 +20,7 @@ namespace Pomodoro.Api.Middleware
         /// <param name="next">Function that can process HTTP request.</param>
         public ExceptionMiddleware(RequestDelegate next)
         {
-            _next = next;
+            this.next = next;
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace Pomodoro.Api.Middleware
         {
             try
             {
-                await _next(context);
+                await this.next(context);
             }
             catch (Exception e)
             {
