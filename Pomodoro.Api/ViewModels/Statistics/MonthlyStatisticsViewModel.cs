@@ -32,7 +32,7 @@ namespace Pomodoro.Api.ViewModels.Statistics
         public int PomodorosDone { get; set; }
 
         /// <summary>
-        /// Gets or sets time (in minutes) spent on pomodoros during the <see cref="Month"/> of the <see cref="Year"/>.
+        /// Gets or sets time (in seconds) spent on pomodoros during the <see cref="Month"/> of the <see cref="Year"/>.
         /// </summary>
         public int TimeSpent { get; set; }
     }

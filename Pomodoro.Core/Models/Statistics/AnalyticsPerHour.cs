@@ -4,6 +4,6 @@
     {
         public int Hour { get; set; }
         public int PomodorosDone { get; set; }
-        public float TimeSpent { get; set; }
+        public int TimeSpent { get; set; }
     }
 }
