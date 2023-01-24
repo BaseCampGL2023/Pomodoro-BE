@@ -10,12 +10,12 @@ using Pomodoro.Api.Extensions;
 namespace Pomodoro.Api.ActionFilterAttributes
 {
     /// <summary>
-    /// Action filter attribute to be used on action methods of API controllers for the <see cref="DateOnly"/> parameter validation.
+    /// Action filter attribute to be used on action methods of API controllers for the <see cref="DateTime"/> parameter validation.
     /// </summary>
     public class ValidateDateAttribute : ActionFilterAttribute
     {
         /// <summary>
-        /// Checks that the <see cref="DateOnly"/> parameter does not represent a date in the future (in UTC).<br/>
+        /// Checks that the <see cref="DateTime"/> parameter does not represent a date in the future (in UTC).<br/>
         /// Called before the action executes, after model binding is complete.
         /// </summary>
         /// <param name="context">The <see cref="ActionExecutingContext"/>.</param>
