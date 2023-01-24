@@ -3,6 +3,8 @@
 // </copyright>
 
 using Microsoft.OpenApi.Models;
+using Pomodoro.Api.Extensions;
+using Pomodoro.Api.Middleware;
 using Pomodoro.DataAccess.Extensions;
 using Serilog;
 using Serilog.Events;
@@ -77,6 +79,8 @@ app.UseHttpsRedirection();
 app.UseCors(pomodoroSpecificOrigins);
 
 app.UseAuthorization();
+
+app.UseExceptionMiddleware();
 
 app.MapControllers();
 
