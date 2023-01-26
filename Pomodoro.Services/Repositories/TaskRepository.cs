@@ -28,6 +28,11 @@ public class TaskRepository : ITaskRepository
         return Task.CompletedTask;
     }
 
+    public async Task<IReadOnlyList<TaskEntity>> GetAllTasksByUserAsync(int userId)
+    {
+        return await _context.Tasks.Where(t => t.UserId == userId).ToListAsync();
+    }
+
     public async Task<TaskEntity> GetByIdAsync(int id)
     {
         return await _context.Tasks
@@ -36,10 +41,6 @@ public class TaskRepository : ITaskRepository
             .FirstOrDefaultAsync(t => t.Id == id);
     }
 
-    public async Task<IReadOnlyList<TaskEntity>> ListAllAsync()
-    {
-        return await _context.Tasks.ToListAsync();
-    }
 
     public Task UpdateAsync(TaskEntity item)
     {

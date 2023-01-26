@@ -10,7 +10,7 @@ namespace Pomodoro.Core.Interfaces;
 public interface ITaskRepository
 {
     Task<TaskEntity> GetByIdAsync(int id);
-    Task<IReadOnlyList<TaskEntity>> ListAllAsync();
+    Task<IReadOnlyList<TaskEntity>> GetAllTasksByUserAsync(int userId);
     Task<TaskEntity> CreateAsync(TaskEntity item);
     Task DeleteAsync(TaskEntity item);
     Task UpdateAsync(TaskEntity item);
