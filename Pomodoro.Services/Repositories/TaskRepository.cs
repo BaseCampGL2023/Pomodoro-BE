@@ -17,15 +17,17 @@ public class TaskRepository : ITaskRepository
 
     public async Task<TaskEntity> CreateAsync(TaskEntity item)
     {
-        await _context.Tasks.AddAsync(item);
+        var res = await _context.Tasks.AddAsync(item);
+        await _context.SaveChangesAsync();
         return item;
     }
 
 
-    public Task DeleteAsync(TaskEntity item)
+    public async Task<TaskEntity> DeleteAsync(TaskEntity item)
     {
         _context.Tasks.Remove(item);
-        return Task.CompletedTask;
+        await _context.SaveChangesAsync();
+        return item;
     }
 
     public async Task<IReadOnlyList<TaskEntity>> GetAllTasksByUserAsync(int userId)
@@ -42,9 +44,10 @@ public class TaskRepository : ITaskRepository
     }
 
 
-    public Task UpdateAsync(TaskEntity item)
+    public async Task<TaskEntity> UpdateAsync(TaskEntity item)
     {
         _context.Tasks.Update(item);
-        return Task.CompletedTask;
+        await _context.SaveChangesAsync();
+        return item;
     }
 }

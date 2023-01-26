@@ -12,6 +12,6 @@ public interface ITaskRepository
     Task<TaskEntity> GetByIdAsync(int id);
     Task<IReadOnlyList<TaskEntity>> GetAllTasksByUserAsync(int userId);
     Task<TaskEntity> CreateAsync(TaskEntity item);
-    Task DeleteAsync(TaskEntity item);
-    Task UpdateAsync(TaskEntity item);
+    Task<TaskEntity> DeleteAsync(TaskEntity item);
+    Task<TaskEntity> UpdateAsync(TaskEntity item);
 }
