@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Pomodoro.DataAccess.Configurations
 {
-    internal class TaskConfig : IEntityTypeConfiguration<Entities.Task>
+    internal class TaskConfig : IEntityTypeConfiguration<Entities.TaskEntity>
     {
-        public void Configure(EntityTypeBuilder<Entities.Task> builder)
+        public void Configure(EntityTypeBuilder<Entities.TaskEntity> builder)
         {
             builder
                 .Property(t => t.InitialDate)

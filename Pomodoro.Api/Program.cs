@@ -3,6 +3,7 @@
 // </copyright>
 
 using Microsoft.OpenApi.Models;
+using Pomodoro.Api.Extensions;
 using Pomodoro.DataAccess.Extensions;
 using Serilog;
 using Serilog.Events;
@@ -15,6 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services
     .AddAppDbContext(builder.Configuration.GetConnectionString("LocalDB"));
+builder.Services.AddApplicationServices();
 
 builder.Services.AddCors(options =>
 {

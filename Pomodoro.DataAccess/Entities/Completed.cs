@@ -12,6 +12,6 @@ namespace Pomodoro.DataAccess.Entities
         public float PomodorosCount { get; set; }
 
         //
-        public Task? Task { get; set; }
+        public TaskEntity? Task { get; set; }
     }
 }

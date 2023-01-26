@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Pomodoro.DataAccess.Entities
 {
-    public class Task : BaseEntity
+    public class TaskEntity : BaseEntity
     {
         public int UserId { get; set; }
         public int FrequencyId { get; set; }
