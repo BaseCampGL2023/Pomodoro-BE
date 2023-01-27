@@ -7,10 +7,11 @@ namespace Pomodoro.Core.Interfaces.IRepositories
         Task<T?> GetByIdAsync(Guid id);
         Task<IEnumerable<T>> GetAllAsync();
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
-        Task UpdateAsync(T entity);
         Task AddAsync(T entity);
         Task AddRangeAsync(IEnumerable<T> entities);
-        Task RemoveAsync(T entity);
-        Task RemoveRangeAsync(IEnumerable<T> entities);
+        Task SaveChangesAsync();
+        void Update(T entity);
+        void Remove(T entity);
+        void RemoveRange(IEnumerable<T> entities);
     }
 }

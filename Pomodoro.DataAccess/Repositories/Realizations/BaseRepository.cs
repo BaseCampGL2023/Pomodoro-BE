@@ -17,13 +17,11 @@ namespace Pomodoro.DataAccess.Repositories.Realizations
         public async Task AddAsync(T entity)
         {
             await context.Set<T>().AddAsync(entity);
-            await context.SaveChangesAsync();
         }
 
         public async Task AddRangeAsync(IEnumerable<T> entities)
         {
             await context.Set<T>().AddRangeAsync(entities);
-            await context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
@@ -35,22 +33,24 @@ namespace Pomodoro.DataAccess.Repositories.Realizations
         public async Task<T?> GetByIdAsync(Guid id)
             => await context.Set<T>().FindAsync(id);
 
-        public async Task RemoveAsync(T entity)
+        public void Remove(T entity)
         {
             context.Set<T>().Remove(entity);
-            await context.SaveChangesAsync();
         }
 
-        public async Task RemoveRangeAsync(IEnumerable<T> entities)
+        public void RemoveRange(IEnumerable<T> entities)
         {
             context.Set<T>().RemoveRange(entities);
+        }
+
+        public async Task SaveChangesAsync()
+        {
             await context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(T entity)
+        public void Update(T entity)
         {
             context.Set<T>().Update(entity);
-            await context.SaveChangesAsync();
         }
     }
 }
