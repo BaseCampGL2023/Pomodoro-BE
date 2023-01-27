@@ -24,12 +24,12 @@ namespace Pomodoro.DataAccess.Extensions
         public static IServiceCollection AddRepositories(
             this IServiceCollection services)
         {
-            services.AddTransient<ICompletedRepository, CompletedRepository>();
-            services.AddTransient<IFrequencyRepository, FrequencyRepository>();
-            services.AddTransient<IFrequencyTypeRepository, FrequencyTypeRepository>();
-            services.AddTransient<ISettingsRepository, SettingsRepository>();
-            services.AddTransient<ITaskRepository, TaskRepository>();
-            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddScoped<ICompletedRepository, CompletedRepository>();
+            services.AddScoped<IFrequencyRepository, FrequencyRepository>();
+            services.AddScoped<IFrequencyTypeRepository, FrequencyTypeRepository>();
+            services.AddScoped<ISettingsRepository, SettingsRepository>();
+            services.AddScoped<ITaskRepository, TaskRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             return services;
         }
