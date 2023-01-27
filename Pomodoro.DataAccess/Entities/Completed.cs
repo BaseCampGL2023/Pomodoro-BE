@@ -13,6 +13,6 @@ namespace Pomodoro.DataAccess.Entities
         public bool IsDone { get; set; }
 
         //
-        public Task? Task { get; set; }
+        public TaskEntity? Task { get; set; }
     }
 }
