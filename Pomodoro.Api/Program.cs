@@ -2,7 +2,11 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
+using System.Reflection;
 using Microsoft.OpenApi.Models;
+using Pomodoro.Api.ActionFilterAttributes;
+using Pomodoro.Api.SecurityContext;
+using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.DataAccess.Extensions;
 using Serilog;
 using Serilog.Events;
@@ -43,7 +47,12 @@ builder.Services.AddCors(options =>
  //       ) //
  //   .WriteTo.Console() //
  // ); //
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ValidateModelAttribute>();
+});
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -57,7 +66,12 @@ builder.Services.AddSwaggerGen(option =>
         Description = "Time tracker",
     });
     option.EnableAnnotations();
+
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    option.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
+
+builder.Services.AddTransient<ISecurityContextService, SecurityContextService>();
 
 var app = builder.Build();
 
