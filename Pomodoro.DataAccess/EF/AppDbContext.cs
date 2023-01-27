@@ -8,7 +8,7 @@ using Pomodoro.DataAccess.Extensions;
 
 namespace Pomodoro.DataAccess.EF
 {
-    internal class AppDbContext : DbContext
+    public class AppDbContext : DbContext
     {
         public DbSet<Completed> CompletedTasks => Set<Completed>();
         public DbSet<Frequency> Frequencies => Set<Frequency>();

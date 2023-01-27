@@ -16,6 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddAppDbContext(builder.Configuration.GetConnectionString("LocalDB"));
 
+builder.Services.AddRepositories();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
