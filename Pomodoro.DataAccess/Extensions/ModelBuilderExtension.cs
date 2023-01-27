@@ -21,37 +21,37 @@ namespace Pomodoro.DataAccess.Extensions
             builder.Seed(
                 new FrequencyType
                 {
-                    Id = 1,
+                    Id = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     Value = FrequencyValue.None
                 },
                 new FrequencyType
                 {
-                    Id = 2,
+                    Id = new Guid(2, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     Value = FrequencyValue.Day
                 },
                 new FrequencyType
                 {
-                    Id = 3,
+                    Id = new Guid(3, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     Value = FrequencyValue.Week
                 },
                 new FrequencyType
                 {
-                    Id = 4,
+                    Id = new Guid(4, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     Value = FrequencyValue.Month
                 },
                 new FrequencyType
                 {
-                    Id = 5,
+                    Id = new Guid(5, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     Value = FrequencyValue.Year
                 },
                 new FrequencyType
                 {
-                    Id = 6,
+                    Id = new Guid(6, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     Value = FrequencyValue.Workday
                 },
                 new FrequencyType
                 {
-                    Id = 7,
+                    Id = new Guid(7, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     Value = FrequencyValue.Weekend
                 }
             );
@@ -62,44 +62,44 @@ namespace Pomodoro.DataAccess.Extensions
             builder.Seed(
                 new Frequency
                 {
-                    Id = 1,
-                    FrequencyTypeId = 1,
+                    Id = new Guid(2, 1, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
+                    FrequencyTypeId = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     Every = 0
                 },
                 new Frequency
                 {
-                    Id = 2,
-                    FrequencyTypeId = 2,
+                    Id = new Guid(2, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
+                    FrequencyTypeId = new Guid(2, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     Every = 1
                 },
                 new Frequency
                 {
-                    Id = 3,
-                    FrequencyTypeId = 3,
+                    Id = new Guid(2, 3, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
+                    FrequencyTypeId = new Guid(3, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     Every = 1
                 },
                 new Frequency
                 {
-                    Id = 4,
-                    FrequencyTypeId = 4,
+                    Id = new Guid(2, 4, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
+                    FrequencyTypeId = new Guid(4, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     Every = 1
                 },
                 new Frequency
                 {
-                    Id = 5,
-                    FrequencyTypeId = 5,
+                    Id = new Guid(2, 5, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
+                    FrequencyTypeId = new Guid(5, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     Every = 1
                 },
                 new Frequency
                 {
-                    Id = 6,
-                    FrequencyTypeId = 6,
+                    Id = new Guid(2, 6, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
+                    FrequencyTypeId = new Guid(6, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     Every = 1
                 },
                 new Frequency
                 {
-                    Id = 7,
-                    FrequencyTypeId = 7,
+                    Id = new Guid(2, 7, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
+                    FrequencyTypeId = new Guid(7, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     Every = 1
                 }
             );

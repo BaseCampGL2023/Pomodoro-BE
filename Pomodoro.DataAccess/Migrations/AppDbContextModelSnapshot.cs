@@ -24,25 +24,26 @@ namespace Pomodoro.DataAccess.Migrations
 
             modelBuilder.Entity("Pomodoro.DataAccess.Entities.Completed", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ActualDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("getutcdate()");
 
+                    b.Property<bool>("IsDone")
+                        .HasColumnType("bit");
+
                     b.Property<float>("PomodorosCount")
                         .HasColumnType("real");
 
-                    b.Property<int>("TaskId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("TaskId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<float>("TimeSpent")
-                        .HasColumnType("real");
+                    b.Property<int>("TimeSpent")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -53,17 +54,15 @@ namespace Pomodoro.DataAccess.Migrations
 
             modelBuilder.Entity("Pomodoro.DataAccess.Entities.Frequency", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<short>("Every")
                         .HasColumnType("smallint");
 
-                    b.Property<int>("FrequencyTypeId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("FrequencyTypeId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsCustom")
                         .HasColumnType("bit");
@@ -77,62 +76,60 @@ namespace Pomodoro.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            Id = new Guid("00000002-0001-0003-0001-020304050607"),
                             Every = (short)0,
-                            FrequencyTypeId = 1,
+                            FrequencyTypeId = new Guid("00000001-0002-0003-0001-020304050607"),
                             IsCustom = false
                         },
                         new
                         {
-                            Id = 2,
+                            Id = new Guid("00000002-0002-0003-0001-020304050607"),
                             Every = (short)1,
-                            FrequencyTypeId = 2,
+                            FrequencyTypeId = new Guid("00000002-0002-0003-0001-020304050607"),
                             IsCustom = false
                         },
                         new
                         {
-                            Id = 3,
+                            Id = new Guid("00000002-0003-0003-0001-020304050607"),
                             Every = (short)1,
-                            FrequencyTypeId = 3,
+                            FrequencyTypeId = new Guid("00000003-0002-0003-0001-020304050607"),
                             IsCustom = false
                         },
                         new
                         {
-                            Id = 4,
+                            Id = new Guid("00000002-0004-0003-0001-020304050607"),
                             Every = (short)1,
-                            FrequencyTypeId = 4,
+                            FrequencyTypeId = new Guid("00000004-0002-0003-0001-020304050607"),
                             IsCustom = false
                         },
                         new
                         {
-                            Id = 5,
+                            Id = new Guid("00000002-0005-0003-0001-020304050607"),
                             Every = (short)1,
-                            FrequencyTypeId = 5,
+                            FrequencyTypeId = new Guid("00000005-0002-0003-0001-020304050607"),
                             IsCustom = false
                         },
                         new
                         {
-                            Id = 6,
+                            Id = new Guid("00000002-0006-0003-0001-020304050607"),
                             Every = (short)1,
-                            FrequencyTypeId = 6,
+                            FrequencyTypeId = new Guid("00000006-0002-0003-0001-020304050607"),
                             IsCustom = false
                         },
                         new
                         {
-                            Id = 7,
+                            Id = new Guid("00000002-0007-0003-0001-020304050607"),
                             Every = (short)1,
-                            FrequencyTypeId = 7,
+                            FrequencyTypeId = new Guid("00000007-0002-0003-0001-020304050607"),
                             IsCustom = false
                         });
                 });
 
             modelBuilder.Entity("Pomodoro.DataAccess.Entities.FrequencyType", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Value")
                         .IsRequired()
@@ -148,48 +145,46 @@ namespace Pomodoro.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            Id = new Guid("00000001-0002-0003-0001-020304050607"),
                             Value = "None"
                         },
                         new
                         {
-                            Id = 2,
+                            Id = new Guid("00000002-0002-0003-0001-020304050607"),
                             Value = "Day"
                         },
                         new
                         {
-                            Id = 3,
+                            Id = new Guid("00000003-0002-0003-0001-020304050607"),
                             Value = "Week"
                         },
                         new
                         {
-                            Id = 4,
+                            Id = new Guid("00000004-0002-0003-0001-020304050607"),
                             Value = "Month"
                         },
                         new
                         {
-                            Id = 5,
+                            Id = new Guid("00000005-0002-0003-0001-020304050607"),
                             Value = "Year"
                         },
                         new
                         {
-                            Id = 6,
+                            Id = new Guid("00000006-0002-0003-0001-020304050607"),
                             Value = "Workday"
                         },
                         new
                         {
-                            Id = 7,
+                            Id = new Guid("00000007-0002-0003-0001-020304050607"),
                             Value = "Weekend"
                         });
                 });
 
             modelBuilder.Entity("Pomodoro.DataAccess.Entities.Settings", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("AutostartEnabled")
                         .HasColumnType("bit");
@@ -206,8 +201,8 @@ namespace Pomodoro.DataAccess.Migrations
                     b.Property<byte>("ShortBreak")
                         .HasColumnType("tinyint");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -219,17 +214,15 @@ namespace Pomodoro.DataAccess.Migrations
 
             modelBuilder.Entity("Pomodoro.DataAccess.Entities.Task", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<short>("AllocatedTime")
                         .HasColumnType("smallint");
 
-                    b.Property<int>("FrequencyId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("FrequencyId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("InitialDate")
                         .ValueGeneratedOnAdd()
@@ -241,8 +234,8 @@ namespace Pomodoro.DataAccess.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -255,11 +248,9 @@ namespace Pomodoro.DataAccess.Migrations
 
             modelBuilder.Entity("Pomodoro.DataAccess.Entities.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
                         .IsRequired()
