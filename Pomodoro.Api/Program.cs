@@ -63,6 +63,8 @@ builder.Services.AddSwaggerGen(option =>
 
 var app = builder.Build();
 
+app.UseExceptionMiddleware();
+
 // Configure the HTTP request pipeline.
 
 // uncomment, if want logging HTTP requests
@@ -79,8 +81,6 @@ app.UseHttpsRedirection();
 app.UseCors(pomodoroSpecificOrigins);
 
 app.UseAuthorization();
-
-app.UseExceptionMiddleware();
 
 app.MapControllers();
 
