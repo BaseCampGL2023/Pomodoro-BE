@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Pomodoro.DataAccess.Migrations
 {
-    public partial class InitWithCorrections : Migration
+    public partial class InitWithFixes : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,8 +13,7 @@ namespace Pomodoro.DataAccess.Migrations
                 name: "FrequencyTypes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Value = table.Column<string>(type: "varchar(7)", nullable: false)
                 },
                 constraints: table =>
@@ -26,8 +25,7 @@ namespace Pomodoro.DataAccess.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Email = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false)
                 },
@@ -40,9 +38,8 @@ namespace Pomodoro.DataAccess.Migrations
                 name: "Frequencies",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FrequencyTypeId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FrequencyTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Every = table.Column<short>(type: "smallint", nullable: false),
                     IsCustom = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -61,9 +58,8 @@ namespace Pomodoro.DataAccess.Migrations
                 name: "Settings",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PomodoroDuration = table.Column<byte>(type: "tinyint", nullable: false),
                     ShortBreak = table.Column<byte>(type: "tinyint", nullable: false),
                     LongBreak = table.Column<byte>(type: "tinyint", nullable: false),
@@ -85,10 +81,9 @@ namespace Pomodoro.DataAccess.Migrations
                 name: "Tasks",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    FrequencyId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FrequencyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     InitialDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getutcdate()"),
                     AllocatedTime = table.Column<short>(type: "smallint", nullable: false)
@@ -114,12 +109,12 @@ namespace Pomodoro.DataAccess.Migrations
                 name: "CompletedTasks",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TaskId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TaskId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ActualDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getutcdate()"),
-                    TimeSpent = table.Column<float>(type: "real", nullable: false),
-                    PomodorosCount = table.Column<float>(type: "real", nullable: false)
+                    TimeSpent = table.Column<int>(type: "int", nullable: false),
+                    PomodorosCount = table.Column<float>(type: "real", nullable: false),
+                    IsDone = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -137,13 +132,13 @@ namespace Pomodoro.DataAccess.Migrations
                 columns: new[] { "Id", "Value" },
                 values: new object[,]
                 {
-                    { 1, "None" },
-                    { 2, "Day" },
-                    { 3, "Week" },
-                    { 4, "Month" },
-                    { 5, "Year" },
-                    { 6, "Workday" },
-                    { 7, "Weekend" }
+                    { new Guid("00000001-0002-0003-0001-020304050607"), "None" },
+                    { new Guid("00000002-0002-0003-0001-020304050607"), "Day" },
+                    { new Guid("00000003-0002-0003-0001-020304050607"), "Week" },
+                    { new Guid("00000004-0002-0003-0001-020304050607"), "Month" },
+                    { new Guid("00000005-0002-0003-0001-020304050607"), "Year" },
+                    { new Guid("00000006-0002-0003-0001-020304050607"), "Workday" },
+                    { new Guid("00000007-0002-0003-0001-020304050607"), "Weekend" }
                 });
 
             migrationBuilder.InsertData(
@@ -151,13 +146,13 @@ namespace Pomodoro.DataAccess.Migrations
                 columns: new[] { "Id", "Every", "FrequencyTypeId", "IsCustom" },
                 values: new object[,]
                 {
-                    { 1, (short)0, 1, false },
-                    { 2, (short)1, 2, false },
-                    { 3, (short)1, 3, false },
-                    { 4, (short)1, 4, false },
-                    { 5, (short)1, 5, false },
-                    { 6, (short)1, 6, false },
-                    { 7, (short)1, 7, false }
+                    { new Guid("00000002-0001-0003-0001-020304050607"), (short)0, new Guid("00000001-0002-0003-0001-020304050607"), false },
+                    { new Guid("00000002-0002-0003-0001-020304050607"), (short)1, new Guid("00000002-0002-0003-0001-020304050607"), false },
+                    { new Guid("00000002-0003-0003-0001-020304050607"), (short)1, new Guid("00000003-0002-0003-0001-020304050607"), false },
+                    { new Guid("00000002-0004-0003-0001-020304050607"), (short)1, new Guid("00000004-0002-0003-0001-020304050607"), false },
+                    { new Guid("00000002-0005-0003-0001-020304050607"), (short)1, new Guid("00000005-0002-0003-0001-020304050607"), false },
+                    { new Guid("00000002-0006-0003-0001-020304050607"), (short)1, new Guid("00000006-0002-0003-0001-020304050607"), false },
+                    { new Guid("00000002-0007-0003-0001-020304050607"), (short)1, new Guid("00000007-0002-0003-0001-020304050607"), false }
                 });
 
             migrationBuilder.CreateIndex(

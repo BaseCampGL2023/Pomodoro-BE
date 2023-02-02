@@ -5,6 +5,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Pomodoro.DataAccess.EF;
+using Pomodoro.DataAccess.Repositories.Interfaces;
+using Pomodoro.DataAccess.Repositories.Realizations;
 
 namespace Pomodoro.DataAccess.Extensions
 {
@@ -17,6 +19,19 @@ namespace Pomodoro.DataAccess.Extensions
             return services.AddDbContext<AppDbContext>(options => {
                 options.UseSqlServer(connectionString);
             });
+        }
+
+        public static IServiceCollection AddRepositories(
+            this IServiceCollection services)
+        {
+            services.AddScoped<ICompletedRepository, CompletedRepository>();
+            services.AddScoped<IFrequencyRepository, FrequencyRepository>();
+            services.AddScoped<IFrequencyTypeRepository, FrequencyTypeRepository>();
+            services.AddScoped<ISettingsRepository, SettingsRepository>();
+            services.AddScoped<ITaskRepository, TaskRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+
+            return services;
         }
     }
 }

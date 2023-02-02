@@ -6,12 +6,13 @@ namespace Pomodoro.DataAccess.Entities
 {
     public class Completed : BaseEntity
     {
-        public int TaskId { get; set; }
+        public Guid TaskId { get; set; }
         public DateTime ActualDate { get; set; }
-        public float TimeSpent { get; set; }
+        public int TimeSpent { get; set; }
         public float PomodorosCount { get; set; }
+        public bool IsDone { get; set; }
 
         //
-        public Task? Task { get; set; }
+        public TaskEntity? Task { get; set; }
     }
 }

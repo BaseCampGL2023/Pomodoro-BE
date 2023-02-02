@@ -4,12 +4,13 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Pomodoro.DataAccess.Entities;
 
 namespace Pomodoro.DataAccess.Configurations
 {
-    internal class TaskConfig : IEntityTypeConfiguration<Entities.Task>
+    internal class TaskConfig : IEntityTypeConfiguration<TaskEntity>
     {
-        public void Configure(EntityTypeBuilder<Entities.Task> builder)
+        public void Configure(EntityTypeBuilder<TaskEntity> builder)
         {
             builder
                 .Property(t => t.InitialDate)
