@@ -5,6 +5,7 @@
 using System.Reflection;
 using Microsoft.OpenApi.Models;
 using Pomodoro.Api.ActionFilterAttributes;
+using Pomodoro.Api.Extensions;
 using Pomodoro.Api.SecurityContext;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.DataAccess.Extensions;
@@ -35,20 +36,20 @@ builder.Services.AddCors(options =>
 });
 
 // setup Serilog
- // builder.Host.UseSerilog((ctx, lc) => lc //
- //   .ReadFrom.Configuration(ctx.Configuration) //
- //   .WriteTo.MSSqlServer( //
- //       connectionString: //
- //       ctx.Configuration.GetConnectionString("PomodoroBE"), //
- //       restrictedToMinimumLevel: LogEventLevel.Information, //
- //       sinkOptions: new MSSqlServerSinkOptions //
- //       { //
- //           TableName = "LogEvents", //
- //           AutoCreateSqlTable = true, //
- //       } //
- //       ) //
- //   .WriteTo.Console() //
- // ); //
+// builder.Host.UseSerilog((ctx, lc) => lc //
+//   .ReadFrom.Configuration(ctx.Configuration) //
+//   .WriteTo.MSSqlServer( //
+//       connectionString: //
+//       ctx.Configuration.GetConnectionString("PomodoroBE"), //
+//       restrictedToMinimumLevel: LogEventLevel.Information, //
+//       sinkOptions: new MSSqlServerSinkOptions //
+//       { //
+//           TableName = "LogEvents", //
+//           AutoCreateSqlTable = true, //
+//       } //
+//       ) //
+//   .WriteTo.Console() //
+// ); //
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ValidateModelAttribute>();
@@ -76,6 +77,8 @@ builder.Services.AddSwaggerGen(option =>
 builder.Services.AddTransient<ISecurityContextService, SecurityContextService>();
 
 var app = builder.Build();
+
+app.UseExceptionMiddleware();
 
 // Configure the HTTP request pipeline.
 
