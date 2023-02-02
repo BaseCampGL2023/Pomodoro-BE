@@ -20,6 +20,6 @@ namespace Pomodoro.DataAccess.Entities
 
         //
         public Settings? Settings { get; set; }
-        public ICollection<Task>? Tasks { get; set; }
+        public ICollection<TaskEntity>? Tasks { get; set; }
     }
 }

@@ -2,9 +2,12 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
+using System.Reflection;
 using Microsoft.OpenApi.Models;
 using Pomodoro.Api.Extensions;
-using Pomodoro.Api.Middleware;
+using Pomodoro.Api.ActionFilterAttributes;
+using Pomodoro.Api.SecurityContext;
+using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.DataAccess.Extensions;
 using Serilog;
 using Serilog.Events;
@@ -17,6 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services
     .AddAppDbContext(builder.Configuration.GetConnectionString("LocalDB"));
+
+builder.Services.AddRepositories();
 
 builder.Services.AddCors(options =>
 {
@@ -31,21 +36,26 @@ builder.Services.AddCors(options =>
 });
 
 // setup Serilog
- // builder.Host.UseSerilog((ctx, lc) => lc //
- //   .ReadFrom.Configuration(ctx.Configuration) //
- //   .WriteTo.MSSqlServer( //
- //       connectionString: //
- //       ctx.Configuration.GetConnectionString("PomodoroBE"), //
- //       restrictedToMinimumLevel: LogEventLevel.Information, //
- //       sinkOptions: new MSSqlServerSinkOptions //
- //       { //
- //           TableName = "LogEvents", //
- //           AutoCreateSqlTable = true, //
- //       } //
- //       ) //
- //   .WriteTo.Console() //
- // ); //
-builder.Services.AddControllers();
+// builder.Host.UseSerilog((ctx, lc) => lc //
+//   .ReadFrom.Configuration(ctx.Configuration) //
+//   .WriteTo.MSSqlServer( //
+//       connectionString: //
+//       ctx.Configuration.GetConnectionString("PomodoroBE"), //
+//       restrictedToMinimumLevel: LogEventLevel.Information, //
+//       sinkOptions: new MSSqlServerSinkOptions //
+//       { //
+//           TableName = "LogEvents", //
+//           AutoCreateSqlTable = true, //
+//       } //
+//       ) //
+//   .WriteTo.Console() //
+// ); //
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ValidateModelAttribute>();
+});
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -59,7 +69,12 @@ builder.Services.AddSwaggerGen(option =>
         Description = "Time tracker",
     });
     option.EnableAnnotations();
+
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    option.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
+
+builder.Services.AddTransient<ISecurityContextService, SecurityContextService>();
 
 var app = builder.Build();
 
@@ -76,7 +91,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseCors(pomodoroSpecificOrigins);
 

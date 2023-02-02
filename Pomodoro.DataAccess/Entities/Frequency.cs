@@ -6,7 +6,7 @@ namespace Pomodoro.DataAccess.Entities
 {
     public class Frequency : BaseEntity
     {
-        public int FrequencyTypeId { get; set; }
+        public Guid FrequencyTypeId { get; set; }
         public short Every { get; set; }
         public bool IsCustom { get; set; }
 
