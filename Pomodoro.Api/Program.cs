@@ -25,6 +25,10 @@ builder.Services.AddRepositories();
 
 builder.Services.AddIdentityEF();
 
+builder.Services.AddScoped<JwtHandler>();
+
+builder.Services.AddJwtAuthentication(builder.Configuration);
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
