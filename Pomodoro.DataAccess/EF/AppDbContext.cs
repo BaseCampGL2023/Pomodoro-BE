@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 
 namespace Pomodoro.DataAccess.EF
 {
-    public class AppDbContext : IdentityDbContext
+    public class AppDbContext : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>, Guid>
     {
         public DbSet<Completed> CompletedTasks => Set<Completed>();
         public DbSet<Frequency> Frequencies => Set<Frequency>();
