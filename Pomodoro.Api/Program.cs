@@ -23,6 +23,8 @@ builder.Services
 
 builder.Services.AddRepositories();
 
+builder.Services.AddIdentityEF();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
