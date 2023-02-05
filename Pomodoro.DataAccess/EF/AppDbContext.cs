@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Pomodoro.DataAccess.Entities;
 using Pomodoro.DataAccess.Extensions;
-using System.Runtime.CompilerServices;
 
 namespace Pomodoro.DataAccess.EF
 {
