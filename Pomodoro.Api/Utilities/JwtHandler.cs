@@ -17,7 +17,7 @@ namespace Pomodoro.Api.Utilities
     public class JwtHandler
     {
         private readonly IConfiguration configuration;
-        private readonly UserManager<IdentityUser> userManager;
+        private readonly UserManager<IdentityUser<Guid>> userManager;
         private readonly ILogger<JwtHandler> logger;
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Pomodoro.Api.Utilities
         /// <param name="configuration">Set of key/value application configuration properties <see cref="IConfiguration"/>.</param>
         /// <param name="userManager">API for managing user in persistence store <see cref="UserManager{TUser}"/>.</param>
         /// <param name="logger">Logger <see cref="ILogger"/>.</param>
-        public JwtHandler(IConfiguration configuration, UserManager<IdentityUser> userManager, ILogger<JwtHandler> logger)
+        public JwtHandler(IConfiguration configuration, UserManager<IdentityUser<Guid>> userManager, ILogger<JwtHandler> logger)
         {
             this.configuration = configuration;
             this.userManager = userManager;
@@ -48,6 +48,8 @@ namespace Pomodoro.Api.Utilities
                 expires: DateTime.Now.AddMinutes(Convert.ToDouble(
                     this.configuration["JwtSettings:ExpirationTimeMinutes"])),
                 signingCredentials: this.GetSigningCredentials());
+
+            this.logger.LogInformation($"Generate JWT for user ${user.Email}");
 
             return token;
         }

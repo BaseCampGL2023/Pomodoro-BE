@@ -15,21 +15,21 @@ namespace Pomodoro.Api.ViewModels.Auth
         /// Gets or sets user name.
         /// </summary>
         [Required(ErrorMessage = "Name is requireed.")]
-        public string? UserName { get; set; }
+        public string UserName { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets user email.
         /// </summary>
         [Required(ErrorMessage = "Email is required.")]
         [EmailAddress]
-        public string? Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets user password.
         /// </summary>
         [Required(ErrorMessage = "Password is required.")]
         [DataType(DataType.Password)]
-        public string? Password { get; set; }
+        public string Password { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets confirmed user password.
@@ -37,6 +37,6 @@ namespace Pomodoro.Api.ViewModels.Auth
         [Required(ErrorMessage = "Confirmed password is required.")]
         [DataType(DataType.Password)]
         [Compare(nameof(Password), ErrorMessage = "Confirmation must match password.")]
-        public string? ConfirmPassword { get; set; }
+        public string ConfirmPassword { get; set; } = string.Empty;
     }
 }
