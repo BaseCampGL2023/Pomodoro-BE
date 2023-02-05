@@ -2,6 +2,7 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ using Pomodoro.Api.Utilities;
 using Pomodoro.Api.ViewModels.Auth;
 using Pomodoro.DataAccess.Entities;
 using Pomodoro.DataAccess.Repositories.Interfaces;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Pomodoro.Api.Controllers
 {
@@ -48,7 +50,15 @@ namespace Pomodoro.Api.Controllers
         /// </summary>
         /// <param name="newcome">Represent data for registration request <see cref="RegistrationRequestViewModel"/>.</param>
         /// <returns>Result of registration attempt <see cref="RegistrationResponseViewModel"/>.</returns>
-        public async Task<IActionResult> RegisterUser([FromBody] RegistrationRequestViewModel newcome)
+        [HttpPost("registration")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerResponse(200, "Registration was succesfull")]
+        [SwaggerResponse(400, "Invalid data")]
+        [SwaggerResponse(500, "Something went wrong")]
+        public async Task<ActionResult<RegistrationResponseViewModel>> RegisterUser(
+            [FromBody] RegistrationRequestViewModel newcome)
         {
             if (newcome == null || !this.ModelState.IsValid)
             {
@@ -63,7 +73,7 @@ namespace Pomodoro.Api.Controllers
             var identityUser = new IdentityUser<Guid>
             {
                 Email = newcome.Email,
-                UserName = newcome.UserName,
+                UserName = newcome.Email,
             };
 
             var result = await this.userManager.CreateAsync(identityUser, newcome.Password);
@@ -75,8 +85,61 @@ namespace Pomodoro.Api.Controllers
             }
 
             await this.userRepository.AddAsync(appUser);
+            await this.userRepository.SaveChangesAsync();
 
             return this.Ok(new RegistrationResponseViewModel() { Success = true });
+        }
+
+        /// <summary>
+        /// Performs user authentication.
+        /// </summary>
+        /// <param name="loginRequest">Represent data for login request <see cref="LoginRequestViewModel"/>.</param>
+        /// <returns>Result of login attempt <see cref="LoginResponseViewModel"/>.</returns>
+        [HttpPost("login")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerResponse(200, "Registration was succesfull")]
+        [SwaggerResponse(400, "Invalid data")]
+        [SwaggerResponse(401, "Invalid credentials")]
+        [SwaggerResponse(500, "Something went wrong")]
+        public async Task<ActionResult<LoginResponseViewModel>> Login(
+            [FromBody] LoginRequestViewModel loginRequest)
+        {
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest(this.ModelState);
+            }
+
+            var user = await this.userManager.FindByEmailAsync(loginRequest.Email);
+            if (user is null)
+            {
+                return this.Unauthorized(new LoginResponseViewModel
+                {
+                    Message = "Invalid Email.",
+                });
+            }
+
+            if (!await this.userManager.CheckPasswordAsync(user, loginRequest.Password))
+            {
+                return this.Unauthorized(new LoginResponseViewModel()
+                {
+                    Message = "Invalid Password.",
+                });
+            }
+
+            var appUser = (await this.userRepository.FindAsync(u => u.Email == loginRequest.Email)).First();
+
+            var token = this.jwtHandler.GetToken(user, appUser);
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return this.Ok(new LoginResponseViewModel()
+            {
+                Success = true,
+                Message = "Login successful",
+                Token = jwt,
+            });
         }
     }
 }
