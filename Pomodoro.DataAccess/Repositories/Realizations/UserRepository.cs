@@ -5,15 +5,15 @@ using Pomodoro.DataAccess.Repositories.Interfaces;
 
 namespace Pomodoro.DataAccess.Repositories.Realizations
 {
-    public class UserRepository : BaseRepository<User>, IUserRepository
+    public class UserRepository : BaseRepository<AppUser>, IUserRepository
     {
         public UserRepository(AppDbContext context) : base(context)
         {
         }
 
-        public async Task<User?> FindByEmailAsync(string email)
+        public async Task<AppUser?> FindByEmailAsync(string email)
         {
-            return await context.AppUsers.Include(u => u.IdentityUser)
+            return await context.AppUsers.Include(u => u.PomoIdentityUser)
                 .SingleAsync(u => u.Email == email);
         }
     }

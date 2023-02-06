@@ -12,8 +12,8 @@ using Pomodoro.DataAccess.EF;
 namespace Pomodoro.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230205213829_SetRelationWithIdentityUser")]
-    partial class SetRelationWithIdentityUser
+    [Migration("20230206142352_SetRelationWithPomoIdentity")]
+    partial class SetRelationWithPomoIdentity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -74,72 +74,6 @@ namespace Pomodoro.DataAccess.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser<System.Guid>", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
@@ -219,6 +153,37 @@ namespace Pomodoro.DataAccess.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("Pomodoro.DataAccess.Entities.AppUser", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<Guid>("PomoIdentityUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "PomoIdentityUserId" }, "IX_Users_AspNetUserId")
+                        .IsUnique();
+
+                    b.ToTable("AppUsers");
                 });
 
             modelBuilder.Entity("Pomodoro.DataAccess.Entities.Completed", b =>
@@ -379,6 +344,72 @@ namespace Pomodoro.DataAccess.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Pomodoro.DataAccess.Entities.PomoIdentityUser", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
+                });
+
             modelBuilder.Entity("Pomodoro.DataAccess.Entities.Settings", b =>
                 {
                     b.Property<Guid>("Id")
@@ -445,37 +476,6 @@ namespace Pomodoro.DataAccess.Migrations
                     b.ToTable("Tasks");
                 });
 
-            modelBuilder.Entity("Pomodoro.DataAccess.Entities.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<Guid>("IdentityUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex(new[] { "IdentityUserId" }, "IX_Users_AspNetUserId")
-                        .IsUnique();
-
-                    b.ToTable("AppUsers");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
@@ -487,7 +487,7 @@ namespace Pomodoro.DataAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser<System.Guid>", null)
+                    b.HasOne("Pomodoro.DataAccess.Entities.PomoIdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -496,7 +496,7 @@ namespace Pomodoro.DataAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser<System.Guid>", null)
+                    b.HasOne("Pomodoro.DataAccess.Entities.PomoIdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -511,7 +511,7 @@ namespace Pomodoro.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser<System.Guid>", null)
+                    b.HasOne("Pomodoro.DataAccess.Entities.PomoIdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -520,11 +520,22 @@ namespace Pomodoro.DataAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser<System.Guid>", null)
+                    b.HasOne("Pomodoro.DataAccess.Entities.PomoIdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Pomodoro.DataAccess.Entities.AppUser", b =>
+                {
+                    b.HasOne("Pomodoro.DataAccess.Entities.PomoIdentityUser", "PomoIdentityUser")
+                        .WithOne("AppUser")
+                        .HasForeignKey("Pomodoro.DataAccess.Entities.AppUser", "PomoIdentityUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PomoIdentityUser");
                 });
 
             modelBuilder.Entity("Pomodoro.DataAccess.Entities.Completed", b =>
@@ -551,7 +562,7 @@ namespace Pomodoro.DataAccess.Migrations
 
             modelBuilder.Entity("Pomodoro.DataAccess.Entities.Settings", b =>
                 {
-                    b.HasOne("Pomodoro.DataAccess.Entities.User", "User")
+                    b.HasOne("Pomodoro.DataAccess.Entities.AppUser", "User")
                         .WithOne("Settings")
                         .HasForeignKey("Pomodoro.DataAccess.Entities.Settings", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -568,7 +579,7 @@ namespace Pomodoro.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Pomodoro.DataAccess.Entities.User", "User")
+                    b.HasOne("Pomodoro.DataAccess.Entities.AppUser", "User")
                         .WithMany("Tasks")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -579,15 +590,11 @@ namespace Pomodoro.DataAccess.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Pomodoro.DataAccess.Entities.User", b =>
+            modelBuilder.Entity("Pomodoro.DataAccess.Entities.AppUser", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser<System.Guid>", "IdentityUser")
-                        .WithOne()
-                        .HasForeignKey("Pomodoro.DataAccess.Entities.User", "IdentityUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Settings");
 
-                    b.Navigation("IdentityUser");
+                    b.Navigation("Tasks");
                 });
 
             modelBuilder.Entity("Pomodoro.DataAccess.Entities.FrequencyType", b =>
@@ -595,16 +602,14 @@ namespace Pomodoro.DataAccess.Migrations
                     b.Navigation("Frequencies");
                 });
 
+            modelBuilder.Entity("Pomodoro.DataAccess.Entities.PomoIdentityUser", b =>
+                {
+                    b.Navigation("AppUser");
+                });
+
             modelBuilder.Entity("Pomodoro.DataAccess.Entities.TaskEntity", b =>
                 {
                     b.Navigation("CompletedTasks");
-                });
-
-            modelBuilder.Entity("Pomodoro.DataAccess.Entities.User", b =>
-                {
-                    b.Navigation("Settings");
-
-                    b.Navigation("Tasks");
                 });
 #pragma warning restore 612, 618
         }

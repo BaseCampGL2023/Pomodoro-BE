@@ -17,7 +17,7 @@ namespace Pomodoro.DataAccess.Entities
         public short AllocatedTime { get; set; }
 
         //
-        public User? User { get; set; }
+        public AppUser? User { get; set; }
         public Frequency? Frequency { get; set; }
         public ICollection<Completed>? CompletedTasks { get; set; }
     }

@@ -52,9 +52,9 @@ namespace Pomodoro.Api.Services
         /// Genererate JWT.
         /// </summary>
         /// <param name="user">Represent a user in identity system <see cref="IdentityUser{TKey}"/>.</param>
-        /// <param name="appUser">Represent user in application <see cref="User"/>.</param>
+        /// <param name="appUser">Represent user in application <see cref="AppUser"/>.</param>
         /// <returns>JWT <see cref="JwtSecurityToken"/>.</returns>
-        public JwtSecurityToken GetToken(IdentityUser<Guid> user, User appUser)
+        public JwtSecurityToken GetToken(IdentityUser<Guid> user, AppUser appUser)
         {
             JwtSecurityToken token = new JwtSecurityToken(
                 issuer: this.configuration["JwtSettings:Issuer"],
@@ -76,7 +76,7 @@ namespace Pomodoro.Api.Services
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
         }
 
-        private List<Claim> GetClaims(IdentityUser<Guid> user, User appUser)
+        private List<Claim> GetClaims(IdentityUser<Guid> user, AppUser appUser)
         {
             var claims = new List<Claim>()
             {

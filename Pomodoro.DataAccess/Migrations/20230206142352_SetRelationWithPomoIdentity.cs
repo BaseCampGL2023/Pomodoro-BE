@@ -5,12 +5,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Pomodoro.DataAccess.Migrations
 {
-    public partial class SetRelationWithIdentityUser : Migration
+    public partial class SetRelationWithPomoIdentity : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<Guid>(
-                name: "IdentityUserId",
+                name: "PomoIdentityUserId",
                 table: "AppUsers",
                 type: "uniqueidentifier",
                 nullable: false/*,
@@ -19,13 +19,13 @@ namespace Pomodoro.DataAccess.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Users_AspNetUserId",
                 table: "AppUsers",
-                column: "IdentityUserId",
+                column: "PomoIdentityUserId",
                 unique: true);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_AppUsers_AspNetUsers_IdentityUserId",
+                name: "FK_AppUsers_AspNetUsers_PomoIdentityUserId",
                 table: "AppUsers",
-                column: "IdentityUserId",
+                column: "PomoIdentityUserId",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
@@ -34,7 +34,7 @@ namespace Pomodoro.DataAccess.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_AppUsers_AspNetUsers_IdentityUserId",
+                name: "FK_AppUsers_AspNetUsers_PomoIdentityUserId",
                 table: "AppUsers");
 
             migrationBuilder.DropIndex(
@@ -42,7 +42,7 @@ namespace Pomodoro.DataAccess.Migrations
                 table: "AppUsers");
 
             migrationBuilder.DropColumn(
-                name: "IdentityUserId",
+                name: "PomoIdentityUserId",
                 table: "AppUsers");
         }
     }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Pomodoro.DataAccess.EF;
+using Pomodoro.DataAccess.Entities;
 
 namespace Pomodoro.Api.Extensions
 {
@@ -22,7 +23,7 @@ namespace Pomodoro.Api.Extensions
         /// <returns>Collection of service descriptors.</returns>
         public static IServiceCollection AddIdentityEF(this IServiceCollection services)
         {
-            services.AddIdentity<IdentityUser<Guid>, IdentityRole<Guid>>(options =>
+            services.AddIdentity<PomoIdentityUser, IdentityRole<Guid>>(options =>
             {
                 options.SignIn.RequireConfirmedPhoneNumber = false;
                 options.Password.RequireDigit = true;

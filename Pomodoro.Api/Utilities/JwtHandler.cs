@@ -17,7 +17,7 @@ namespace Pomodoro.Api.Utilities
     public class JwtHandler
     {
         private readonly IConfiguration configuration;
-        private readonly UserManager<IdentityUser<Guid>> userManager;
+        private readonly UserManager<PomoIdentityUser> userManager;
         private readonly ILogger<JwtHandler> logger;
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Pomodoro.Api.Utilities
         /// <param name="configuration">Set of key/value application configuration properties <see cref="IConfiguration"/>.</param>
         /// <param name="userManager">API for managing user in persistence store <see cref="UserManager{TUser}"/>.</param>
         /// <param name="logger">Logger <see cref="ILogger"/>.</param>
-        public JwtHandler(IConfiguration configuration, UserManager<IdentityUser<Guid>> userManager, ILogger<JwtHandler> logger)
+        public JwtHandler(IConfiguration configuration, UserManager<PomoIdentityUser> userManager, ILogger<JwtHandler> logger)
         {
             this.configuration = configuration;
             this.userManager = userManager;
@@ -37,9 +37,9 @@ namespace Pomodoro.Api.Utilities
         /// Genererate JWT.
         /// </summary>
         /// <param name="user">Represent a user in identity system <see cref="IdentityUser{TKey}"/>.</param>
-        /// <param name="appUser">Represent user in application <see cref="User"/>.</param>
+        /// <param name="appUser">Represent user in application <see cref="AppUser"/>.</param>
         /// <returns>JWT <see cref="JwtSecurityToken"/>.</returns>
-        public JwtSecurityToken GetToken(IdentityUser<Guid> user, User appUser)
+        public JwtSecurityToken GetToken(IdentityUser<Guid> user, AppUser appUser)
         {
             JwtSecurityToken token = new JwtSecurityToken(
                 issuer: this.configuration["JwtSettings:Issuer"],
@@ -61,7 +61,7 @@ namespace Pomodoro.Api.Utilities
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
         }
 
-        private List<Claim> GetClaims(IdentityUser<Guid> user, User appUser)
+        private List<Claim> GetClaims(IdentityUser<Guid> user, AppUser appUser)
         {
             var claims = new List<Claim>()
             {

@@ -8,16 +8,16 @@ using Pomodoro.DataAccess.Entities;
 
 namespace Pomodoro.DataAccess.Configs
 {
-    internal class UserConfig : IEntityTypeConfiguration<User>
+    internal class UserConfig : IEntityTypeConfiguration<AppUser>
     {
-        public void Configure(EntityTypeBuilder<User> builder)
+        public void Configure(EntityTypeBuilder<AppUser> builder)
         {
-            builder.HasIndex(e => e.IdentityUserId, "IX_Users_AspNetUserId")
+            builder.HasIndex(e => e.PomoIdentityUserId, "IX_Users_AspNetUserId")
                 .IsUnique();
 
-            builder.HasOne(d => d.IdentityUser)
-                .WithOne()
-                .HasForeignKey<User>(e => e.IdentityUserId)
+            builder.HasOne(d => d.PomoIdentityUser)
+                .WithOne(p => p.AppUser)
+                .HasForeignKey<AppUser>(e => e.PomoIdentityUserId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

@@ -21,7 +21,7 @@ namespace Pomodoro.Api.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly UserManager<IdentityUser<Guid>> userManager;
+        private readonly UserManager<PomoIdentityUser> userManager;
         private readonly IUserRepository userRepository;
         private readonly ILogger<AccountController> logger;
         private readonly JwtHandler jwtHandler;
@@ -34,7 +34,7 @@ namespace Pomodoro.Api.Controllers
         /// <param name="logger">Logger <see cref="ILogger"/>.</param>
         /// <param name="jwtHandler">Generate Jwt <see cref="JwtHandler"/>.</param>
         public AccountController(
-            UserManager<IdentityUser<Guid>> userManager,
+            UserManager<PomoIdentityUser> userManager,
             IUserRepository userRepository,
             ILogger<AccountController> logger,
             JwtHandler jwtHandler)
@@ -65,7 +65,7 @@ namespace Pomodoro.Api.Controllers
                 return this.BadRequest(this.ModelState);
             }
 
-            var identityUser = new IdentityUser<Guid>
+            var identityUser = new PomoIdentityUser
             {
                 Email = newcome.Email,
                 UserName = newcome.Email,
@@ -79,11 +79,11 @@ namespace Pomodoro.Api.Controllers
                 return this.BadRequest(new RegistrationResponseViewModel { Errors = errors });
             }
 
-            var appUser = new User
+            var appUser = new AppUser
             {
                 Email = newcome.Email,
                 Name = newcome.UserName,
-                IdentityUserId = identityUser.Id,
+                PomoIdentityUserId = identityUser.Id,
             };
 
             await this.userRepository.AddAsync(appUser);
