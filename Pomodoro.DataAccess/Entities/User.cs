@@ -2,6 +2,7 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
@@ -18,7 +19,10 @@ namespace Pomodoro.DataAccess.Entities
         [Unicode(false)]
         public string Email { get; set; } = string.Empty;
 
+        public Guid IdentityUserId { get; set; }
+
         //
+        public IdentityUser<Guid>? IdentityUser { get; set; }
         public Settings? Settings { get; set; }
         public ICollection<TaskEntity>? Tasks { get; set; }
     }

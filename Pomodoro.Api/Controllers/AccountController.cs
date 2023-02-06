@@ -65,11 +65,6 @@ namespace Pomodoro.Api.Controllers
                 return this.BadRequest(this.ModelState);
             }
 
-            var appUser = new User
-            {
-                Email = newcome.Email,
-                Name = newcome.UserName,
-            };
             var identityUser = new IdentityUser<Guid>
             {
                 Email = newcome.Email,
@@ -83,6 +78,13 @@ namespace Pomodoro.Api.Controllers
                 var errors = result.Errors.Select(e => e.Description).ToList();
                 return this.BadRequest(new RegistrationResponseViewModel { Errors = errors });
             }
+
+            var appUser = new User
+            {
+                Email = newcome.Email,
+                Name = newcome.UserName,
+                IdentityUserId = identityUser.Id,
+            };
 
             await this.userRepository.AddAsync(appUser);
             await this.userRepository.SaveChangesAsync();
