@@ -8,6 +8,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Pomodoro.Api.ViewModels.Auth;
+using Pomodoro.Core.Exceptions;
 using Pomodoro.DataAccess.Entities;
 
 namespace Pomodoro.Api.Services
@@ -110,10 +111,11 @@ namespace Pomodoro.Api.Services
                 };
             }
 
-            /*if (user.AppUser is null)
+            if (user.AppUser is null)
             {
-                throw new
-            }*/
+                this.logger.LogCritical("Identity user doesn't contain AppUser property");
+                throw new BrokenModelDataException("Identity user doesn't contain AppUser property");
+            }
 
             var token = this.GetToken(user);
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
