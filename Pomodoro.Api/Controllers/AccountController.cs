@@ -80,7 +80,7 @@ namespace Pomodoro.Api.Controllers
         }
 
         /// <summary>
-        /// Performs user authentication.
+        /// Endpoint for user authentication.
         /// </summary>
         /// <param name="loginRequest">Represent data for login request <see cref="LoginRequestViewModel"/>.</param>
         /// <returns>Result of login attempt <see cref="LoginResponseViewModel"/>.</returns>
