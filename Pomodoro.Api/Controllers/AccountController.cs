@@ -6,6 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Pomodoro.Api.Services;
 using Pomodoro.Api.Utilities;
 using Pomodoro.Api.ViewModels.Auth;
 using Pomodoro.DataAccess.Entities;
@@ -25,6 +26,7 @@ namespace Pomodoro.Api.Controllers
         private readonly IUserRepository userRepository;
         private readonly ILogger<AccountController> logger;
         private readonly JwtHandler jwtHandler;
+        private readonly AuthService authService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AccountController"/> class.
@@ -33,20 +35,23 @@ namespace Pomodoro.Api.Controllers
         /// <param name="userRepository">API for CRUD operations with application user <see cref="IUserRepository"/>.</param>
         /// <param name="logger">Logger <see cref="ILogger"/>.</param>
         /// <param name="jwtHandler">Generate Jwt <see cref="JwtHandler"/>.</param>
+        /// <param name="authService">Create Jwt, perform registration and login operations <see cref="AuthService"/>.</param>
         public AccountController(
             UserManager<PomoIdentityUser> userManager,
             IUserRepository userRepository,
             ILogger<AccountController> logger,
-            JwtHandler jwtHandler)
+            JwtHandler jwtHandler,
+            AuthService authService)
         {
             this.userManager = userManager;
             this.userRepository = userRepository;
             this.logger = logger;
             this.jwtHandler = jwtHandler;
+            this.authService = authService;
         }
 
         /// <summary>
-        /// Performs user registration in application.
+        /// Endpoint for user registration.
         /// </summary>
         /// <param name="newcome">Represent data for registration request <see cref="RegistrationRequestViewModel"/>.</param>
         /// <returns>Result of registration attempt <see cref="RegistrationResponseViewModel"/>.</returns>
@@ -65,31 +70,13 @@ namespace Pomodoro.Api.Controllers
                 return this.BadRequest(this.ModelState);
             }
 
-            var identityUser = new PomoIdentityUser
+            var result = await this.authService.RegistrationAsync(newcome);
+            if (result.Success)
             {
-                Email = newcome.Email,
-                UserName = newcome.Email,
-            };
-
-            var result = await this.userManager.CreateAsync(identityUser, newcome.Password);
-
-            if (!result.Succeeded)
-            {
-                var errors = result.Errors.Select(e => e.Description).ToList();
-                return this.BadRequest(new RegistrationResponseViewModel { Errors = errors });
+                return this.Ok(result);
             }
 
-            var appUser = new AppUser
-            {
-                Email = newcome.Email,
-                Name = newcome.UserName,
-                PomoIdentityUserId = identityUser.Id,
-            };
-
-            await this.userRepository.AddAsync(appUser);
-            await this.userRepository.SaveChangesAsync();
-
-            return this.Ok(new RegistrationResponseViewModel() { Success = true });
+            return this.BadRequest(result);
         }
 
         /// <summary>
@@ -109,39 +96,19 @@ namespace Pomodoro.Api.Controllers
         public async Task<ActionResult<LoginResponseViewModel>> Login(
             [FromBody] LoginRequestViewModel loginRequest)
         {
-            if (!this.ModelState.IsValid)
+            if (loginRequest is null || !this.ModelState.IsValid)
             {
                 return this.BadRequest(this.ModelState);
             }
 
-            var user = await this.userManager.FindByEmailAsync(loginRequest.Email);
-            if (user is null)
+            var result = await this.authService.LoginAsync(loginRequest);
+
+            if (result.Success)
             {
-                return this.Unauthorized(new LoginResponseViewModel
-                {
-                    Message = "Invalid Email.",
-                });
+                return this.Ok(result);
             }
 
-            if (!await this.userManager.CheckPasswordAsync(user, loginRequest.Password))
-            {
-                return this.Unauthorized(new LoginResponseViewModel()
-                {
-                    Message = "Invalid Password.",
-                });
-            }
-
-            var appUser = (await this.userRepository.FindAsync(u => u.Email == loginRequest.Email)).First();
-
-            var token = this.jwtHandler.GetToken(user, appUser);
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-
-            return this.Ok(new LoginResponseViewModel()
-            {
-                Success = true,
-                Message = "Login successful",
-                Token = jwt,
-            });
+            return this.Unauthorized(result);
         }
     }
 }

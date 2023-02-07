@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using Pomodoro.Api.ActionFilterAttributes;
 using Pomodoro.Api.Extensions;
 using Pomodoro.Api.SecurityContext;
+using Pomodoro.Api.Services;
 using Pomodoro.Api.Utilities;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.DataAccess.Extensions;
@@ -27,6 +28,8 @@ builder.Services.AddRepositories();
 builder.Services.AddIdentityEF();
 
 builder.Services.AddScoped<JwtHandler>();
+
+builder.Services.AddScoped<AuthService>();
 
 builder.Services.AddJwtAuthentication(builder.Configuration);
 
