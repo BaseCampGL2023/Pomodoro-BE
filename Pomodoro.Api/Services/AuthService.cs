@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Pomodoro.Api.ViewModels.Auth;
 using Pomodoro.DataAccess.Entities;
-using Pomodoro.DataAccess.Repositories.Interfaces;
 
 namespace Pomodoro.Api.Services
 {
@@ -48,7 +47,8 @@ namespace Pomodoro.Api.Services
         {
             if (registrationRequest is null)
             {
-                throw new ArgumentNullException($"{nameof(registrationRequest)} is null");
+                this.logger.LogCritical("Model validation at the presentation level didn't work");
+                throw new ArgumentNullException($"{nameof(registrationRequest)}", " argument is null");
             }
 
             var pomoIdentityUser = new PomoIdentityUser()
@@ -67,6 +67,7 @@ namespace Pomodoro.Api.Services
             if (!result.Succeeded)
             {
                 var errors = result.Errors.Select(e => e.Description).ToList();
+                this.logger.LogWarning("Failed registration attempt.", errors);
                 return new RegistrationResponseViewModel
                 {
                     Errors = errors,
@@ -86,12 +87,14 @@ namespace Pomodoro.Api.Services
         {
             if (loginRequest is null)
             {
-                throw new ArgumentNullException($"{nameof(loginRequest)} is null");
+                this.logger.LogCritical("Model validation at the presentation level didn't work");
+                throw new ArgumentNullException($"{nameof(loginRequest)}", " argument is null");
             }
 
             var user = await this.userManager.FindByEmailAsync(loginRequest.Email);
             if (user is null)
             {
+                this.logger.LogWarning("Authorization attempt with invalid name.");
                 return new LoginResponseViewModel
                 {
                     Message = "Invalid Email.",
@@ -100,6 +103,7 @@ namespace Pomodoro.Api.Services
 
             if (!await this.userManager.CheckPasswordAsync(user, loginRequest.Password))
             {
+                this.logger.LogWarning("Authorization attempt with invalid password.");
                 return new LoginResponseViewModel
                 {
                     Message = "Invalid Password.",
@@ -128,7 +132,7 @@ namespace Pomodoro.Api.Services
         /// <returns>JWT <see cref="JwtSecurityToken"/>.</returns>
         private JwtSecurityToken GetToken(PomoIdentityUser user)
         {
-            JwtSecurityToken token = new JwtSecurityToken(
+            JwtSecurityToken token = new (
                 issuer: this.configuration["JwtSettings:Issuer"],
                 audience: this.configuration["JwtSettings:Audience"],
                 claims: this.GetClaims(user),
@@ -136,7 +140,7 @@ namespace Pomodoro.Api.Services
                     this.configuration["JwtSettings:ExpirationTimeMinutes"])),
                 signingCredentials: this.GetSigningCredentials());
 
-            this.logger.LogInformation("Generate JWT for user {userEmail}", user.Email);
+            this.logger.LogInformation("Generate token for user {userEmail}", user.Email);
 
             return token;
         }
