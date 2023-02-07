@@ -5,6 +5,5 @@ namespace Pomodoro.DataAccess.Repositories.Interfaces
 {
     public interface IUserRepository : IBaseRepository<AppUser>
     {
-        public Task<AppUser?> FindByEmailAsync(string email);
     }
 }

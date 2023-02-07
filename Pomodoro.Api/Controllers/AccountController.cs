@@ -2,15 +2,9 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Pomodoro.Api.Services;
-using Pomodoro.Api.Utilities;
 using Pomodoro.Api.ViewModels.Auth;
-using Pomodoro.DataAccess.Entities;
-using Pomodoro.DataAccess.Repositories.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Pomodoro.Api.Controllers
@@ -22,31 +16,14 @@ namespace Pomodoro.Api.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly UserManager<PomoIdentityUser> userManager;
-        private readonly IUserRepository userRepository;
-        private readonly ILogger<AccountController> logger;
-        private readonly JwtHandler jwtHandler;
         private readonly AuthService authService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AccountController"/> class.
         /// </summary>
-        /// <param name="userManager">API for managing identity user in persistence store <see cref="UserManager{TUser}"/>.</param>
-        /// <param name="userRepository">API for CRUD operations with application user <see cref="IUserRepository"/>.</param>
-        /// <param name="logger">Logger <see cref="ILogger"/>.</param>
-        /// <param name="jwtHandler">Generate Jwt <see cref="JwtHandler"/>.</param>
         /// <param name="authService">Create Jwt, perform registration and login operations <see cref="AuthService"/>.</param>
-        public AccountController(
-            UserManager<PomoIdentityUser> userManager,
-            IUserRepository userRepository,
-            ILogger<AccountController> logger,
-            JwtHandler jwtHandler,
-            AuthService authService)
+        public AccountController(AuthService authService)
         {
-            this.userManager = userManager;
-            this.userRepository = userRepository;
-            this.logger = logger;
-            this.jwtHandler = jwtHandler;
             this.authService = authService;
         }
 

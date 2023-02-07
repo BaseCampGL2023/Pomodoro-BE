@@ -21,7 +21,6 @@ namespace Pomodoro.Api.Services
         private readonly IConfiguration configuration;
         private readonly ILogger<AuthService> logger;
         private readonly UserManager<PomoIdentityUser> userManager;
-        private readonly IUserRepository userRepository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthService"/> class.
@@ -29,17 +28,14 @@ namespace Pomodoro.Api.Services
         /// <param name="configuration">Set of key/value application configuration properties <see cref="IConfiguration"/>.</param>
         /// <param name="logger">Logger <see cref="ILogger"/>.</param>
         /// <param name="userManager">API for managing user in persistence store <see cref="UserManager{TUser}"/>.</param>
-        /// <param name="userRepository">API for CRUD operations with application user <see cref="IUserRepository"/>.</param>
         public AuthService(
             IConfiguration configuration,
             ILogger<AuthService> logger,
-            UserManager<PomoIdentityUser> userManager,
-            IUserRepository userRepository)
+            UserManager<PomoIdentityUser> userManager)
         {
             this.configuration = configuration;
             this.logger = logger;
             this.userManager = userManager;
-            this.userRepository = userRepository;
         }
 
         /// <summary>
