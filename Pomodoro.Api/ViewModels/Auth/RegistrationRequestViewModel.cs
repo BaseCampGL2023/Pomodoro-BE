@@ -28,6 +28,7 @@ namespace Pomodoro.Api.ViewModels.Auth
         /// Gets or sets user password.
         /// </summary>
         [Required(ErrorMessage = "Password is required.")]
+        [MinLength(8, ErrorMessage = "Password length less than 8 symbols")]
         [DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
 
