@@ -13,14 +13,20 @@ namespace Pomodoro.Api.Middleware
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate next;
+        private readonly IWebHostEnvironment environment;
+        private readonly ILogger<ExceptionMiddleware> logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExceptionMiddleware"/> class.
         /// </summary>
-        /// <param name="next">Function that can process HTTP request.</param>
-        public ExceptionMiddleware(RequestDelegate next)
+        /// <param name="next">Next middleware in pipe.</param>
+        /// <param name="environment">Object provides information about host environment.</param>
+        /// <param name="logger">Logger <see cref="ILogger"/>.</param>
+        public ExceptionMiddleware(RequestDelegate next, IWebHostEnvironment environment, ILogger<ExceptionMiddleware> logger)
         {
             this.next = next;
+            this.environment = environment;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -38,10 +44,16 @@ namespace Pomodoro.Api.Middleware
             {
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
+                var message = this.environment.IsDevelopment()
+                    ? e.Message : "Internal error";
+                var stackTrace = e?.StackTrace ?? string.Empty;
+
+                this.logger.LogError(e, "Process failed with {stackTrace}", stackTrace);
+
                 var error = new Error
                 {
                     StatusCode = context.Response.StatusCode.ToString(),
-                    Message = e.Message,
+                    Message = message,
                 };
 
                 context.Response.ContentType = "application/json";
