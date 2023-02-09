@@ -96,6 +96,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseUpdateDb();
 }
 
 if (!app.Environment.IsDevelopment())
