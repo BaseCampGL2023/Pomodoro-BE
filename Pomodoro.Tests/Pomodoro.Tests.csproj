@@ -32,6 +32,13 @@
 		</PackageReference>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Pomodoro.Api\Pomodoro.Api.csproj" />
+	  <ProjectReference Include="..\Pomodoro.Core\Pomodoro.Core.csproj" />
+	  <ProjectReference Include="..\Pomodoro.DataAccess\Pomodoro.DataAccess.csproj" />
+	  <ProjectReference Include="..\Pomodoro.Services\Pomodoro.Services.csproj" />
+	</ItemGroup>
+
 	<PropertyGroup Condition="'$(BuildingInsideVisualStudio)' != 'true'">
 	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>
