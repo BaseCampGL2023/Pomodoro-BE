@@ -3,7 +3,7 @@ using Pomodoro.DataAccess.Entities;
 
 namespace Pomodoro.DataAccess.Repositories.Interfaces
 {
-    public interface IUserRepository : IBaseRepository<User>
+    public interface IUserRepository : IBaseRepository<AppUser>
     {
     }
 }

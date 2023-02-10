@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using Pomodoro.Api.ActionFilterAttributes;
 using Pomodoro.Api.Extensions;
 using Pomodoro.Api.SecurityContext;
+using Pomodoro.Api.Services;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.DataAccess.Extensions;
 using Serilog;
@@ -22,6 +23,12 @@ builder.Services
     .AddAppDbContext(builder.Configuration.GetConnectionString("LocalDB"));
 
 builder.Services.AddRepositories();
+
+builder.Services.AddIdentityEF();
+
+builder.Services.AddScoped<AuthService>();
+
+builder.Services.AddJwtAuthentication(builder.Configuration);
 
 builder.Services.AddCors(options =>
 {
@@ -89,6 +96,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseUpdateDb();
 }
 
 if (!app.Environment.IsDevelopment())
@@ -98,6 +106,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseCors(pomodoroSpecificOrigins);
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
