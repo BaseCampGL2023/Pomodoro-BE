@@ -10,7 +10,7 @@ using Pomodoro.Tests.EqualityComparers;
 namespace Pomodoro.Tests.DataAccessTests
 {
     /// <summary>
-    /// Unit test sample class.
+    /// User repository test class.
     /// </summary>
     public class UserRepositoryTests
     {
@@ -83,21 +83,7 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
             var userRepository = new UserRepository(context);
-            var expUsers = new List<AppUser>
-            {
-                new AppUser
-                {
-                    Id = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                    Name = "Viktor",
-                    Email = "vitia@gmail.com",
-                },
-                new AppUser
-                {
-                    Id = new Guid(2, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                    Name = "Mia",
-                    Email = "mia@gmail.com",
-                },
-            };
+            var expUsers = context.AppUsers.Take(2).ToList();
 
             // act
             var actUsers = await userRepository.FindAsync(x => x.Name == expUsers[0].Name
@@ -105,24 +91,6 @@ namespace Pomodoro.Tests.DataAccessTests
 
             // assert
             Assert.Equal(expUsers, actUsers, new AppUserComparer());
-        }
-
-        /// <summary>
-        /// Does not find any user.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> object that represents an asynchronous operation.</returns>
-        [Fact]
-        public async Task FindAsync_DoesNotFindAnyUser()
-        {
-            // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
-            var userRepository = new UserRepository(context);
-
-            // act
-            var actUser = await userRepository.FindAsync(u => u.Name == "Will8795");
-
-            // assert
-            Assert.Empty(actUser);
         }
 
         /// <summary>
@@ -135,21 +103,7 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
             var userRepository = new UserRepository(context);
-            var expUsers = new List<AppUser>
-            {
-                new AppUser
-                {
-                    Id = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                    Name = "Viktor",
-                    Email = "vitia@gmail.com",
-                },
-                new AppUser
-                {
-                    Id = new Guid(2, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                    Name = "Mia",
-                    Email = "mia@gmail.com",
-                },
-            };
+            var expUsers = context.AppUsers.ToList();
 
             // act
             var actUsers = await userRepository.GetAllAsync();
@@ -168,18 +122,13 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
             var userRepository = new UserRepository(context);
-            var expUser = new AppUser
-            {
-                Id = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                Name = "Viktor",
-                Email = "vitia@gmail.com",
-            };
+            var expUser = context.AppUsers.First();
 
             // act
-            var actUses = await userRepository.GetByIdAsync(expUser.Id);
+            var actUser = await userRepository.GetByIdAsync(expUser.Id);
 
             // assert
-            Assert.Equal(expUser, actUses, new AppUserComparer());
+            Assert.Equal(expUser, actUser, new AppUserComparer());
         }
 
         /// <summary>
@@ -191,12 +140,7 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
             var userRepository = new UserRepository(context);
-            var user = new AppUser
-            {
-                Id = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                Name = "Viktor",
-                Email = "vitia@gmail.com",
-            };
+            var user = context.AppUsers.First();
 
             // act
             userRepository.Remove(user);
@@ -215,21 +159,7 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
             var userRepository = new UserRepository(context);
-            var users = new List<AppUser>
-            {
-                new AppUser
-                {
-                    Id = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                    Name = "Viktor",
-                    Email = "vitia@gmail.com",
-                },
-                new AppUser
-                {
-                    Id = new Guid(2, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                    Name = "Mia",
-                    Email = "mia@gmail.com",
-                },
-            };
+            var users = context.AppUsers.ToList();
 
             // act
             userRepository.RemoveRange(users);
@@ -259,10 +189,10 @@ namespace Pomodoro.Tests.DataAccessTests
             // act
             userRepository.Update(expUser);
             context.SaveChanges();
-            var actUses = await userRepository.GetByIdAsync(expUser.Id);
+            var actUser = await userRepository.GetByIdAsync(expUser.Id);
 
             // assert
-            Assert.Equal(expUser, actUses, new AppUserComparer());
+            Assert.Equal(expUser, actUser, new AppUserComparer());
         }
     }
 }

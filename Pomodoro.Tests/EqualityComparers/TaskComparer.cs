@@ -1,4 +1,4 @@
-﻿// <copyright file="AppUserEqualityComparer.cs" company="PomodoroGroup_GL_BaseCamp">
+﻿// <copyright file="TaskComparer.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
@@ -8,12 +8,12 @@ using Pomodoro.DataAccess.Entities;
 namespace Pomodoro.Tests.EqualityComparers
 {
     /// <summary>
-    /// Comparer for AppUser.
+    /// Comparer for Task.
     /// </summary>
-    public class AppUserComparer : IEqualityComparer<AppUser?>
+    public class TaskComparer : IEqualityComparer<TaskEntity?>
     {
         /// <inheritdoc/>
-        public bool Equals([AllowNull] AppUser x, [AllowNull] AppUser y)
+        public bool Equals([AllowNull] TaskEntity x, [AllowNull] TaskEntity y)
         {
             if (x == null && y == null)
             {
@@ -26,12 +26,15 @@ namespace Pomodoro.Tests.EqualityComparers
             }
 
             return x.Id == y.Id
-                && x.Name == y.Name
-                && x.Email == y.Email;
+                && x.UserId == y.UserId
+                && x.FrequencyId == y.FrequencyId
+                && x.Title == y.Title
+                && x.InitialDate == y.InitialDate
+                && x.AllocatedTime == y.AllocatedTime;
         }
 
         /// <inheritdoc/>
-        public int GetHashCode([DisallowNull] AppUser obj)
+        public int GetHashCode([DisallowNull] TaskEntity obj)
         {
             return obj.GetHashCode();
         }
