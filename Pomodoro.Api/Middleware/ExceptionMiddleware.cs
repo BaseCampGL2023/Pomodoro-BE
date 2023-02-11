@@ -3,7 +3,7 @@
 // </copyright>
 
 using System.Net;
-using Pomodoro.Api.Contracts;
+using Pomodoro.Api.ViewModels;
 
 namespace Pomodoro.Api.Middleware
 {

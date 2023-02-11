@@ -4,7 +4,7 @@
 
 using System.Text.Json;
 
-namespace Pomodoro.Api.Contracts
+namespace Pomodoro.Api.ViewModels
 {
     /// <summary>
     /// Represents a class that will be responsed in case of error.
