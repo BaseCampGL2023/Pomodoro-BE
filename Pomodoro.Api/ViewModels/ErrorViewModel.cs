@@ -1,4 +1,4 @@
-﻿// <copyright file="Error.cs" company="PomodoroGroup_GL_BaseCamp">
+﻿// <copyright file="ErrorViewModel.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
@@ -9,7 +9,7 @@ namespace Pomodoro.Api.ViewModels
     /// <summary>
     /// Represents a class that will be responsed in case of error.
     /// </summary>
-    public class Error
+    public class ErrorViewModel
     {
         /// <summary>
         /// Gets or sets status code of error.
@@ -22,9 +22,9 @@ namespace Pomodoro.Api.ViewModels
         public string? Message { get; set; }
 
         /// <summary>
-        /// Serializes the <see cref="Error"/> in json.
+        /// Serializes the <see cref="ErrorViewModel"/> in json.
         /// </summary>
-        /// <returns>Json serialized <see cref="Error"/>.</returns>
+        /// <returns>Json serialized <see cref="ErrorViewModel"/>.</returns>
         public override string ToString()
         {
             return JsonSerializer.Serialize(this);
