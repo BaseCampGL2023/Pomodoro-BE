@@ -3,7 +3,7 @@
 // </copyright>
 
 using System.Net;
-using Pomodoro.Api.Contracts;
+using Pomodoro.Api.ViewModels;
 
 namespace Pomodoro.Api.Middleware
 {
@@ -50,7 +50,7 @@ namespace Pomodoro.Api.Middleware
 
                 this.logger.LogError(e, "Process failed with {stackTrace}", stackTrace);
 
-                var error = new Error
+                var error = new ErrorViewModel
                 {
                     StatusCode = context.Response.StatusCode.ToString(),
                     Message = message,
