@@ -5,6 +5,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Pomodoro.Api.ActionFilterAttributes;
+using Pomodoro.Api.Controllers.Base;
 using Pomodoro.Api.ViewModels.Statistics;
 using Pomodoro.Core.Interfaces.IServices;
 
@@ -15,27 +16,22 @@ namespace Pomodoro.Api.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class StatisticsController : ControllerBase
+    public class StatisticsController : BaseController
     {
         private readonly IMapper mapper;
-
         private readonly IStatisticsService statisticsService;
-        private readonly ISecurityContextService securityContextService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StatisticsController"/> class.
         /// </summary>
         /// <param name="mapper">Interface for mapping 2 objects.</param>
         /// <param name="statisticsService">Service for obtaining statistics data.</param>
-        /// <param name="securityContextService">Service for obtaining data about the current user.</param>
         public StatisticsController(
             IMapper mapper,
-            IStatisticsService statisticsService,
-            ISecurityContextService securityContextService)
+            IStatisticsService statisticsService)
         {
             this.mapper = mapper;
             this.statisticsService = statisticsService;
-            this.securityContextService = securityContextService;
         }
 
         /// <summary>
@@ -57,8 +53,8 @@ namespace Pomodoro.Api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<DailyStatisticsViewModel>> GetDailyStatistics(DateTime day)
         {
-            var userId = this.securityContextService.GetCurrentUserId();
-            var result = await this.statisticsService.GetDailyStatisticsAsync(userId, DateOnly.FromDateTime(day));
+            var result = await this.statisticsService
+                .GetDailyStatisticsAsync(this.UserId, DateOnly.FromDateTime(day));
 
             if (result is null)
             {
@@ -90,8 +86,8 @@ namespace Pomodoro.Api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<MonthlyStatisticsViewModel>> GetMonthlyStatistics(int year, int month)
         {
-            var userId = this.securityContextService.GetCurrentUserId();
-            var result = await this.statisticsService.GetMonthlyStatisticsAsync(userId, year, month);
+            var result = await this.statisticsService
+                .GetMonthlyStatisticsAsync(this.UserId, year, month);
 
             if (result is null)
             {
@@ -121,8 +117,8 @@ namespace Pomodoro.Api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<AnnualStatisticsViewModel>> GetAnnualStatistics(int year)
         {
-            var userId = this.securityContextService.GetCurrentUserId();
-            var result = await this.statisticsService.GetAnnualStatisticsAsync(userId, year);
+            var result = await this.statisticsService
+                .GetAnnualStatisticsAsync(this.UserId, year);
 
             if (result is null)
             {
