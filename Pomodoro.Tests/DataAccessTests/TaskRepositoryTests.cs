@@ -6,7 +6,6 @@ using Pomodoro.DataAccess.EF;
 using Pomodoro.DataAccess.Entities;
 using Pomodoro.DataAccess.Repositories.Realizations;
 using Pomodoro.Tests.EqualityComparers;
-using System.Threading.Tasks;
 
 namespace Pomodoro.Tests.DataAccessTests
 {
