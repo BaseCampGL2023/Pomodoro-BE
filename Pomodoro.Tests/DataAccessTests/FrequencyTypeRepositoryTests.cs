@@ -30,13 +30,14 @@ namespace Pomodoro.Tests.DataAccessTests
                 Id = new Guid(8, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                 Value = FrequencyValue.Month,
             };
+            int expectedCount = context.FrequencyTypes.Count() + 1;
 
             // act
             await frequencyTypeRepository.AddAsync(frequencyType);
             await context.SaveChangesAsync();
 
             // assert
-            Assert.Equal(8, context.FrequencyTypes.Count());
+            Assert.Equal(expectedCount, context.FrequencyTypes.Count());
         }
 
         /// <summary>
@@ -62,13 +63,14 @@ namespace Pomodoro.Tests.DataAccessTests
                     Value = FrequencyValue.Year,
                 },
             };
+            int expectedCount = context.FrequencyTypes.Count() + frequencyTypes.Count;
 
             // act
             await frequencyTypeRepository.AddRangeAsync(frequencyTypes);
             await context.SaveChangesAsync();
 
             // assert
-            Assert.Equal(9, context.FrequencyTypes.Count());
+            Assert.Equal(expectedCount, context.FrequencyTypes.Count());
         }
 
         /// <summary>
@@ -138,13 +140,14 @@ namespace Pomodoro.Tests.DataAccessTests
             using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
             var frequencyTypeRepository = new FrequencyTypeRepository(context);
             var frequencyType = context.FrequencyTypes.First();
+            int expectedCount = context.FrequencyTypes.Count() - 1;
 
             // act
             frequencyTypeRepository.Remove(frequencyType);
             context.SaveChanges();
 
             // assert
-            Assert.Equal(6, context.FrequencyTypes.Count());
+            Assert.Equal(expectedCount, context.FrequencyTypes.Count());
         }
 
         /// <summary>

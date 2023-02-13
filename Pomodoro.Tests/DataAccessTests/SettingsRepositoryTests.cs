@@ -32,13 +32,14 @@ namespace Pomodoro.Tests.DataAccessTests
                 LongBreak = 10,
                 PomodorosBeforeLongBreak = 3,
             };
+            int expectedCount = context.Settings.Count() + 1;
 
             // act
             await settingsRepository.AddAsync(settings);
             await context.SaveChangesAsync();
 
             // assert
-            Assert.Equal(3, context.Settings.Count());
+            Assert.Equal(expectedCount, context.Settings.Count());
         }
 
         /// <summary>
@@ -70,13 +71,14 @@ namespace Pomodoro.Tests.DataAccessTests
                     PomodorosBeforeLongBreak = 2,
                 },
             };
+            int expectedCount = context.Settings.Count() + settingsList.Count;
 
             // act
             await settingsRepository.AddRangeAsync(settingsList);
             await context.SaveChangesAsync();
 
             // assert
-            Assert.Equal(4, context.Settings.Count());
+            Assert.Equal(expectedCount, context.Settings.Count());
         }
 
         /// <summary>
@@ -146,13 +148,14 @@ namespace Pomodoro.Tests.DataAccessTests
             using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
             var settingsRepository = new SettingsRepository(context);
             var settings = context.Settings.First();
+            int expectedCount = context.Settings.Count() - 1;
 
             // act
             settingsRepository.Remove(settings);
             context.SaveChanges();
 
             // assert
-            Assert.Equal(1, context.Settings.Count());
+            Assert.Equal(expectedCount, context.Settings.Count());
         }
 
         /// <summary>

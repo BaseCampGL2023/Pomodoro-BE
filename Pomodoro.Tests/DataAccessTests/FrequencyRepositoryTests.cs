@@ -30,13 +30,14 @@ namespace Pomodoro.Tests.DataAccessTests
                 FrequencyTypeId = new Guid(7, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                 Every = 2,
             };
+            int expectedCount = context.Frequencies.Count() + 1;
 
             // act
             await frequencyRepository.AddAsync(frequency);
             await context.SaveChangesAsync();
 
             // assert
-            Assert.Equal(8, context.Frequencies.Count());
+            Assert.Equal(expectedCount, context.Frequencies.Count());
         }
 
         /// <summary>
@@ -64,13 +65,14 @@ namespace Pomodoro.Tests.DataAccessTests
                     Every = 3,
                 },
             };
+            int expectedCount = context.Frequencies.Count() + frequencies.Count;
 
             // act
             await frequencyRepository.AddRangeAsync(frequencies);
             await context.SaveChangesAsync();
 
             // assert
-            Assert.Equal(9, context.Frequencies.Count());
+            Assert.Equal(expectedCount, context.Frequencies.Count());
         }
 
         /// <summary>
@@ -140,13 +142,14 @@ namespace Pomodoro.Tests.DataAccessTests
             using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
             var frequencyRepository = new FrequencyRepository(context);
             var frequency = context.Frequencies.First();
+            int expectedCount = context.Frequencies.Count() - 1;
 
             // act
             frequencyRepository.Remove(frequency);
             context.SaveChanges();
 
             // assert
-            Assert.Equal(6, context.Frequencies.Count());
+            Assert.Equal(expectedCount, context.Frequencies.Count());
         }
 
         /// <summary>

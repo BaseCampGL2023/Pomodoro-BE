@@ -30,13 +30,14 @@ namespace Pomodoro.Tests.DataAccessTests
                 Name = "Jane",
                 Email = "jane@gmail.com",
             };
+            int expectedCount = context.AppUsers.Count() + 1;
 
             // act
             await userRepository.AddAsync(user);
             await context.SaveChangesAsync();
 
             // assert
-            Assert.Equal(3, context.AppUsers.Count());
+            Assert.Equal(expectedCount, context.AppUsers.Count());
         }
 
         /// <summary>
@@ -64,13 +65,14 @@ namespace Pomodoro.Tests.DataAccessTests
                     Email = "bob@gmail.com",
                 },
             };
+            int expectedCount = context.AppUsers.Count() + users.Count;
 
             // act
             await userRepository.AddRangeAsync(users);
             await context.SaveChangesAsync();
 
             // assert
-            Assert.Equal(4, context.AppUsers.Count());
+            Assert.Equal(expectedCount, context.AppUsers.Count());
         }
 
         /// <summary>
@@ -141,13 +143,14 @@ namespace Pomodoro.Tests.DataAccessTests
             using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
             var userRepository = new UserRepository(context);
             var user = context.AppUsers.First();
+            int expectedCount = context.AppUsers.Count() - 1;
 
             // act
             userRepository.Remove(user);
             context.SaveChanges();
 
             // assert
-            Assert.Equal(1, context.AppUsers.Count());
+            Assert.Equal(expectedCount, context.AppUsers.Count());
         }
 
         /// <summary>

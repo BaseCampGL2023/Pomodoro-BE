@@ -6,6 +6,7 @@ using Pomodoro.DataAccess.EF;
 using Pomodoro.DataAccess.Entities;
 using Pomodoro.DataAccess.Repositories.Realizations;
 using Pomodoro.Tests.EqualityComparers;
+using System.Threading.Tasks;
 
 namespace Pomodoro.Tests.DataAccessTests
 {
@@ -33,13 +34,14 @@ namespace Pomodoro.Tests.DataAccessTests
                 InitialDate = new DateTime(2023, 1, 11),
                 AllocatedTime = 4200,
             };
+            int expectedCount = context.Tasks.Count() + 1;
 
             // act
             await taskRepository.AddAsync(task);
             await context.SaveChangesAsync();
 
             // assert
-            Assert.Equal(3, context.Tasks.Count());
+            Assert.Equal(expectedCount, context.Tasks.Count());
         }
 
         /// <summary>
@@ -73,13 +75,14 @@ namespace Pomodoro.Tests.DataAccessTests
                     AllocatedTime = 3000,
                 },
             };
+            int expectedCount = context.Tasks.Count() + tasks.Count;
 
             // act
             await taskRepository.AddRangeAsync(tasks);
             await context.SaveChangesAsync();
 
             // assert
-            Assert.Equal(4, context.Tasks.Count());
+            Assert.Equal(expectedCount, context.Tasks.Count());
         }
 
         /// <summary>
@@ -149,13 +152,14 @@ namespace Pomodoro.Tests.DataAccessTests
             using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
             var taskRepository = new TaskRepository(context);
             var task = context.Tasks.First();
+            int expectedCount = context.Tasks.Count() - 1;
 
             // act
             taskRepository.Remove(task);
             context.SaveChanges();
 
             // assert
-            Assert.Equal(1, context.Tasks.Count());
+            Assert.Equal(expectedCount, context.Tasks.Count());
         }
 
         /// <summary>

@@ -33,13 +33,14 @@ namespace Pomodoro.Tests.DataAccessTests
                 PomodorosCount = 2,
                 IsDone = true,
             };
+            int expectedCount = context.CompletedTasks.Count() + 1;
 
             // act
             await completedRepository.AddAsync(completed);
             await context.SaveChangesAsync();
 
             // assert
-            Assert.Equal(6, context.CompletedTasks.Count());
+            Assert.Equal(expectedCount, context.CompletedTasks.Count());
         }
 
         /// <summary>
@@ -73,13 +74,14 @@ namespace Pomodoro.Tests.DataAccessTests
                     IsDone = true,
                 },
             };
+            int expectedCount = context.CompletedTasks.Count() + completeds.Count;
 
             // act
             await completedRepository.AddRangeAsync(completeds);
             await context.SaveChangesAsync();
 
             // assert
-            Assert.Equal(7, context.CompletedTasks.Count());
+            Assert.Equal(expectedCount, context.CompletedTasks.Count());
         }
 
         /// <summary>
@@ -178,13 +180,14 @@ namespace Pomodoro.Tests.DataAccessTests
             using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
             var completedRepository = new CompletedRepository(context);
             var completed = context.CompletedTasks.First();
+            int expectedCount = context.CompletedTasks.Count() - 1;
 
             // act
             completedRepository.Remove(completed);
             context.SaveChanges();
 
             // assert
-            Assert.Equal(4, context.CompletedTasks.Count());
+            Assert.Equal(expectedCount, context.CompletedTasks.Count());
         }
 
         /// <summary>
