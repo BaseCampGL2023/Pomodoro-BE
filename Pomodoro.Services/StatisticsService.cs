@@ -6,7 +6,7 @@ using Pomodoro.DataAccess.Entities;
 
 namespace Pomodoro.Services
 {
-	public class StatisticsService : IStatisticsService
+	public  class StatisticsService : IStatisticsService
 	{
 		public async Task<DailyStatistics> GetDailyStatisticsAsync(Guid userId, DateOnly day)
 		{
@@ -24,24 +24,21 @@ namespace Pomodoro.Services
 
 				for (int i = 0; i < 24; i++)
 				{
+					int hour = i;
+					
 					AnalyticsPerHour analytics = new AnalyticsPerHour();
 
-					IQueryable<Completed> hours = tasks.Where(t => t.ActualDate.Hour == i);
+					IQueryable<Completed> hourstatistic = tasks.Where(t => t.ActualDate.Hour == hour);
 
-					analytics.Hour = i;
+					analytics.Hour = hour;
 
-					foreach (var v in hours)
+					foreach (var h in hourstatistic)
 					{
-						analytics.PomodorosDone += v.PomodorosCount;
-					}
-
-					foreach (var t in hours)
-					{
-						analytics.TimeSpent += t.TimeSpent;
+						analytics.TimeSpent += h.TimeSpent;
+						analytics.PomodorosDone += h.PomodorosCount;
 					}
 
 					dailyStatistics.AnalyticsPerHours?.Add(analytics);
-
 				}
 			}
 			return await Task.FromResult(dailyStatistics);
@@ -61,7 +58,6 @@ namespace Pomodoro.Services
 				tasks = tasks.Where(t => t.Id == userId);
 				tasks = tasks.Where(t => t.ActualDate.Year == year);
 				tasks = tasks.Where(t => t.ActualDate.Month == month);
-				
 
 				monthlyStatistics.TasksCompleted = tasks.Count();
 
@@ -92,10 +88,11 @@ namespace Pomodoro.Services
 
 				foreach (int m in Enum.GetValues(typeof(Month)))
 				{
-					monthsTasks = monthsTasks.Where(t => t.ActualDate.Year == year);
+					monthsTasks = monthsTasks.Where(t => t.ActualDate.Year == annualStatistics.Year);
 					monthsTasks = monthsTasks.Where(t => t.ActualDate.Month == m);
 
 					AnalyticsPerMonth temp = new AnalyticsPerMonth();
+					
 					temp.Month = (Month)m;
 					foreach (var d in monthsTasks)
 					{
