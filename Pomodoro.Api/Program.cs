@@ -10,6 +10,7 @@ using Pomodoro.Api.SecurityContext;
 using Pomodoro.Api.Services;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.DataAccess.Extensions;
+using Pomodoro.Services.Realizations;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
@@ -27,6 +28,8 @@ builder.Services.AddRepositories();
 builder.Services.AddIdentityEF();
 
 builder.Services.AddScoped<AuthService>();
+
+builder.Services.AddScoped<ISettingsService, SettingsService>();
 
 builder.Services.AddJwtAuthentication(builder.Configuration);
 

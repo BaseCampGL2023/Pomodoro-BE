@@ -36,6 +36,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Pomodoro.Core\Pomodoro.Core.csproj" />
 	  <ProjectReference Include="..\Pomodoro.DataAccess\Pomodoro.DataAccess.csproj" />
+	  <ProjectReference Include="..\Pomodoro.Services\Pomodoro.Services.csproj" />
 	</ItemGroup>
 
 </Project>
