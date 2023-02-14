@@ -19,7 +19,10 @@ namespace Pomodoro.DataAccess.EF
         public DbSet<TaskEntity> Tasks => Set<TaskEntity>();
         public DbSet<AppUser> AppUsers => Set<AppUser>();
 
-        public AppDbContext(DbContextOptions options) : base(options) { }
+        public AppDbContext(DbContextOptions options) : base(options)
+        {
+            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
