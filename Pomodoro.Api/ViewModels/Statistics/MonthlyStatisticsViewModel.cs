@@ -2,6 +2,7 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
+using Pomodoro.Api.ViewModels.Base;
 using Pomodoro.Core.Enums;
 
 namespace Pomodoro.Api.ViewModels.Statistics

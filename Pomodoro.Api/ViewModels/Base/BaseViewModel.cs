@@ -2,7 +2,7 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
-namespace Pomodoro.Api.ViewModels
+namespace Pomodoro.Api.ViewModels.Base
 {
     /// <summary>
     /// Represents an abstract class to be inherited by view models which hold an id for DB.

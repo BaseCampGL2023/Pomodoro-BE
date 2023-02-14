@@ -1,4 +1,4 @@
-﻿namespace Pomodoro.Core.Models
+﻿namespace Pomodoro.Core.Models.Base
 {
     public abstract class BaseModel
     {

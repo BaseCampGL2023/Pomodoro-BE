@@ -1,4 +1,6 @@
-﻿namespace Pomodoro.Core.Models
+﻿using Pomodoro.Core.Models.Base;
+
+namespace Pomodoro.Core.Models
 {
     public class SettingsModel : BaseModel
     {
