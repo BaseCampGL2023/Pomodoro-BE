@@ -21,7 +21,6 @@ namespace Pomodoro.DataAccess.EF
 
         public AppDbContext(DbContextOptions options) : base(options)
         {
-            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

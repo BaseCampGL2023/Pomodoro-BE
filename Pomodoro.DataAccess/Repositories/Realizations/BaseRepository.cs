@@ -25,13 +25,20 @@ namespace Pomodoro.DataAccess.Repositories.Realizations
         }
 
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
-            => await context.Set<T>().Where(predicate).ToListAsync();
+            => await context.Set<T>()
+            .Where(predicate)
+            .AsNoTracking()
+            .ToListAsync();
 
         public async Task<IEnumerable<T>> GetAllAsync()
-            => await context.Set<T>().ToListAsync();
+            => await context.Set<T>()
+            .AsNoTracking()
+            .ToListAsync();
 
         public async Task<T?> GetByIdAsync(Guid id)
-            => await context.Set<T>().FindAsync(id);
+            => await context.Set<T>()
+            .AsNoTracking()
+            .SingleOrDefaultAsync(entity => entity.Id == id);
 
         public void Remove(T entity)
         {
