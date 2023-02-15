@@ -54,11 +54,17 @@ namespace Pomodoro.Services.Realizations
             return mapper.Map<SettingsModel>(settings?.FirstOrDefault());
         }
 
-        public async Task<SettingsModel> UpdateSettingsAsync(SettingsModel settingsModel)
+        public async Task<SettingsModel?> UpdateSettingsAsync(SettingsModel settingsModel)
         {
             if (settingsModel is null)
             {
                 throw new ArgumentNullException(nameof(settingsModel));
+            }
+
+            var settingsToUpdate = await settingsRepository.GetByIdAsync(settingsModel.Id);
+            if (settingsToUpdate is null)
+            {
+                return null;
             }
 
             var settings = mapper.Map<Settings>(settingsModel);

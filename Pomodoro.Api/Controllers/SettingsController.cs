@@ -126,17 +126,15 @@ namespace Pomodoro.Api.Controllers
                 return this.BadRequest("SettingsId mismatch.");
             }
 
-            var modelToUpdate = await this.settingsService.GetSettingsAsync(id);
-            if (modelToUpdate is null)
+            var settingsModel = this.mapper.Map<SettingsModel>(settingsViewModel);
+            settingsModel = await this.settingsService.UpdateSettingsAsync(settingsModel);
+            if (settingsModel is null)
             {
                 return this.NotFound("No settings found by the provided id.");
             }
 
-            var model = this.mapper.Map<SettingsModel>(settingsViewModel);
-            model = await this.settingsService.UpdateSettingsAsync(model);
-
-            var updated = this.mapper.Map<SettingsViewModel>(model);
-            return this.AcceptedAtAction(nameof(this.GetUserSettings), updated);
+            var updatedViewModel = this.mapper.Map<SettingsViewModel>(settingsModel);
+            return this.AcceptedAtAction(nameof(this.GetUserSettings), updatedViewModel);
         }
     }
 }
