@@ -43,6 +43,19 @@ namespace Pomodoro.Tests
             SeedSettings(context);
         }
 
+        public static AppDbContext Context => SqlLiteInMemoryContext();
+
+        private static AppDbContext SqlLiteInMemoryContext()
+        {
+            var options = new DbContextOptionsBuilder<AppDbContext>()
+                .UseSqlite("DataSource=:memory:")
+                .Options;
+            var context = new AppDbContext(options);
+            context.Database.OpenConnection();
+            context.Database.EnsureCreated();
+            return context;
+        }
+
         private static void SeedFrequencyTypes(AppDbContext context)
         {
             context.FrequencyTypes.AddRange(
