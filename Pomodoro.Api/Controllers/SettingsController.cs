@@ -63,7 +63,8 @@ namespace Pomodoro.Api.Controllers
         }
 
         /// <summary>
-        /// Creates pomodoro settings related to the current user.
+        /// Creates pomodoro settings related to the current user.<br/>
+        /// Removes previous settings, if any.
         /// </summary>
         /// <param name="settingsViewModel">Represents object to be created.</param>
         /// <returns>Created object represented by <see cref="SettingsViewModel"/>.</returns>
@@ -72,26 +73,17 @@ namespace Pomodoro.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerResponse(201, "Returns created object containing user settings.")]
         [SwaggerResponse(400, "The model state is invalid.")]
         [SwaggerResponse(401, "An unauthorized request cannot be processed.")]
         [SwaggerResponse(403, "User cannot create settings for another person.")]
-        [SwaggerResponse(409, "Pomodoro settings for the current user already exist.")]
         [SwaggerResponse(500, "An unhandled exception occurred on the server while executing the request.")]
         public async Task<ActionResult<SettingsViewModel>> CreateSettings([FromBody] SettingsViewModel settingsViewModel)
         {
             if (this.UserId != settingsViewModel.UserId)
             {
                 return this.Forbid();
-            }
-
-            var userSettings = await this.settingsService
-                .GetUserSettingsAsync(this.UserId);
-            if (userSettings != null)
-            {
-                return this.Conflict("Pomodoro settings for the current user already exist.");
             }
 
             var settingsModel = this.mapper.Map<SettingsModel>(settingsViewModel);

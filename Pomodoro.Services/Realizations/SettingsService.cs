@@ -28,6 +28,7 @@ namespace Pomodoro.Services.Realizations
 
             var settings = mapper.Map<Settings>(settingsModel);
 
+            await RemoveExistingSettings(settings.UserId);
             await settingsRepository.AddAsync(settings);
             await settingsRepository.SaveChangesAsync();
 
@@ -66,6 +67,18 @@ namespace Pomodoro.Services.Realizations
             await settingsRepository.SaveChangesAsync();
 
             return mapper.Map<SettingsModel>(settings);
+        }
+
+        private async Task RemoveExistingSettings(Guid userId)
+        {
+            var settings = await settingsRepository
+                .FindAsync(s => s.UserId == userId);
+
+            if (settings?.Count() > 0)
+            {
+                settingsRepository.RemoveRange(settings);
+                await settingsRepository.SaveChangesAsync();
+            }   
         }
     }
 }
