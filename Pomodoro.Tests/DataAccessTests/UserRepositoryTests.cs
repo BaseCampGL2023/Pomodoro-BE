@@ -22,13 +22,15 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task AddAsync_AddsUserToDatabase()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            //using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = UnitTestHelper.Context;
             var userRepository = new UserRepository(context);
             var user = new AppUser
             {
                 Id = new Guid(3, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                 Name = "Jane",
                 Email = "jane@gmail.com",
+                //PomoIdentityUserId = new Guid(9, 9, 9, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
             };
             int expectedCount = context.AppUsers.Count() + 1;
 
