@@ -61,8 +61,8 @@ namespace Pomodoro.Services.Realizations
                 throw new ArgumentNullException(nameof(settingsModel));
             }
 
-            var settingsToUpdate = await settingsRepository.GetByIdAsync(settingsModel.Id);
-            if (settingsToUpdate is null)
+            if (!await settingsRepository
+                .HasByIdAsync(settingsModel.Id))
             {
                 return null;
             }
