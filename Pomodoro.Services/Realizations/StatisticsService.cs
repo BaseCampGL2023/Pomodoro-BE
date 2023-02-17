@@ -2,7 +2,7 @@
 using Pomodoro.Core.Models.Statistics;
 using Pomodoro.DataAccess.Repositories.Interfaces;
 using AutoMapper;
-namespace Pomodoro.Services
+namespace Pomodoro.Services.Realizations
 {
     public class StatisticsService:IStatisticsService
     {
