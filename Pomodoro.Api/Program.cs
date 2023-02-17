@@ -9,6 +9,7 @@ using Pomodoro.Api.Extensions;
 using Pomodoro.Api.Services;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.DataAccess.Extensions;
+using Pomodoro.Services.Services;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
@@ -26,6 +27,8 @@ builder.Services.AddRepositories();
 builder.Services.AddIdentityEF();
 
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<IFrequencyService, FrequencyService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
 
 builder.Services.AddJwtAuthentication(builder.Configuration);
 

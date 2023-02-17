@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Pomodoro.Core\Pomodoro.Core.csproj" />
+    <ProjectReference Include="..\Pomodoro.DataAccess\Pomodoro.DataAccess.csproj" />
+  </ItemGroup>
+
 </Project>

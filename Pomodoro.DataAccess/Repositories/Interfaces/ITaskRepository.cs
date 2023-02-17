@@ -5,5 +5,8 @@ namespace Pomodoro.DataAccess.Repositories.Interfaces
 {
     public interface ITaskRepository : IBaseRepository<TaskEntity>
     {
+        public Task<IEnumerable<TaskEntity>> GetAllTasks();
+
+        public Task<Guid> AddTask(TaskEntity task);
     }
 }
