@@ -95,15 +95,14 @@ namespace Pomodoro.Services.Realizations
             {
                 
                 AnalyticsPerMonth temp = new AnalyticsPerMonth();
+
+                var months = statistics.Where(c => c.ActualDate.Month == m);
                 
                 temp.Month = (Month)m;
                 
-                foreach (var d in statistics)
+                foreach (var d in months)
                 {
-                    if (temp.Month == (Month)d.ActualDate.Month)
-                    {
-                        temp.PomodorosDone += d.PomodorosCount;
-                    }
+                    temp.PomodorosDone += d.PomodorosCount;
                 }
                 
                 annualStatistics.AnalyticsPerMonths?.Add(temp);
