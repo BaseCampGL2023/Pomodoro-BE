@@ -1,51 +1,116 @@
-﻿using Pomodoro.Core.Interfaces.IServices;
+﻿using Pomodoro.Core.Enums;
+using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.Core.Models.Statistics;
 using Pomodoro.DataAccess.Repositories.Interfaces;
-using AutoMapper;
+
 namespace Pomodoro.Services.Realizations
 {
     public class StatisticsService:IStatisticsService
     {
-        private readonly IMapper _mapper;
+    
         private readonly ICompletedRepository _completedRepository;
 
-        public StatisticsService(IMapper mapper, ICompletedRepository repository)
+        public StatisticsService( ICompletedRepository repository)
         {
-            this._mapper = mapper;
             this._completedRepository = repository;
         }
         
         public async Task<DailyStatistics> GetDailyStatisticsAsync(Guid userId, DateOnly day)
         {
-            var dailystatistics = await _completedRepository.FindAsync(
+            DailyStatistics dailyStatistics = new DailyStatistics();
+
+            dailyStatistics.UserId = userId;
+            dailyStatistics.Day = day;
+            
+            var statistics = await _completedRepository.FindAsync(
                 u=>u.Task != null &&
                    u.Task.UserId == userId &&
                    u.ActualDate.Year == day.Year &&
                    u.ActualDate.Month == day.Month && 
                    u.ActualDate.Day == day.Day
             );
-            return  _mapper.Map<DailyStatistics>(dailystatistics);
+            
+            for (int i = 0; i < 24; i++) 
+            {
+                AnalyticsPerHour analytics = new AnalyticsPerHour();
+                
+                var hours = statistics.Where(t => t.ActualDate.Hour == i);
+
+                analytics.Hour = i;
+
+                foreach (var v in hours)
+                {
+                    analytics.PomodorosDone += v.PomodorosCount;
+                    analytics.TimeSpent += v.TimeSpent;
+                }
+                
+                dailyStatistics.AnalyticsPerHours?.Add(analytics);
+
+            }
+
+            return dailyStatistics;
+
         }
 
         public async Task<MonthlyStatistics> GetMonthlyStatisticsAsync(Guid userId, int year, int month)
         {
-            var monthlystatistics = await _completedRepository.FindAsync(
+            MonthlyStatistics monthlyStatistics = new MonthlyStatistics();
+            
+            monthlyStatistics.UserId = userId;
+            monthlyStatistics.Year = year;
+            monthlyStatistics.Month = (Month)month;
+
+            var statistics = await _completedRepository.FindAsync(
                 m=> m.Task != null &&
                     m.Task.UserId == userId && 
                     m.ActualDate.Year == year && 
                     m.ActualDate.Month == month );
-
-            return _mapper.Map<MonthlyStatistics>(monthlystatistics);
+            
+            monthlyStatistics.TasksCompleted = statistics.Count();
+            
+            foreach (var p in statistics)
+            {
+                monthlyStatistics.PomodorosDone += p.PomodorosCount;
+                monthlyStatistics.TimeSpent += p.TimeSpent;
+            }
+            
+            return monthlyStatistics;
         }
 
         public async Task<AnnualStatistics> GetAnnualStatisticsAsync(Guid userId, int year)
         {
-            var annualstatistics = await _completedRepository.FindAsync(
+            AnnualStatistics annualStatistics = new AnnualStatistics();
+            
+            annualStatistics.UserId = userId;
+            annualStatistics.Year = year;
+            
+            var statistics = await _completedRepository.FindAsync(
                 a => a.Task != null &&
                      a.Task.UserId == userId && 
                      a.ActualDate.Year == year
             );
-            return _mapper.Map<AnnualStatistics>(annualstatistics);
+            
+            
+            foreach (int m in Enum.GetValues(typeof(Month)))
+            {
+                
+                AnalyticsPerMonth temp = new AnalyticsPerMonth();
+                
+                temp.Month = (Month)m;
+                
+                foreach (var d in statistics)
+                {
+                    if (temp.Month == (Month)d.ActualDate.Month)
+                    {
+                        temp.PomodorosDone += d.PomodorosCount;
+                    }
+                }
+                
+                annualStatistics.AnalyticsPerMonths?.Add(temp);
+            }
+
+            return annualStatistics;
+
         }
     }
 }
