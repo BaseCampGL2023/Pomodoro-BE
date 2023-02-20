@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Pomodoro.Core.Enums;
+﻿using Pomodoro.Core.Enums;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.Core.Models.Statistics;
 using Pomodoro.DataAccess.Repositories.Interfaces;
@@ -37,7 +34,7 @@ namespace Pomodoro.Services.Realizations
             {
                 AnalyticsPerHour analytics = new AnalyticsPerHour();
                 
-                var hours = statistics.Where(t => t.ActualDate.Hour == i || t.ActualDate.Hour < i+2);
+                var hours = statistics.Where(t => t.ActualDate.Hour == i || (t.ActualDate.Hour > i && t.ActualDate.Hour < i+2));
 
                 analytics.Hour = i;
 
