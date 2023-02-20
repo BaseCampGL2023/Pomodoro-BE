@@ -30,11 +30,11 @@ namespace Pomodoro.Services.Realizations
                    u.ActualDate.Day == day.Day
             );
             
-            for (int i = 0; i < 24; i++) 
+            for (int i = 0; i < 24; i+=2) 
             {
                 AnalyticsPerHour analytics = new AnalyticsPerHour();
                 
-                var hours = statistics.Where(t => t.ActualDate.Hour == i);
+                var hours = statistics.Where(t => t.ActualDate.Hour == i && t.ActualDate.Hour < i+2);
 
                 analytics.Hour = i;
 
