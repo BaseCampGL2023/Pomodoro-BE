@@ -21,9 +21,7 @@ namespace Pomodoro.DataAccess.EF
 
         public AppDbContext(DbContextOptions options) : base(options) { }
 
-        public AppDbContext()
-        {
-        }
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
