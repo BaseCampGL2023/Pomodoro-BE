@@ -40,7 +40,7 @@ namespace Pomodoro.Services.Realizations
 
                 foreach (var v in hours)
                 {
-                    analytics.PomodorosDone += v.PomodorosCount;
+                    analytics.PomodorosDone += (int)v.PomodorosCount;
                     analytics.TimeSpent += v.TimeSpent;
                 }
                 
@@ -70,7 +70,7 @@ namespace Pomodoro.Services.Realizations
             
             foreach (var p in statistics)
             {
-                monthlyStatistics.PomodorosDone += p.PomodorosCount;
+                monthlyStatistics.PomodorosDone += (int)p.PomodorosCount;
                 monthlyStatistics.TimeSpent += p.TimeSpent;
             }
             
@@ -102,7 +102,7 @@ namespace Pomodoro.Services.Realizations
                 
                 foreach (var d in months)
                 {
-                    temp.PomodorosDone += d.PomodorosCount;
+                    temp.PomodorosDone += (int)d.PomodorosCount;
                 }
                 
                 annualStatistics.AnalyticsPerMonths?.Add(temp);

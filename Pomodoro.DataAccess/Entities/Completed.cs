@@ -9,7 +9,7 @@ namespace Pomodoro.DataAccess.Entities
         public Guid TaskId { get; set; }
         public DateTime ActualDate { get; set; }
         public int TimeSpent { get; set; }
-        public int PomodorosCount { get; set; }
+        public float PomodorosCount { get; set; }
         public bool IsDone { get; set; }
 
         //
