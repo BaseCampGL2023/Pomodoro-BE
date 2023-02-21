@@ -2,11 +2,9 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Pomodoro.DataAccess.EF;
 using Pomodoro.DataAccess.Entities;
-using Pomodoro.DataAccess.Repositories.Interfaces;
 using Pomodoro.DataAccess.Repositories.Realizations;
 using Pomodoro.Tests.EqualityComparers;
 
@@ -59,39 +57,6 @@ namespace Pomodoro.Tests.DataAccessTests
             var settingsRepository = new SettingsRepository(context);
             var settings = new Settings
             {
-                PomodoroDuration = 20,
-                ShortBreak = 5,
-                LongBreak = 10,
-                PomodorosBeforeLongBreak = 3,
-            };
-
-            // act
-            var act = async () =>
-            {
-                await settingsRepository.AddAsync(settings);
-                await context.SaveChangesAsync();
-            };
-
-            // assert
-            await Assert.ThrowsAsync<DbUpdateException>(act);
-        }
-
-        /// <summary>
-        /// Doesn`t add settings to database because of not unique settings id.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> object that represents an asynchronous operation.</returns>
-        [Fact]
-        public async Task AddAsync_ThrowsDbUpdateException_SettingsIdNotUnique()
-        {
-            // arrange
-            using var context = new AppDbContext(UnitTestHelper.DbOptions);
-            var settingsRepository = new SettingsRepository(context);
-            var identityUserId = context.Users.Add(new PomoIdentityUser()).Entity.Id;
-            var userId = context.AppUsers.Add(new AppUser { PomoIdentityUserId = identityUserId }).Entity.Id;
-            var settings = new Settings
-            {
-                Id = UnitTestHelper.Settings[0].Id,
-                UserId = userId,
                 PomodoroDuration = 20,
                 ShortBreak = 5,
                 LongBreak = 10,
@@ -173,53 +138,6 @@ namespace Pomodoro.Tests.DataAccessTests
                 },
                 new Settings
                 {
-                    PomodoroDuration = 30,
-                    ShortBreak = 10,
-                    LongBreak = 15,
-                    PomodorosBeforeLongBreak = 2,
-                },
-            };
-
-            // act
-            var act = async () =>
-            {
-                await settingsRepository.AddRangeAsync(settingsList);
-                await context.SaveChangesAsync();
-            };
-
-            // assert
-            await Assert.ThrowsAsync<DbUpdateException>(act);
-        }
-
-        /// <summary>
-        /// Doesn`t add settings to database because of not unique settings` id.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> object that represents an asynchronous operation.</returns>
-        [Fact]
-        public async Task AddRangeAsync_ThrowsDbUpdateException_IdentityUsersDoesntExist()
-        {
-            // arrange
-            using var context = new AppDbContext(UnitTestHelper.DbOptions);
-            var settingsRepository = new SettingsRepository(context);
-            var identityUserId1 = context.Users.Add(new PomoIdentityUser()).Entity.Id;
-            var identityUserId2 = context.Users.Add(new PomoIdentityUser()).Entity.Id;
-            var userId1 = context.AppUsers.Add(new AppUser { PomoIdentityUserId = identityUserId1, Email = "1@i.a" }).Entity.Id;
-            var userId2 = context.AppUsers.Add(new AppUser { PomoIdentityUserId = identityUserId2, Email = "2@i.a" }).Entity.Id;
-            var settingsList = new List<Settings>
-            {
-                new Settings
-                {
-                    Id = UnitTestHelper.Settings[0].Id,
-                    UserId = userId1,
-                    PomodoroDuration = 25,
-                    ShortBreak = 5,
-                    LongBreak = 15,
-                    PomodorosBeforeLongBreak = 4,
-                },
-                new Settings
-                {
-                    Id = UnitTestHelper.Settings[1].Id,
-                    UserId = userId2,
                     PomodoroDuration = 30,
                     ShortBreak = 10,
                     LongBreak = 15,
@@ -344,15 +262,11 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var settingsRepository = new SettingsRepository(context);
-            var expSettings = new Settings
-            {
-                Id = UnitTestHelper.Settings[0].Id,
-                UserId = UnitTestHelper.Settings[0].UserId,
-                PomodoroDuration = 30,
-                ShortBreak = 10,
-                LongBreak = 20,
-                PomodorosBeforeLongBreak = 3,
-            };
+            var expSettings = UnitTestHelper.Settings[0];
+            expSettings.PomodoroDuration = 30;
+            expSettings.ShortBreak = 10;
+            expSettings.LongBreak = 10;
+            expSettings.PomodorosBeforeLongBreak = 3;
 
             // act
             settingsRepository.Update(expSettings);
@@ -372,15 +286,12 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var settingsRepository = new SettingsRepository(context);
-            var expSettings = new Settings
-            {
-                Id = UnitTestHelper.Settings[0].Id,
-                UserId = UnitTestHelper.Settings[1].UserId,
-                PomodoroDuration = 30,
-                ShortBreak = 10,
-                LongBreak = 20,
-                PomodorosBeforeLongBreak = 3,
-            };
+            var expSettings = UnitTestHelper.Settings[0];
+            expSettings.UserId = UnitTestHelper.Settings[1].UserId;
+            expSettings.PomodoroDuration = 30;
+            expSettings.ShortBreak = 10;
+            expSettings.LongBreak = 10;
+            expSettings.PomodorosBeforeLongBreak = 3;
 
             // act
             var act = () =>

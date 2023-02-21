@@ -2,6 +2,7 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
+using Microsoft.EntityFrameworkCore;
 using Pomodoro.DataAccess.EF;
 using Pomodoro.DataAccess.Entities;
 using Pomodoro.DataAccess.Repositories.Realizations;
@@ -26,14 +27,13 @@ namespace Pomodoro.Tests.DataAccessTests
             var completedRepository = new CompletedRepository(context);
             var completed = new Completed
             {
-                Id = new Guid(6, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                TaskId = new Guid(2, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
+                TaskId = UnitTestHelper.Tasks[1].Id,
                 ActualDate = new DateTime(2023, 1, 14),
                 TimeSpent = 3000,
                 PomodorosCount = 2,
                 IsDone = true,
             };
-            int expectedCount = context.CompletedTasks.Count() + 1;
+            int expectedCount = UnitTestHelper.CompletedTasks.Count + 1;
 
             // act
             await completedRepository.AddAsync(completed);
@@ -41,6 +41,35 @@ namespace Pomodoro.Tests.DataAccessTests
 
             // assert
             Assert.Equal(expectedCount, context.CompletedTasks.Count());
+        }
+
+        /// <summary>
+        /// Doesn`t add completed to database because task doesn`t exist.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> object that represents an asynchronous operation.</returns>
+        [Fact]
+        public async Task AddAsync_ThrowsDbUpdateException_TaskDoesntExist()
+        {
+            // arrange
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
+            var completedRepository = new CompletedRepository(context);
+            var completed = new Completed
+            {
+                ActualDate = new DateTime(2023, 1, 14),
+                TimeSpent = 3000,
+                PomodorosCount = 2,
+                IsDone = true,
+            };
+
+            // act
+            var act = async () =>
+            {
+                await completedRepository.AddAsync(completed);
+                await context.SaveChangesAsync();
+            };
+
+            // assert
+            await Assert.ThrowsAsync<DbUpdateException>(act);
         }
 
         /// <summary>
@@ -57,8 +86,7 @@ namespace Pomodoro.Tests.DataAccessTests
             {
                 new Completed
                 {
-                    Id = new Guid(6, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                    TaskId = new Guid(2, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
+                    TaskId = UnitTestHelper.Tasks[0].Id,
                     ActualDate = new DateTime(2023, 1, 14),
                     TimeSpent = 3000,
                     PomodorosCount = 2,
@@ -66,15 +94,14 @@ namespace Pomodoro.Tests.DataAccessTests
                 },
                 new Completed
                 {
-                    Id = new Guid(7, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                    TaskId = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
+                    TaskId = UnitTestHelper.Tasks[1].Id,
                     ActualDate = new DateTime(2023, 1, 14),
                     TimeSpent = 3000,
                     PomodorosCount = 2,
                     IsDone = true,
                 },
             };
-            int expectedCount = context.CompletedTasks.Count() + completeds.Count;
+            int expectedCount = UnitTestHelper.CompletedTasks.Count + completeds.Count;
 
             // act
             await completedRepository.AddRangeAsync(completeds);
@@ -82,6 +109,45 @@ namespace Pomodoro.Tests.DataAccessTests
 
             // assert
             Assert.Equal(expectedCount, context.CompletedTasks.Count());
+        }
+
+        /// <summary>
+        /// Doesn`t add completeds to database because tasks don`t exist.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> object that represents an asynchronous operation.</returns>
+        [Fact]
+        public async Task AddRangeAsync_ThrowsDbUpdateException_TasksDontExist()
+        {
+            // arrange
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
+            var completedRepository = new CompletedRepository(context);
+            var completeds = new List<Completed>
+            {
+                new Completed
+                {
+                    ActualDate = new DateTime(2023, 1, 14),
+                    TimeSpent = 3000,
+                    PomodorosCount = 2,
+                    IsDone = true,
+                },
+                new Completed
+                {
+                    ActualDate = new DateTime(2023, 1, 14),
+                    TimeSpent = 3000,
+                    PomodorosCount = 2,
+                    IsDone = true,
+                },
+            };
+
+            // act
+            var act = async () =>
+            {
+                await completedRepository.AddRangeAsync(completeds);
+                await context.SaveChangesAsync();
+            };
+
+            // assert
+            await Assert.ThrowsAsync<DbUpdateException>(act);
         }
 
         /// <summary>
@@ -94,36 +160,8 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var completedRepository = new CompletedRepository(context);
-            var expCompleteds = new List<Completed>
-            {
-                new Completed
-                {
-                    Id = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                    TaskId = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                    ActualDate = new DateTime(2023, 1, 10),
-                    TimeSpent = 3000,
-                    PomodorosCount = 2,
-                    IsDone = true,
-                },
-                new Completed
-                {
-                    Id = new Guid(2, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                    TaskId = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                    ActualDate = new DateTime(2023, 1, 11),
-                    TimeSpent = 4500,
-                    PomodorosCount = 3,
-                    IsDone = true,
-                },
-                new Completed
-                {
-                    Id = new Guid(3, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                    TaskId = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                    ActualDate = new DateTime(2023, 1, 12),
-                    TimeSpent = 3000,
-                    PomodorosCount = 2,
-                    IsDone = true,
-                },
-            };
+            var expCompleteds = UnitTestHelper.CompletedTasks.Where(c => c.TaskId == UnitTestHelper.Tasks[0].Id)
+                                                             .ToList();
 
             // act
             var actCompleteds = await completedRepository.FindAsync(x => x.TaskId == expCompleteds[0].TaskId);
@@ -142,7 +180,7 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var completedRepository = new CompletedRepository(context);
-            var expCompleteds = context.CompletedTasks.ToList();
+            var expCompleteds = UnitTestHelper.CompletedTasks;
 
             // act
             var actCompleteds = await completedRepository.GetAllAsync();
@@ -161,7 +199,7 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var completedRepository = new CompletedRepository(context);
-            var expCompleted = context.CompletedTasks.First();
+            var expCompleted = UnitTestHelper.CompletedTasks[0];
 
             // act
             var actCompleted = await completedRepository.GetByIdAsync(expCompleted.Id);
@@ -179,8 +217,8 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var completedRepository = new CompletedRepository(context);
-            var completed = context.CompletedTasks.First();
-            int expectedCount = context.CompletedTasks.Count() - 1;
+            var completed = UnitTestHelper.CompletedTasks[0];
+            int expectedCount = UnitTestHelper.CompletedTasks.Count - 1;
 
             // act
             completedRepository.Remove(completed);
@@ -199,7 +237,7 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var completedRepository = new CompletedRepository(context);
-            var completeds = context.CompletedTasks.ToList();
+            var completeds = UnitTestHelper.CompletedTasks;
 
             // act
             completedRepository.RemoveRange(completeds);
@@ -219,15 +257,10 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var completedRepository = new CompletedRepository(context);
-            var expCompleted = new Completed
-            {
-                Id = new Guid(5, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                TaskId = new Guid(2, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                ActualDate = new DateTime(2023, 1, 13),
-                TimeSpent = 3000,
-                PomodorosCount = 2,
-                IsDone = true,
-            };
+            var expCompleted = UnitTestHelper.CompletedTasks[0];
+            expCompleted.TimeSpent = 5000;
+            expCompleted.PomodorosCount = 3;
+            expCompleted.IsDone = false;
 
             // act
             completedRepository.Update(expCompleted);
@@ -236,6 +269,32 @@ namespace Pomodoro.Tests.DataAccessTests
 
             // assert
             Assert.Equal(expCompleted, actCompleted, new CompletedComparer());
+        }
+
+        /// <summary>
+        /// Doesn`t update completed because task doesn`t exist.
+        /// </summary>
+        [Fact]
+        public void Update_ThrowsDbUpdateException_TaskDoesntExist()
+        {
+            // arrange
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
+            var completedRepository = new CompletedRepository(context);
+            var expCompleted = UnitTestHelper.CompletedTasks[0];
+            expCompleted.TaskId = Guid.Empty;
+            expCompleted.TimeSpent = 5000;
+            expCompleted.PomodorosCount = 3;
+            expCompleted.IsDone = false;
+
+            // act
+            var act = () =>
+            {
+                completedRepository.Update(expCompleted);
+                context.SaveChanges();
+            };
+
+            // assert
+            Assert.Throws<DbUpdateException>(act);
         }
     }
 }

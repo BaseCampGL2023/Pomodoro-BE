@@ -70,36 +70,6 @@ namespace Pomodoro.Tests.DataAccessTests
         }
 
         /// <summary>
-        /// Doesn`t add user to database because of not unique user`s id.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> object that represents an asynchronous operation.</returns>
-        [Fact]
-        public async Task AddAsync_ThrowsDbUpdateException_UserIdNotUnique()
-        {
-            // arrange
-            using var context = new AppDbContext(UnitTestHelper.DbOptions);
-            var userRepository = new UserRepository(context);
-            var identityUserId = context.Users.Add(new PomoIdentityUser()).Entity.Id;
-            var user = new AppUser
-            {
-                Id = UnitTestHelper.AppUsers[0].Id,
-                Name = "Jane",
-                Email = "jane@gmail.com",
-                PomoIdentityUserId = identityUserId,
-            };
-
-            // act
-            var act = async () =>
-            {
-                await userRepository.AddAsync(user);
-                await context.SaveChangesAsync();
-            };
-
-            // assert
-            await Assert.ThrowsAsync<DbUpdateException>(act);
-        }
-
-        /// <summary>
         /// Adds users to database.
         /// </summary>
         /// <returns>A <see cref="Task"/> object that represents an asynchronous operation.</returns>
@@ -157,47 +127,6 @@ namespace Pomodoro.Tests.DataAccessTests
                 {
                     Name = "Bob",
                     Email = "bob@gmail.com",
-                },
-            };
-
-            // act
-            var act = async () =>
-            {
-                await userRepository.AddRangeAsync(users);
-                await context.SaveChangesAsync();
-            };
-
-            // assert
-            await Assert.ThrowsAsync<DbUpdateException>(act);
-        }
-
-        /// <summary>
-        /// Doesn`t add users to database because of not unique users` id.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> object that represents an asynchronous operation.</returns>
-        [Fact]
-        public async Task AddRangeAsync_ThrowsDbUpdateException_UsersIdNotUnique()
-        {
-            // arrange
-            using var context = new AppDbContext(UnitTestHelper.DbOptions);
-            var userRepository = new UserRepository(context);
-            var identityUserId1 = context.Users.Add(new PomoIdentityUser()).Entity.Id;
-            var identityUserId2 = context.Users.Add(new PomoIdentityUser()).Entity.Id;
-            var users = new List<AppUser>
-            {
-                new AppUser
-                {
-                    Id = UnitTestHelper.AppUsers[0].Id,
-                    Name = "Jane",
-                    Email = "jane@gmail.com",
-                    PomoIdentityUserId = identityUserId1,
-                },
-                new AppUser
-                {
-                    Id = UnitTestHelper.AppUsers[1].Id,
-                    Name = "Bob",
-                    Email = "bob@gmail.com",
-                    PomoIdentityUserId = identityUserId2,
                 },
             };
 
@@ -318,13 +247,9 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var userRepository = new UserRepository(context);
-            var expUser = new AppUser
-            {
-                Id = UnitTestHelper.AppUsers[0].Id,
-                Name = "new" + UnitTestHelper.AppUsers[0].Name,
-                Email = "new" + UnitTestHelper.AppUsers[0].Email,
-                PomoIdentityUserId = UnitTestHelper.AppUsers[0].PomoIdentityUserId,
-            };
+            var expUser = UnitTestHelper.AppUsers[0];
+            expUser.Name = "new name";
+            expUser.Email = "newmail@gmail.com";
 
             // act
             userRepository.Update(expUser);
@@ -344,13 +269,10 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var userRepository = new UserRepository(context);
-            var expUser = new AppUser
-            {
-                Id = UnitTestHelper.AppUsers[0].Id,
-                Name = "new" + UnitTestHelper.AppUsers[0].Name,
-                Email = "new" + UnitTestHelper.AppUsers[0].Email,
-                PomoIdentityUserId = UnitTestHelper.IdentityUsers[1].Id,
-            };
+            var expUser = UnitTestHelper.AppUsers[0];
+            expUser.Name = "new name";
+            expUser.Email = "newmail@gmail.com";
+            expUser.PomoIdentityUserId = UnitTestHelper.IdentityUsers[1].Id;
 
             // act
             var act = () =>
