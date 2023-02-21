@@ -2,8 +2,11 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Pomodoro.DataAccess.EF;
 using Pomodoro.DataAccess.Entities;
+using Pomodoro.DataAccess.Repositories.Interfaces;
 using Pomodoro.DataAccess.Repositories.Realizations;
 using Pomodoro.Tests.EqualityComparers;
 
@@ -24,15 +27,17 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var settingsRepository = new SettingsRepository(context);
+            var identityUserId = context.Users.Add(new PomoIdentityUser()).Entity.Id;
+            var userId = context.AppUsers.Add(new AppUser { PomoIdentityUserId = identityUserId }).Entity.Id;
             var settings = new Settings
             {
-                Id = new Guid(3, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
+                UserId = userId,
                 PomodoroDuration = 20,
                 ShortBreak = 5,
                 LongBreak = 10,
                 PomodorosBeforeLongBreak = 3,
             };
-            int expectedCount = context.Settings.Count() + 1;
+            int expectedCount = UnitTestHelper.Settings.Count + 1;
 
             // act
             await settingsRepository.AddAsync(settings);
@@ -40,6 +45,68 @@ namespace Pomodoro.Tests.DataAccessTests
 
             // assert
             Assert.Equal(expectedCount, context.Settings.Count());
+        }
+
+        /// <summary>
+        /// Doesn`t add settings to database because user doesn`t exist.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> object that represents an asynchronous operation.</returns>
+        [Fact]
+        public async Task AddAsync_ThrowsDbUpdateException_UserDoesntExist()
+        {
+            // arrange
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
+            var settingsRepository = new SettingsRepository(context);
+            var settings = new Settings
+            {
+                PomodoroDuration = 20,
+                ShortBreak = 5,
+                LongBreak = 10,
+                PomodorosBeforeLongBreak = 3,
+            };
+
+            // act
+            var act = async () =>
+            {
+                await settingsRepository.AddAsync(settings);
+                await context.SaveChangesAsync();
+            };
+
+            // assert
+            await Assert.ThrowsAsync<DbUpdateException>(act);
+        }
+
+        /// <summary>
+        /// Doesn`t add settings to database because of not unique settings id.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> object that represents an asynchronous operation.</returns>
+        [Fact]
+        public async Task AddAsync_ThrowsDbUpdateException_SettingsIdNotUnique()
+        {
+            // arrange
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
+            var settingsRepository = new SettingsRepository(context);
+            var identityUserId = context.Users.Add(new PomoIdentityUser()).Entity.Id;
+            var userId = context.AppUsers.Add(new AppUser { PomoIdentityUserId = identityUserId }).Entity.Id;
+            var settings = new Settings
+            {
+                Id = UnitTestHelper.Settings[0].Id,
+                UserId = userId,
+                PomodoroDuration = 20,
+                ShortBreak = 5,
+                LongBreak = 10,
+                PomodorosBeforeLongBreak = 3,
+            };
+
+            // act
+            var act = async () =>
+            {
+                await settingsRepository.AddAsync(settings);
+                await context.SaveChangesAsync();
+            };
+
+            // assert
+            await Assert.ThrowsAsync<DbUpdateException>(act);
         }
 
         /// <summary>
@@ -52,11 +119,15 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var settingsRepository = new SettingsRepository(context);
+            var identityUserId1 = context.Users.Add(new PomoIdentityUser()).Entity.Id;
+            var identityUserId2 = context.Users.Add(new PomoIdentityUser()).Entity.Id;
+            var userId1 = context.AppUsers.Add(new AppUser { PomoIdentityUserId = identityUserId1, Email = "1@i.a" }).Entity.Id;
+            var userId2 = context.AppUsers.Add(new AppUser { PomoIdentityUserId = identityUserId2, Email = "2@i.a" }).Entity.Id;
             var settingsList = new List<Settings>
             {
                 new Settings
                 {
-                    Id = new Guid(3, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
+                    UserId = userId1,
                     PomodoroDuration = 25,
                     ShortBreak = 5,
                     LongBreak = 15,
@@ -64,14 +135,14 @@ namespace Pomodoro.Tests.DataAccessTests
                 },
                 new Settings
                 {
-                    Id = new Guid(4, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
+                    UserId = userId2,
                     PomodoroDuration = 30,
                     ShortBreak = 10,
                     LongBreak = 15,
                     PomodorosBeforeLongBreak = 2,
                 },
             };
-            int expectedCount = context.Settings.Count() + settingsList.Count;
+            int expectedCount = UnitTestHelper.Settings.Count + settingsList.Count;
 
             // act
             await settingsRepository.AddRangeAsync(settingsList);
@@ -79,6 +150,92 @@ namespace Pomodoro.Tests.DataAccessTests
 
             // assert
             Assert.Equal(expectedCount, context.Settings.Count());
+        }
+
+        /// <summary>
+        /// Doesn`t add settings to database because users don`t exist.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> object that represents an asynchronous operation.</returns>
+        [Fact]
+        public async Task AddRangeAsync_ThrowsDbUpdateException_UsersDontExist()
+        {
+            // arrange
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
+            var settingsRepository = new SettingsRepository(context);
+            var settingsList = new List<Settings>
+            {
+                new Settings
+                {
+                    PomodoroDuration = 25,
+                    ShortBreak = 5,
+                    LongBreak = 15,
+                    PomodorosBeforeLongBreak = 4,
+                },
+                new Settings
+                {
+                    PomodoroDuration = 30,
+                    ShortBreak = 10,
+                    LongBreak = 15,
+                    PomodorosBeforeLongBreak = 2,
+                },
+            };
+
+            // act
+            var act = async () =>
+            {
+                await settingsRepository.AddRangeAsync(settingsList);
+                await context.SaveChangesAsync();
+            };
+
+            // assert
+            await Assert.ThrowsAsync<DbUpdateException>(act);
+        }
+
+        /// <summary>
+        /// Doesn`t add settings to database because of not unique settings` id.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> object that represents an asynchronous operation.</returns>
+        [Fact]
+        public async Task AddRangeAsync_ThrowsDbUpdateException_IdentityUsersDoesntExist()
+        {
+            // arrange
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
+            var settingsRepository = new SettingsRepository(context);
+            var identityUserId1 = context.Users.Add(new PomoIdentityUser()).Entity.Id;
+            var identityUserId2 = context.Users.Add(new PomoIdentityUser()).Entity.Id;
+            var userId1 = context.AppUsers.Add(new AppUser { PomoIdentityUserId = identityUserId1, Email = "1@i.a" }).Entity.Id;
+            var userId2 = context.AppUsers.Add(new AppUser { PomoIdentityUserId = identityUserId2, Email = "2@i.a" }).Entity.Id;
+            var settingsList = new List<Settings>
+            {
+                new Settings
+                {
+                    Id = UnitTestHelper.Settings[0].Id,
+                    UserId = userId1,
+                    PomodoroDuration = 25,
+                    ShortBreak = 5,
+                    LongBreak = 15,
+                    PomodorosBeforeLongBreak = 4,
+                },
+                new Settings
+                {
+                    Id = UnitTestHelper.Settings[1].Id,
+                    UserId = userId2,
+                    PomodoroDuration = 30,
+                    ShortBreak = 10,
+                    LongBreak = 15,
+                    PomodorosBeforeLongBreak = 2,
+                },
+            };
+
+            // act
+            var act = async () =>
+            {
+                await settingsRepository.AddRangeAsync(settingsList);
+                await context.SaveChangesAsync();
+            };
+
+            // assert
+            await Assert.ThrowsAsync<DbUpdateException>(act);
         }
 
         /// <summary>
@@ -91,7 +248,7 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var settingsRepository = new SettingsRepository(context);
-            var expSettingsList = context.Settings.ToList();
+            var expSettingsList = UnitTestHelper.Settings.ToList();
 
             // act
             var actSettingsList = await settingsRepository.FindAsync(x => x.ShortBreak == expSettingsList[0].ShortBreak);
@@ -110,7 +267,7 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var settingsRepository = new SettingsRepository(context);
-            var expSettingsList = context.Settings.ToList();
+            var expSettingsList = UnitTestHelper.Settings.ToList();
 
             // act
             var actSettingsList = await settingsRepository.GetAllAsync();
@@ -129,7 +286,7 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var settingsRepository = new SettingsRepository(context);
-            var expSettingsList = context.Settings.First();
+            var expSettingsList = UnitTestHelper.Settings[0];
 
             // act
             var actSettingsList = await settingsRepository.GetByIdAsync(expSettingsList.Id);
@@ -147,8 +304,8 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var settingsRepository = new SettingsRepository(context);
-            var settings = context.Settings.First();
-            int expectedCount = context.Settings.Count() - 1;
+            var settings = UnitTestHelper.Settings[0];
+            int expectedCount = UnitTestHelper.Settings.Count - 1;
 
             // act
             settingsRepository.Remove(settings);
@@ -167,7 +324,7 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var settingsRepository = new SettingsRepository(context);
-            var settingsList = context.Settings.ToList();
+            var settingsList = UnitTestHelper.Settings;
 
             // act
             settingsRepository.RemoveRange(settingsList);
@@ -189,8 +346,8 @@ namespace Pomodoro.Tests.DataAccessTests
             var settingsRepository = new SettingsRepository(context);
             var expSettings = new Settings
             {
-                Id = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                UserId = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
+                Id = UnitTestHelper.Settings[0].Id,
+                UserId = UnitTestHelper.Settings[0].UserId,
                 PomodoroDuration = 30,
                 ShortBreak = 10,
                 LongBreak = 20,
@@ -204,6 +361,36 @@ namespace Pomodoro.Tests.DataAccessTests
 
             // assert
             Assert.Equal(expSettings, actSettings, new SettingsComparer());
+        }
+
+        /// <summary>
+        /// Doesn`t update user because user is taken.
+        /// </summary>
+        [Fact]
+        public void Update_ThrowsDbUpdateException_UserIsTaken()
+        {
+            // arrange
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
+            var settingsRepository = new SettingsRepository(context);
+            var expSettings = new Settings
+            {
+                Id = UnitTestHelper.Settings[0].Id,
+                UserId = UnitTestHelper.Settings[1].UserId,
+                PomodoroDuration = 30,
+                ShortBreak = 10,
+                LongBreak = 20,
+                PomodorosBeforeLongBreak = 3,
+            };
+
+            // act
+            var act = () =>
+            {
+                settingsRepository.Update(expSettings);
+                context.SaveChanges();
+            };
+
+            // assert
+            Assert.Throws<DbUpdateException>(act);
         }
     }
 }

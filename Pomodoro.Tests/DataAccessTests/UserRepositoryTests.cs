@@ -141,7 +141,7 @@ namespace Pomodoro.Tests.DataAccessTests
         /// </summary>
         /// <returns>A <see cref="Task"/> object that represents an asynchronous operation.</returns>
         [Fact]
-        public async Task AddRangeAsync_AddsUsersToDatabase_IdentityUsersDoesntExist()
+        public async Task AddRangeAsync_ThrowsDbUpdateException_IdentityUsersDontExist()
         {
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
@@ -176,7 +176,7 @@ namespace Pomodoro.Tests.DataAccessTests
         /// </summary>
         /// <returns>A <see cref="Task"/> object that represents an asynchronous operation.</returns>
         [Fact]
-        public async Task AddRangeAsync_AddsUsersToDatabase_UsersIdNotUnique()
+        public async Task AddRangeAsync_ThrowsDbUpdateException_UsersIdNotUnique()
         {
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
@@ -279,7 +279,7 @@ namespace Pomodoro.Tests.DataAccessTests
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var userRepository = new UserRepository(context);
             var user = UnitTestHelper.AppUsers[0];
-            int expectedCount = UnitTestHelper.AppUsers.Count() - 1;
+            int expectedCount = UnitTestHelper.AppUsers.Count - 1;
 
             // act
             userRepository.Remove(user);
@@ -339,7 +339,7 @@ namespace Pomodoro.Tests.DataAccessTests
         /// Doesn`t update user because identityUser is taken.
         /// </summary>
         [Fact]
-        public void Update_DoesntUpdateUser_IdentityUserIsTaken()
+        public void Update_ThrowsDbUpdateException_IdentityUserIsTaken()
         {
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);

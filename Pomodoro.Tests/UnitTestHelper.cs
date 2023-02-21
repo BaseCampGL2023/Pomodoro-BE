@@ -67,7 +67,6 @@ namespace Pomodoro.Tests
 
             using (var context = new AppDbContext(options))
             {
-
                 context.Database.EnsureCreated();
 
                 SeedData(context);
