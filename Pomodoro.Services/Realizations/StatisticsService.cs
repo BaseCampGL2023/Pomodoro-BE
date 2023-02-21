@@ -37,13 +37,13 @@ namespace Pomodoro.Services.Realizations
                 var hours = statistics.Where(t => t.ActualDate.Hour == i || (t.ActualDate.Hour > i && t.ActualDate.Hour < i+2));
 
                 analytics.Hour = i;
-
-                foreach (var v in hours)
-                {
-                    analytics.PomodorosDone += (int)v.PomodorosCount;
-                    analytics.TimeSpent += v.TimeSpent;
-                }
                 
+                float totalPomodorosCount = hours.Sum(c => c.PomodorosCount);
+
+                analytics.PomodorosDone = Convert.ToInt32(totalPomodorosCount);
+
+                analytics.TimeSpent = hours.Sum(c=>c.TimeSpent);
+
                 dailyStatistics.AnalyticsPerHours?.Add(analytics);
 
             }
@@ -67,13 +67,13 @@ namespace Pomodoro.Services.Realizations
                     m.ActualDate.Month == month );
             
             monthlyStatistics.TasksCompleted = statistics.Count();
-            
-            foreach (var p in statistics)
-            {
-                monthlyStatistics.PomodorosDone += (int)p.PomodorosCount;
-                monthlyStatistics.TimeSpent += p.TimeSpent;
-            }
-            
+
+            float totalPomodorosCount = statistics.Sum(c=>c.PomodorosCount);
+
+            monthlyStatistics.PomodorosDone = Convert.ToInt32(totalPomodorosCount);
+
+            monthlyStatistics.TimeSpent = statistics.Sum(c=>c.TimeSpent);
+
             return monthlyStatistics;
         }
 
@@ -99,12 +99,11 @@ namespace Pomodoro.Services.Realizations
                 var months = statistics.Where(c => c.ActualDate.Month == m);
                 
                 temp.Month = (Month)m;
-                
-                foreach (var d in months)
-                {
-                    temp.PomodorosDone += (int)d.PomodorosCount;
-                }
-                
+
+                float totalPomodorosCount = months.Sum(c=>c.PomodorosCount);
+
+                temp.PomodorosDone = Convert.ToInt32(totalPomodorosCount);
+
                 annualStatistics.AnalyticsPerMonths?.Add(temp);
             }
 
