@@ -2,6 +2,7 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Pomodoro.DataAccess.EF;
 using Pomodoro.DataAccess.Entities;
@@ -10,23 +11,67 @@ using Pomodoro.DataAccess.Enums;
 namespace Pomodoro.Tests
 {
     /// <summary>
-    /// Class that provide parts for tests arranging.
+    /// Class that provides data for testing.
     /// </summary>
     public static class UnitTestHelper
     {
         /// <summary>
-        /// Create DbContext options.
+        /// Gets frequencyTypes for testing.
         /// </summary>
-        /// <returns>DbContext.</returns>
-        public static DbContextOptions<AppDbContext> GetUnitTestDbOptions()
+        public static List<FrequencyType> FrequencyTypes => GetFrequencyTypes();
+
+        /// <summary>
+        /// Gets frequencies for testing.
+        /// </summary>
+        public static List<Frequency> Frequencies => GetFrequencies();
+
+        /// <summary>
+        /// Gets tasks for testing.
+        /// </summary>
+        public static List<TaskEntity> Tasks => GetTasks();
+
+        /// <summary>
+        /// Gets completedTasks for testing.
+        /// </summary>
+        public static List<Completed> CompletedTasks => GetCompletedTasks();
+
+        /// <summary>
+        /// Gets appUsers for testing.
+        /// </summary>
+        public static List<AppUser> AppUsers => GetAppUsers();
+
+        /// <summary>
+        /// Gets identityUsers for testing.
+        /// </summary>
+        public static List<PomoIdentityUser> IdentityUsers => GetIdentityUsers();
+
+        /// <summary>
+        /// Gets settings for testing.
+        /// </summary>
+        public static List<Settings> Settings => GetSettings();
+
+        /// <summary>
+        /// Gets dbContext options for testing.
+        /// </summary>
+        public static DbContextOptions<AppDbContext> DbOptions => GetUnitTestDbOptions();
+
+        private static DbContextOptions<AppDbContext> GetUnitTestDbOptions()
         {
+            var connection = new SqliteConnection("DataSource=:memory:");
+
+            connection.Open();
+
             var options = new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
+                .UseSqlite(connection)
                 .Options;
 
             using (var context = new AppDbContext(options))
             {
+
+                context.Database.EnsureCreated();
+
                 SeedData(context);
+
                 context.SaveChanges();
             }
 
@@ -35,17 +80,17 @@ namespace Pomodoro.Tests
 
         private static void SeedData(AppDbContext context)
         {
-            SeedFrequencyTypes(context);
-            SeedFrequencies(context);
-            SeedTasks(context);
-            SeedCompletedTasks(context);
-            SeedAppUsers(context);
-            SeedSettings(context);
+            context.Users.AddRange(IdentityUsers);
+            context.AppUsers.AddRange(AppUsers);
+            context.Settings.AddRange(Settings);
+            context.Tasks.AddRange(Tasks);
+            context.CompletedTasks.AddRange(CompletedTasks);
         }
 
-        private static void SeedFrequencyTypes(AppDbContext context)
+        private static List<FrequencyType> GetFrequencyTypes()
         {
-            context.FrequencyTypes.AddRange(
+            return new List<FrequencyType>
+            {
                 new FrequencyType
                 {
                     Id = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
@@ -80,12 +125,14 @@ namespace Pomodoro.Tests
                 {
                     Id = new Guid(7, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     Value = FrequencyValue.Weekend,
-                });
+                },
+            };
         }
 
-        private static void SeedFrequencies(AppDbContext context)
+        private static List<Frequency> GetFrequencies()
         {
-            context.Frequencies.AddRange(
+            return new List<Frequency>
+            {
                 new Frequency
                 {
                     Id = new Guid(2, 1, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
@@ -127,17 +174,19 @@ namespace Pomodoro.Tests
                     Id = new Guid(2, 7, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     FrequencyTypeId = new Guid(7, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     Every = 1,
-                });
+                },
+            };
         }
 
-        private static void SeedTasks(AppDbContext context)
+        private static List<TaskEntity> GetTasks()
         {
-            context.Tasks.AddRange(
+            return new List<TaskEntity>
+            {
                 new TaskEntity
                 {
                     Id = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     UserId = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                    FrequencyId = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
+                    FrequencyId = new Guid(2, 1, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     Title = "Cleaning",
                     InitialDate = new DateTime(2023, 1, 10),
                     AllocatedTime = 3600,
@@ -150,12 +199,14 @@ namespace Pomodoro.Tests
                     Title = "Play guitar",
                     InitialDate = new DateTime(2023, 1, 11),
                     AllocatedTime = 2000,
-                });
+                },
+            };
         }
 
-        private static void SeedCompletedTasks(AppDbContext context)
+        private static List<Completed> GetCompletedTasks()
         {
-            context.CompletedTasks.AddRange(
+            return new List<Completed>
+            {
                 new Completed
                 {
                     Id = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
@@ -200,29 +251,50 @@ namespace Pomodoro.Tests
                     TimeSpent = 1500,
                     PomodorosCount = 1,
                     IsDone = true,
-                });
+                },
+            };
         }
 
-        private static void SeedAppUsers(AppDbContext context)
+        private static List<PomoIdentityUser> GetIdentityUsers()
         {
-            context.AppUsers.AddRange(
+            return new List<PomoIdentityUser>
+            {
+                new PomoIdentityUser
+                {
+                    Id = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
+                },
+                new PomoIdentityUser
+                {
+                    Id = new Guid(2, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
+                },
+            };
+        }
+
+        private static List<AppUser> GetAppUsers()
+        {
+            return new List<AppUser>
+            {
                 new AppUser
                 {
                     Id = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
+                    PomoIdentityUserId = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     Name = "Viktor",
                     Email = "vitia@gmail.com",
                 },
                 new AppUser
                 {
                     Id = new Guid(2, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
+                    PomoIdentityUserId = new Guid(2, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     Name = "Mia",
                     Email = "mia@gmail.com",
-                });
+                },
+            };
         }
 
-        private static void SeedSettings(AppDbContext context)
+        private static List<Settings> GetSettings()
         {
-            context.Settings.AddRange(
+            return new List<Settings>
+            {
                 new Settings
                 {
                     Id = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
@@ -240,7 +312,8 @@ namespace Pomodoro.Tests
                     ShortBreak = 5,
                     LongBreak = 10,
                     PomodorosBeforeLongBreak = 3,
-                });
+                },
+            };
         }
     }
 }

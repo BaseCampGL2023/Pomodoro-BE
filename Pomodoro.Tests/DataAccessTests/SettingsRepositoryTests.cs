@@ -22,7 +22,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task AddAsync_AddsSettingsToDatabase()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var settingsRepository = new SettingsRepository(context);
             var settings = new Settings
             {
@@ -50,7 +50,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task AddRangeAsync_AddsSettingsRangeToDatabase()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var settingsRepository = new SettingsRepository(context);
             var settingsList = new List<Settings>
             {
@@ -89,7 +89,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task FindAsync_FindsSettings()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var settingsRepository = new SettingsRepository(context);
             var expSettingsList = context.Settings.ToList();
 
@@ -108,7 +108,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task GetAllAsync_ReturnsAllSettings()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var settingsRepository = new SettingsRepository(context);
             var expSettingsList = context.Settings.ToList();
 
@@ -127,7 +127,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task GetByIdAsync_ReturnsSettings()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var settingsRepository = new SettingsRepository(context);
             var expSettingsList = context.Settings.First();
 
@@ -145,7 +145,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public void Remove_RemovesSettings()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var settingsRepository = new SettingsRepository(context);
             var settings = context.Settings.First();
             int expectedCount = context.Settings.Count() - 1;
@@ -165,7 +165,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public void RemoveRange_RemovesSettingsRange()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var settingsRepository = new SettingsRepository(context);
             var settingsList = context.Settings.ToList();
 
@@ -185,7 +185,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task Update_UpdatesSettings()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var settingsRepository = new SettingsRepository(context);
             var expSettings = new Settings
             {

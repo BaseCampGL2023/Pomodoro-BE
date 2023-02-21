@@ -22,7 +22,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task AddAsync_AddsTaskToDatabase()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var taskRepository = new TaskRepository(context);
             var task = new TaskEntity
             {
@@ -51,7 +51,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task AddRangeAsync_AddsTasksToDatabase()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var taskRepository = new TaskRepository(context);
             var tasks = new List<TaskEntity>
             {
@@ -92,7 +92,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task FindAsync_FindsTasks()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var taskRepository = new TaskRepository(context);
             var expTasks = context.Tasks.ToList();
 
@@ -111,7 +111,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task GetAllAsync_ReturnsAllTasks()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var taskRepository = new TaskRepository(context);
             var expTasks = context.Tasks.ToList();
 
@@ -130,7 +130,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task GetByIdAsync_ReturnsTask()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var taskRepository = new TaskRepository(context);
             var expTask = context.Tasks.First();
 
@@ -148,7 +148,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public void Remove_RemovesTask()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var taskRepository = new TaskRepository(context);
             var task = context.Tasks.First();
             int expectedCount = context.Tasks.Count() - 1;
@@ -168,7 +168,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public void RemoveRange_RemovesTasks()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var taskRepository = new TaskRepository(context);
             var tasks = context.Tasks.ToList();
 
@@ -188,7 +188,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task Update_UpdatesTask()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var taskRepository = new TaskRepository(context);
             var expTask = new TaskEntity
             {

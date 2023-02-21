@@ -23,7 +23,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task AddAsync_AddsFrequencyTypeToDatabase()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var frequencyTypeRepository = new FrequencyTypeRepository(context);
             var frequencyType = new FrequencyType
             {
@@ -48,7 +48,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task AddRangeAsync_AddsFrequencyTypesToDatabase()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var frequencyTypeRepository = new FrequencyTypeRepository(context);
             var frequencyTypes = new List<FrequencyType>
             {
@@ -81,7 +81,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task FindAsync_FindsFrequencyTypes()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var frequencyTypeRepository = new FrequencyTypeRepository(context);
             var expFrequencyTypes = context.FrequencyTypes.Take(1).ToList();
 
@@ -100,7 +100,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task GetAllAsync_ReturnsAllFrequencyTypes()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var frequencyTypeRepository = new FrequencyTypeRepository(context);
             var expFrequencyTypes = context.FrequencyTypes.ToList();
 
@@ -119,7 +119,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task GetByIdAsync_ReturnsFrequencyType()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var frequencyTypeRepository = new FrequencyTypeRepository(context);
             var expFrequencyType = context.FrequencyTypes.First();
 
@@ -137,7 +137,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public void Remove_RemovesFrequencyType()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var frequencyTypeRepository = new FrequencyTypeRepository(context);
             var frequencyType = context.FrequencyTypes.First();
             int expectedCount = context.FrequencyTypes.Count() - 1;
@@ -157,7 +157,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public void RemoveRange_RemovesFrequencyTypes()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var frequencyTypeRepository = new FrequencyTypeRepository(context);
             var frequencyTypes = context.FrequencyTypes.ToList();
 
@@ -177,7 +177,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task Update_UpdatesFrequencyType()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var frequencyTypeRepository = new FrequencyTypeRepository(context);
             var expFrequency = new FrequencyType
             {

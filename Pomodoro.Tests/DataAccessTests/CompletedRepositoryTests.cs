@@ -22,7 +22,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task AddAsync_AddsCompletedToDatabase()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var completedRepository = new CompletedRepository(context);
             var completed = new Completed
             {
@@ -51,7 +51,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task AddRangeAsync_AddsCompletedsToDatabase()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var completedRepository = new CompletedRepository(context);
             var completeds = new List<Completed>
             {
@@ -92,7 +92,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task FindAsync_FindsCompleteds()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var completedRepository = new CompletedRepository(context);
             var expCompleteds = new List<Completed>
             {
@@ -140,7 +140,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task GetAllAsync_ReturnsAllCompleteds()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var completedRepository = new CompletedRepository(context);
             var expCompleteds = context.CompletedTasks.ToList();
 
@@ -159,7 +159,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task GetByIdAsync_ReturnsCompleted()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var completedRepository = new CompletedRepository(context);
             var expCompleted = context.CompletedTasks.First();
 
@@ -177,7 +177,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public void Remove_RemovesCompleted()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var completedRepository = new CompletedRepository(context);
             var completed = context.CompletedTasks.First();
             int expectedCount = context.CompletedTasks.Count() - 1;
@@ -197,7 +197,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public void RemoveRange_RemovesCompleteds()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var completedRepository = new CompletedRepository(context);
             var completeds = context.CompletedTasks.ToList();
 
@@ -217,7 +217,7 @@ namespace Pomodoro.Tests.DataAccessTests
         public async Task Update_UpdatesCompleted()
         {
             // arrange
-            using var context = new AppDbContext(UnitTestHelper.GetUnitTestDbOptions());
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var completedRepository = new CompletedRepository(context);
             var expCompleted = new Completed
             {
