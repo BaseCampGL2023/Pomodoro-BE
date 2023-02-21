@@ -2,6 +2,7 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
+using Microsoft.EntityFrameworkCore;
 using Pomodoro.DataAccess.EF;
 using Pomodoro.DataAccess.Entities;
 using Pomodoro.DataAccess.Enums;
@@ -27,10 +28,9 @@ namespace Pomodoro.Tests.DataAccessTests
             var frequencyTypeRepository = new FrequencyTypeRepository(context);
             var frequencyType = new FrequencyType
             {
-                Id = new Guid(8, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                Value = FrequencyValue.Month,
+                Value = (FrequencyValue)7,
             };
-            int expectedCount = context.FrequencyTypes.Count() + 1;
+            int expectedCount = UnitTestHelper.FrequencyTypes.Count + 1;
 
             // act
             await frequencyTypeRepository.AddAsync(frequencyType);
@@ -38,6 +38,32 @@ namespace Pomodoro.Tests.DataAccessTests
 
             // assert
             Assert.Equal(expectedCount, context.FrequencyTypes.Count());
+        }
+
+        /// <summary>
+        /// Doesn`t add frequency type to database because frequency value already exist.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> object that represents an asynchronous operation.</returns>
+        [Fact]
+        public async Task AddAsync_ThrowsDbUpdateException_FrequencyValueAlreadyExist()
+        {
+            // arrange
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
+            var frequencyTypeRepository = new FrequencyTypeRepository(context);
+            var frequencyType = new FrequencyType
+            {
+                Value = FrequencyValue.Day,
+            };
+
+            // act
+            var act = async () =>
+            {
+                await frequencyTypeRepository.AddAsync(frequencyType);
+                await context.SaveChangesAsync();
+            };
+
+            // assert
+            await Assert.ThrowsAsync<DbUpdateException>(act);
         }
 
         /// <summary>
@@ -54,16 +80,14 @@ namespace Pomodoro.Tests.DataAccessTests
             {
                 new FrequencyType
                 {
-                    Id = new Guid(8, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                    Value = FrequencyValue.Month,
+                    Value = (FrequencyValue)7,
                 },
                 new FrequencyType
                 {
-                    Id = new Guid(9, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                    Value = FrequencyValue.Year,
+                    Value = (FrequencyValue)8,
                 },
             };
-            int expectedCount = context.FrequencyTypes.Count() + frequencyTypes.Count;
+            int expectedCount = UnitTestHelper.FrequencyTypes.Count + frequencyTypes.Count;
 
             // act
             await frequencyTypeRepository.AddRangeAsync(frequencyTypes);
@@ -71,6 +95,39 @@ namespace Pomodoro.Tests.DataAccessTests
 
             // assert
             Assert.Equal(expectedCount, context.FrequencyTypes.Count());
+        }
+
+        /// <summary>
+        /// Doesn`t add frequency types to database because frequency values already exist.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> object that represents an asynchronous operation.</returns>
+        [Fact]
+        public async Task AddRangeAsync_ThrowsDbUpdateException_FrequencyValuesAlreadyExist()
+        {
+            // arrange
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
+            var frequencyTypeRepository = new FrequencyTypeRepository(context);
+            var frequencyTypes = new List<FrequencyType>
+            {
+                new FrequencyType
+                {
+                    Value = FrequencyValue.Workday,
+                },
+                new FrequencyType
+                {
+                    Value = FrequencyValue.Day,
+                },
+            };
+
+            // act
+            var act = async () =>
+            {
+                await frequencyTypeRepository.AddRangeAsync(frequencyTypes);
+                await context.SaveChangesAsync();
+            };
+
+            // assert
+            await Assert.ThrowsAsync<DbUpdateException>(act);
         }
 
         /// <summary>
@@ -83,7 +140,7 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var frequencyTypeRepository = new FrequencyTypeRepository(context);
-            var expFrequencyTypes = context.FrequencyTypes.Take(1).ToList();
+            var expFrequencyTypes = UnitTestHelper.FrequencyTypes.Take(1).ToList();
 
             // act
             var actFrequencyTypes = await frequencyTypeRepository.FindAsync(x => x.Value == expFrequencyTypes[0].Value);
@@ -102,7 +159,7 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var frequencyTypeRepository = new FrequencyTypeRepository(context);
-            var expFrequencyTypes = context.FrequencyTypes.ToList();
+            var expFrequencyTypes = UnitTestHelper.FrequencyTypes;
 
             // act
             var actFrequencyTypes = await frequencyTypeRepository.GetAllAsync();
@@ -121,7 +178,7 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var frequencyTypeRepository = new FrequencyTypeRepository(context);
-            var expFrequencyType = context.FrequencyTypes.First();
+            var expFrequencyType = UnitTestHelper.FrequencyTypes[0];
 
             // act
             var actFrequencyType = await frequencyTypeRepository.GetByIdAsync(expFrequencyType.Id);
@@ -139,8 +196,8 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var frequencyTypeRepository = new FrequencyTypeRepository(context);
-            var frequencyType = context.FrequencyTypes.First();
-            int expectedCount = context.FrequencyTypes.Count() - 1;
+            var frequencyType = UnitTestHelper.FrequencyTypes[0];
+            int expectedCount = UnitTestHelper.FrequencyTypes.Count - 1;
 
             // act
             frequencyTypeRepository.Remove(frequencyType);
@@ -159,7 +216,7 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var frequencyTypeRepository = new FrequencyTypeRepository(context);
-            var frequencyTypes = context.FrequencyTypes.ToList();
+            var frequencyTypes = UnitTestHelper.FrequencyTypes;
 
             // act
             frequencyTypeRepository.RemoveRange(frequencyTypes);
@@ -179,19 +236,39 @@ namespace Pomodoro.Tests.DataAccessTests
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
             var frequencyTypeRepository = new FrequencyTypeRepository(context);
-            var expFrequency = new FrequencyType
-            {
-                Id = new Guid(7, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
-                Value = FrequencyValue.Year,
-            };
+            var expFrequencyType = UnitTestHelper.FrequencyTypes[0];
+            expFrequencyType.Value = (FrequencyValue)7;
 
             // act
-            frequencyTypeRepository.Update(expFrequency);
+            frequencyTypeRepository.Update(expFrequencyType);
             context.SaveChanges();
-            var actFrequencyType = await frequencyTypeRepository.GetByIdAsync(expFrequency.Id);
+            var actFrequencyType = await frequencyTypeRepository.GetByIdAsync(expFrequencyType.Id);
 
             // assert
-            Assert.Equal(expFrequency, actFrequencyType, new FrequencyTypeComparer());
+            Assert.Equal(expFrequencyType, actFrequencyType, new FrequencyTypeComparer());
+        }
+
+        /// <summary>
+        /// Doesn`t update frequency type because frequency value already exist.
+        /// </summary>
+        [Fact]
+        public void Update_ThrowsDbUpdateException_FrequencyValueAlreadyExist()
+        {
+            // arrange
+            using var context = new AppDbContext(UnitTestHelper.DbOptions);
+            var frequencyTypeRepository = new FrequencyTypeRepository(context);
+            var expFrequencyType = UnitTestHelper.FrequencyTypes[0];
+            expFrequencyType.Value = FrequencyValue.Year;
+
+            // act
+            var act = () =>
+            {
+                frequencyTypeRepository.Update(expFrequencyType);
+                context.SaveChanges();
+            };
+
+            // assert
+            Assert.Throws<DbUpdateException>(act);
         }
     }
 }
