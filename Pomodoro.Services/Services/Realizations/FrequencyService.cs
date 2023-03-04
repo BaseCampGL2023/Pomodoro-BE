@@ -2,15 +2,9 @@
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.Core.Models.Frequency;
 using Pomodoro.DataAccess.Entities;
-using Pomodoro.DataAccess.Enums;
 using Pomodoro.DataAccess.Repositories.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Pomodoro.Services.Services
+namespace Pomodoro.Services.Services.Realizations
 {
     public class FrequencyService : IFrequencyService
     {
@@ -27,10 +21,22 @@ namespace Pomodoro.Services.Services
             this.freqRepo = freqRepo;
         }
 
+        public async Task<Guid> GetFrequencyId(FrequencyModel freqModel)
+        {
+            Guid freqId = await FindFrequencyId(freqModel);
+
+            if (freqId == Guid.Empty)
+            {
+                freqId = await AddFrequencyAsync(freqModel);
+            }
+
+            return freqId;
+        }
+
         public async Task<Guid> FindFrequencyTypeId(FrequencyModel freq)
         {
-            var freqTypeData = await this.freqTypeRepo.FindAsync(x =>
-                x.Value == (FrequencyValue)Enum.Parse(typeof(FrequencyValue), freq.FrequencyTypeValue)
+            var freqTypeData = await freqTypeRepo.FindAsync(x =>
+                x.Value == freq.FrequencyTypeValue
             );
 
             return freqTypeData.FirstOrDefault().Id;
@@ -38,9 +44,9 @@ namespace Pomodoro.Services.Services
 
         public async Task<Guid> FindFrequencyId(FrequencyModel freq)
         {
-            Guid freqTypeId = await this.FindFrequencyTypeId(freq);
+            Guid freqTypeId = await FindFrequencyTypeId(freq);
 
-            var freqData = await this.freqRepo.FindAsync(
+            var freqData = await freqRepo.FindAsync(
                 f => f.FrequencyTypeId == freqTypeId
                 && f.IsCustom == freq.IsCustom && f.Every == freq.Every
             );
@@ -48,39 +54,37 @@ namespace Pomodoro.Services.Services
             if (freqData.Count() == 0)
             {
                 return Guid.Empty;
-            } 
-            return freqData.FirstOrDefault().Id;
+            }
+            return freqData.FirstOrDefault() == null ? Guid.Empty : freqData.FirstOrDefault().Id;
 
 
         }
 
         public async Task<IEnumerable<FrequencyModel>> FindAllFrequenciesAsync(FrequencyModel freq)
         {
-            var freqId = await this.FindFrequencyTypeId(freq);
-            var result = await this.freqRepo.FindAsync(
+            var freqId = await FindFrequencyTypeId(freq);
+            var result = await freqRepo.FindAsync(
                 f => f.FrequencyTypeId == freqId &&
                 f.Every == freq.Every && f.IsCustom == freq.IsCustom
             );
 
-            return this.mapper.Map<IEnumerable<Frequency>, IEnumerable<FrequencyModel>>(result);
+            return mapper.Map<IEnumerable<Frequency>, IEnumerable<FrequencyModel>>(result);
         }
 
         public async Task<Guid> AddFrequencyAsync(FrequencyModel freq)
         {
-            Guid freqTypeId = await this.FindFrequencyTypeId(freq);
+            Guid freqTypeId = await FindFrequencyTypeId(freq);
 
-            Frequency newFreq = new Frequency();
-            newFreq.Every = freq.Every;
-            newFreq.IsCustom = freq.IsCustom;
+            Frequency newFreq = mapper.Map<FrequencyModel, Frequency>(freq);
 
             if (freqTypeId != Guid.Empty)
             {
                 newFreq.FrequencyTypeId = freqTypeId;
             }
 
-            Guid insertedFreqId = await this.freqRepo.AddFrequencyAsync(newFreq);
-            await this.freqRepo.SaveChangesAsync();
-            return insertedFreqId;
-        } 
+            await freqRepo.AddAsync(newFreq);
+            await freqRepo.SaveChangesAsync();
+            return newFreq.Id;
+        }
     }
 }

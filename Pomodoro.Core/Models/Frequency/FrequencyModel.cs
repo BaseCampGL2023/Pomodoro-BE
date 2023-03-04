@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pomodoro.Core.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace Pomodoro.Core.Models.Frequency
 {
     public class FrequencyModel
     {
-        public string FrequencyTypeValue { get; set; } = "None";
+        public FrequencyValue FrequencyTypeValue { get; set; } = FrequencyValue.None;
         public bool IsCustom { get; set; }
         public short Every { get; set; }
     }

@@ -2,7 +2,7 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
-namespace Pomodoro.DataAccess.Enums
+namespace Pomodoro.Core.Enums
 {
     public enum FrequencyValue
     {

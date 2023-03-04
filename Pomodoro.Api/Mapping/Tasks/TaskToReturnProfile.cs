@@ -3,9 +3,10 @@
 // </copyright>
 
 using AutoMapper;
-using Pomodoro.Api.ViewModels.Tasks;
 using Pomodoro.Core.Models.Tasks;
+using Pomodoro.Core.Enums;
 using Pomodoro.DataAccess.Entities;
+using Pomodoro.Core.Models.Frequency;
 
 namespace Pomodoro.Api.Mapping.Tasks
 {
@@ -22,10 +23,11 @@ namespace Pomodoro.Api.Mapping.Tasks
         {
             this.CreateMap<TaskEntity, TaskModel>()
                 .ForMember(t => t.TaskId, o => o.MapFrom(s => s.Id))
-                .ForMember(t => t.Frequency, o => o.MapFrom(s => s.Frequency.FrequencyType.Value))
-                .ForMember(t => t.Every, o => o.MapFrom(s => s.Frequency.Every))
-                .ForMember(t => t.Custom, o => o.MapFrom(s => s.Frequency.IsCustom));
-            this.CreateMap<TaskModel, TaskToReturnModel>();
+                .ForPath(f => f.FrequencyData.FrequencyTypeValue, o => o.MapFrom(s => s.Frequency.FrequencyType.Value))
+                .ForPath(f => f.FrequencyData.IsCustom, o => o.MapFrom(s => s.Frequency.IsCustom))
+                .ForPath(f => f.FrequencyData.Every, o => o.MapFrom(s => s.Frequency.Every));
+            this.CreateMap<TaskModel, TaskEntity>()
+                .ForMember(t => t.Id, o => o.MapFrom(s => s.TaskId));
         }
     }
 }
