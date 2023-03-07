@@ -3,6 +3,8 @@
 // </copyright>
 
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Pomodoro.Api.Services;
 using Pomodoro.Api.ViewModels.Auth;
 using Swashbuckle.AspNetCore.Annotations;
@@ -16,15 +18,22 @@ namespace Pomodoro.Api.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
+        private const string ReturnUrlQueryParam = "returnUrl";
+        private const string ExternalLoginResponseKey = "ExternalLoginResponse";
+        private const string JwtSettingsAudienceKey = "JwtSettings:Audience";
+
         private readonly AuthService authService;
+        private readonly IConfiguration configuration;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AccountController"/> class.
         /// </summary>
         /// <param name="authService">Create Jwt, perform registration and login operations <see cref="AuthService"/>.</param>
-        public AccountController(AuthService authService)
+        /// <param name="configuration">Provides access to configuration settings.</param>
+        public AccountController(AuthService authService, IConfiguration configuration)
         {
             this.authService = authService;
+            this.configuration = configuration;
         }
 
         /// <summary>
@@ -87,5 +96,67 @@ namespace Pomodoro.Api.Controllers
 
             return this.Unauthorized(result);
         }
+
+        /// <summary>
+        /// Endpoint for calling an external login service.
+        /// </summary>
+        /// <param name="provider">Provider for external authentication.</param>
+        /// <param name="returnUrl">URL of the frontend resource that should be opened after successful login.</param>
+        /// <returns>A <see cref="ChallengeResult"/> with the specified authentication scheme and properties.</returns>
+        [HttpGet("external-login")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerResponse(200, "External login service was successfully called.")]
+        [SwaggerResponse(400, "Invalid data")]
+        [SwaggerResponse(500, "Something went wrong")]
+        public IActionResult ExternalLogin(string provider, string returnUrl)
+        {
+            var actionUrl = this.Url.Action(nameof(this.ExternalLoginCallback));
+            var queryString = ExternalLoginQueryString(returnUrl);
+
+            var properties = this.authService.GetExternalAuthProperties(
+                provider, actionUrl!, queryString);
+
+            return this.Challenge(properties, provider);
+        }
+
+        /// <summary>
+        /// Callback endpoint to complete an external login.
+        /// </summary>
+        /// <param name="returnUrl">URL of the frontend resource that should be opened after successful login.</param>
+        /// <returns>A <see cref="RedirectResult"/> object that redirects to the specified <paramref name="returnUrl"/>.</returns>
+        [HttpGet("external-login-callback")]
+        [ProducesResponseType(StatusCodes.Status302Found)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerResponse(302, "Authentication was successful.")]
+        [SwaggerResponse(400, "Invalid data")]
+        [SwaggerResponse(500, "Something went wrong")]
+        public async Task<IActionResult> ExternalLoginCallback(string returnUrl)
+        {
+            var result = await this.authService.LoginViaExternalService();
+            var options = new CookieOptions()
+            {
+                Expires = DateTime.UtcNow.AddMinutes(5),
+            };
+
+            this.Response.Cookies.Append(
+                ExternalLoginResponseKey,
+                JsonConvert.SerializeObject(result, new JsonSerializerSettings
+                {
+                    ContractResolver = new DefaultContractResolver
+                    {
+                        NamingStrategy = new CamelCaseNamingStrategy(),
+                    },
+                    Formatting = Formatting.Indented,
+                }), options);
+
+            return this.Redirect($"{this.configuration[JwtSettingsAudienceKey]}?" +
+                ExternalLoginQueryString(returnUrl));
+        }
+
+        private static string ExternalLoginQueryString(string returnUrl)
+         => $"{ReturnUrlQueryParam}={returnUrl}";
     }
 }
