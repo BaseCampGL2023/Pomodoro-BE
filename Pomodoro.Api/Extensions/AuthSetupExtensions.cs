@@ -3,6 +3,7 @@
 // </copyright>
 
 using System.Text;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -12,7 +13,7 @@ using Pomodoro.DataAccess.Entities;
 namespace Pomodoro.Api.Extensions
 {
     /// <summary>
-    /// Setup Identity store and password settings.
+    /// Setup authentication middleware.
     /// </summary>
     public static class AuthSetupExtensions
     {
@@ -31,7 +32,8 @@ namespace Pomodoro.Api.Extensions
                 options.Password.RequireUppercase = true;
                 options.Password.RequireNonAlphanumeric = true;
                 options.Password.RequiredLength = 8;
-            }).AddEntityFrameworkStores<AppDbContext>();
+            }).AddEntityFrameworkStores<AppDbContext>()
+            .AddSignInManager();
 
             return services;
         }
@@ -41,10 +43,10 @@ namespace Pomodoro.Api.Extensions
         /// </summary>
         /// <param name="services">Collection of service descriptors <see cref="IServiceCollection"/>.</param>
         /// <param name="config">Mutable configuration object <see cref="ConfigurationManager"/>.</param>
-        /// <returns>Collection of service descriptors.</returns>
-        public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, ConfigurationManager config)
+        /// <returns>A <see cref="AuthenticationBuilder"/> that can be used to further configure authentication.</returns>
+        public static AuthenticationBuilder AddJwtAuthentication(this IServiceCollection services, ConfigurationManager config)
         {
-            services.AddAuthentication(options =>
+            return services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -63,8 +65,40 @@ namespace Pomodoro.Api.Extensions
                         config["JwtSettings:SecurityKey"])),
                 };
             });
+        }
 
-            return services;
+        /// <summary>
+        /// Add Google authentication scheme with configuration settings.
+        /// </summary>
+        /// <param name="authenticationBuilder"><see cref="AuthenticationBuilder"/> to configure authentication.</param>
+        /// <param name="config">Mutable configuration object <see cref="ConfigurationManager"/>.</param>
+        /// <returns>A <see cref="AuthenticationBuilder"/> that can be used to further configure authentication.</returns>
+        public static AuthenticationBuilder AddGoogleAuthentication(
+            this AuthenticationBuilder authenticationBuilder, ConfigurationManager config)
+        {
+            return authenticationBuilder.AddGoogle(options =>
+            {
+                options.ClientId = config["GoogleSecrets:ClientId"];
+                options.ClientSecret = config["GoogleSecrets:ClientSecret"];
+                options.SignInScheme = IdentityConstants.ExternalScheme;
+
+                options.Scope.Add("email");
+            });
+        }
+
+        /// <summary>
+        /// Configure Cookie Policy needed for external authentication.
+        /// </summary>
+        /// <param name="services">Collection of service descriptors <see cref="IServiceCollection"/>.</param>
+        /// <returns>Collection of service descriptors.</returns>
+        public static IServiceCollection AddCookiesForExternalAuth(this IServiceCollection services)
+        {
+            return services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
+            });
         }
     }
 }
