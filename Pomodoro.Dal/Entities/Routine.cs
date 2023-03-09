@@ -1,4 +1,4 @@
-﻿// <copyright file="Task.cs" company="PomodoroGroup_GL_BaseCamp">
+﻿// <copyright file="Routine.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
@@ -8,42 +8,47 @@ using Pomodoro.Dal.Entities.Base;
 namespace Pomodoro.Dal.Entities
 {
     /// <summary>
-    /// Describes user task.
+    /// Describes user routine.
     /// </summary>
-    public class Task : BaseEntity
+    public class Routine : BaseEntity
     {
         /// <summary>
-        /// Gets or sets task title.
+        /// Gets or sets pattern of frequency of task execution.
+        /// </summary>
+        public long Template { get; set; }
+
+        /// <summary>
+        /// Gets or sets routine title.
         /// </summary>
         [Required]
         [StringLength(100)]
         public string Title { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets task description, optional.
+        /// Gets or sets routine description, optional.
         /// </summary>
         [StringLength(1000)]
         public string? Description { get; set; }
 
         /// <summary>
-        /// Gets or sets DateTime when task created.
+        /// Gets or sets DateTime when routine created.
         /// </summary>
-        public DateTime CreatedDt { get; set; }
+        public DateTime CreatedAt { get; set; }
+
+        /// <summary>
+        /// Gets or sets DateTime when routine finished.
+        /// </summary>
+        public DateTime FinishAt { get; set; }
+
+        /// <summary>
+        /// Gets or sets planned duration of the routine round.
+        /// </summary>
+        public TimeSpan AllocatedDuration { get; set; }
 
         /// <summary>
         /// Gets or sets planned start time.
         /// </summary>
         public DateTime? StartTime { get; set; }
-
-        /// <summary>
-        /// Gets or sets DateTime when task performing completed.
-        /// </summary>
-        public DateTime? FinishDt { get; set; } = null;
-
-        /// <summary>
-        /// Gets or sets planned duration of the task.
-        /// </summary>
-        public TimeSpan? AllocatedDuration { get; set; }
 
         /// <summary>
         /// Gets or sets foreign key to AppUser entity.
@@ -56,8 +61,8 @@ namespace Pomodoro.Dal.Entities
         public AppUser? AppUser { get; set; }
 
         /// <summary>
-        /// Gets or sets collection of task attempts.
+        /// Gets or sets collection of routine attempts.
         /// </summary>
-        public ICollection<TaskAttempt>? Attempts { get; set; }
+        public ICollection<RoutineAttempt>? Attempts { get; set; }
     }
 }
