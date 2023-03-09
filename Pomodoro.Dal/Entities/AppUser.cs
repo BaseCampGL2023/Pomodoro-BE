@@ -30,5 +30,20 @@ namespace Pomodoro.Dal.Entities
         /// Gets or sets navigation property represents user in authentication system.
         /// </summary>
         public AppIdentityUser? AppIdentityUser { get; set; }
+
+        /// <summary>
+        /// Gets or sets collection of user timer settings.
+        /// </summary>
+        public ICollection<TimerSettings>? TimerSettings { get; set; }
+
+        /// <summary>
+        /// Gets or sets collection of user scheduled tasks.
+        /// </summary>
+        public ICollection<Routine>? Routins { get; set; }
+
+        /// <summary>
+        /// Gets or sets collection of user tasks.
+        /// </summary>
+        public ICollection<Task>? Tasks { get; set; }
     }
 }
