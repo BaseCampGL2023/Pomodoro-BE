@@ -24,7 +24,7 @@ namespace Pomodoro.Dal.Entities
         /// <summary>
         /// Gets or sets IdentityUser foreign key.
         /// </summary>
-        public Guid IdentityUserId { get; set; }
+        public Guid AppIdentityUserId { get; set; }
 
         /// <summary>
         /// Gets or sets navigation property represents user in authentication system.

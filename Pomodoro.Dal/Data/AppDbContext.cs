@@ -51,5 +51,25 @@ namespace Pomodoro.Dal.Data
         /// Gets a DbSet that can be used to query and save RoutineAttempt instances.
         /// </summary>
         public DbSet<RoutineAttempt> RoutineAttempts => this.Set<RoutineAttempt>();
+
+        /// <summary>
+        /// Configure entities mapping and relations.
+        /// </summary>
+        /// <param name="builder">Provides API for configuring <see cref="ModelBuilder"/>.</param>
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<AppUser>(entity =>
+            {
+                entity.HasIndex(e => e.AppIdentityUserId, "IX_Users_AspNetUserId")
+                .IsUnique();
+
+                entity.HasOne(d => d.AppIdentityUser)
+                .WithOne(p => p.AppUser)
+                .HasForeignKey<AppUser>(e => e.AppIdentityUserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            });
+        }
     }
 }
