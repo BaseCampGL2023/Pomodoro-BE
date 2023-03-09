@@ -83,5 +83,14 @@ namespace Pomodoro.Services.Services.Realizations
             await tasksRepo.SaveChangesAsync();
             return task;
         }
+
+        public async Task<IEnumerable<TaskModel>> GetAllTasksByDate(DateTime startDate, DateTime endDate)
+        {
+            IEnumerable<TaskEntity> data = endDate == DateTime.MinValue ?
+                await tasksRepo.FindAllAsync(x => x.InitialDate >= startDate) :
+                await tasksRepo.FindAllAsync(x => x.InitialDate >= startDate && x.InitialDate <= endDate);
+            var result = mapper.Map<IEnumerable<TaskEntity>, IEnumerable<TaskModel>>(data);
+            return result;
+        }
     }
 }

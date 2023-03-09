@@ -1,4 +1,4 @@
-﻿// <copyright file="FrequencyModel.cs" company="PomodoroGroup_GL_BaseCamp">
+﻿// <copyright file="FrequencyViewModel.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 using Pomodoro.Core.Enums;
@@ -8,9 +8,9 @@ namespace Pomodoro.Core.Models.Frequency
 {
     /// <summary>
     /// Represents a view model for Frequency information.
-    /// Used for the <see cref="TaskModel"/>.
+    /// Used for the <see cref="TaskViewModel"/>.
     /// </summary>
-    public class FrequencyModel
+    public class FrequencyViewModel
     {
         /// <summary>
         /// Gets or sets a type of frequency that is used by user in this task.

@@ -28,6 +28,8 @@ namespace Pomodoro.Api.Mapping.Tasks
                 .ForPath(f => f.FrequencyData.Every, o => o.MapFrom(s => s.Frequency.Every));
             this.CreateMap<TaskModel, TaskEntity>()
                 .ForMember(t => t.Id, o => o.MapFrom(s => s.TaskId));
+            this.CreateMap<TaskViewModel, TaskModel>();
+            this.CreateMap<TaskModel, TaskViewModel>();
         }
     }
 }

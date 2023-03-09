@@ -15,5 +15,6 @@ namespace Pomodoro.Core.Interfaces.IServices
         public Task<TaskModel> DeleteTask(TaskModel task);
         public Task<TaskModel> UpdateTask(TaskModel task);
         public Task<IEnumerable<TaskModel>> GetAllTasksAsyncTest();
+        public Task<IEnumerable<TaskModel>> GetAllTasksByDate(DateTime startDate, DateTime endDate);
     }
 }
