@@ -1,4 +1,4 @@
-﻿// <copyright file="TaskAttempt.cs" company="PomodoroGroup_GL_BaseCamp">
+﻿// <copyright file="AppTaskAttempt.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
@@ -10,7 +10,7 @@ namespace Pomodoro.Dal.Entities
     /// <summary>
     /// Describes task performance round.
     /// </summary>
-    public class TaskAttempt : BaseEntity
+    public class AppTaskAttempt : BaseEntity
     {
         /// <summary>
         /// Gets or sets DateTime when task performing started.
@@ -29,13 +29,13 @@ namespace Pomodoro.Dal.Entities
         public string? Comment { get; set; }
 
         /// <summary>
-        /// Gets or sets foreign key to Task entity.
+        /// Gets or sets foreign key to AppTask entity.
         /// </summary>
         public Guid TaskId { get; set; }
 
         /// <summary>
-        /// Gets or sets navigation property represents Task.
+        /// Gets or sets navigation property represents AppTask.
         /// </summary>
-        public Task? Task { get; set; }
+        public AppTask? Task { get; set; }
     }
 }

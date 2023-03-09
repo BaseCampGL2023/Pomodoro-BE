@@ -1,4 +1,4 @@
-﻿// <copyright file="Task.cs" company="PomodoroGroup_GL_BaseCamp">
+﻿// <copyright file="AppTask.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
@@ -10,7 +10,7 @@ namespace Pomodoro.Dal.Entities
     /// <summary>
     /// Describes user task.
     /// </summary>
-    public class Task : BaseEntity
+    public class AppTask : BaseEntity
     {
         /// <summary>
         /// Gets or sets task title.
@@ -58,6 +58,6 @@ namespace Pomodoro.Dal.Entities
         /// <summary>
         /// Gets or sets collection of task attempts.
         /// </summary>
-        public ICollection<TaskAttempt>? Attempts { get; set; }
+        public ICollection<AppTaskAttempt>? Attempts { get; set; }
     }
 }

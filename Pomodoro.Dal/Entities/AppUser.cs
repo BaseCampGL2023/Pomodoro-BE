@@ -44,6 +44,6 @@ namespace Pomodoro.Dal.Entities
         /// <summary>
         /// Gets or sets collection of user tasks.
         /// </summary>
-        public ICollection<Task>? Tasks { get; set; }
+        public ICollection<AppTask>? Tasks { get; set; }
     }
 }
