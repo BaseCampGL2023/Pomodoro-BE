@@ -2,7 +2,6 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
-using System.ComponentModel.DataAnnotations;
 using Pomodoro.Dal.Entities.Base;
 
 namespace Pomodoro.Dal.Entities
@@ -15,14 +14,11 @@ namespace Pomodoro.Dal.Entities
         /// <summary>
         /// Gets or sets task title.
         /// </summary>
-        [Required]
-        [StringLength(100)]
         public string Title { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets task description, optional.
         /// </summary>
-        [StringLength(1000)]
         public string? Description { get; set; }
 
         /// <summary>

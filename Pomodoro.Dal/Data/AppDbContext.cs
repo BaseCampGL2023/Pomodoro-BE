@@ -62,6 +62,9 @@ namespace Pomodoro.Dal.Data
 
             builder.Entity<AppUser>(entity =>
             {
+                entity.Property(e => e.Name).IsRequired()
+                    .HasMaxLength(50);
+
                 entity.HasIndex(e => e.AppIdentityUserId, "IX_Users_AspNetUserId")
                 .IsUnique();
 
@@ -69,7 +72,94 @@ namespace Pomodoro.Dal.Data
                 .WithOne(p => p.AppUser)
                 .HasForeignKey<AppUser>(e => e.AppIdentityUserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasMany(e => e.TimerSettings)
+                    .WithOne(d => d.AppUser)
+                    .HasForeignKey(d => d.AppUserId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_TimerSettings_AppUser_AppUserId");
+
+                entity.HasMany(e => e.Routins)
+                    .WithOne(d => d.AppUser)
+                    .HasForeignKey(d => d.AppUserId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_Routins_AppUser_AppIserId");
+
+                entity.HasMany(e => e.Tasks)
+                    .WithOne(d => d.AppUser)
+                    .HasForeignKey(d => d.AppUserId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_AppTasks_AppUser_AppUserId");
+            });
+
+            builder.Entity<AppIdentityUser>(entity =>
+            {
+                entity.Navigation(e => e.AppUser).AutoInclude();
+            });
+
+            builder.Entity<TimerSettings>(entity =>
+            {
+                entity.Property(e => e.Pomodoro)
+                    .IsRequired().HasConversion<long>();
+
+                entity.Property(e => e.ShortBrake)
+                    .IsRequired().HasConversion<long>();
+
+                entity.Property(e => e.LongBreak)
+                    .IsRequired().HasConversion<long>();
+            });
+
+            builder.Entity<AppTask>(entity =>
+            {
+                entity.Property(e => e.Title)
+                    .IsRequired().HasMaxLength(100);
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(1000);
+
+                entity.Property(e => e.AllocatedDuration)
+                    .HasConversion<long>();
+
+                entity.HasMany(e => e.Attempts)
+                    .WithOne(d => d.Task)
+                    .HasForeignKey(d => d.TaskId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_AppTaskAttempts_AppTask_AppTaskId");
+            });
+
+            builder.Entity<AppTaskAttempt>(entity =>
+            {
+                entity.Property(e => e.Comment)
+                    .HasMaxLength(1000);
+
+                entity.Property(e => e.Duration)
+                    .IsRequired().HasConversion<long>();
+            });
+
+            builder.Entity<Routine>(entity =>
+            {
+                entity.Property(e => e.Title)
+                    .IsRequired().HasMaxLength(100);
+
+                entity.Property(e => e.Description).HasMaxLength(1000);
+
+                entity.Property(e => e.AllocatedDuration)
+                    .HasConversion<long>();
+
+                entity.HasMany(e => e.Attempts)
+                    .WithOne(d => d.Routine)
+                    .HasForeignKey(d => d.RoutineId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_RoutineAttemts_Routine_RoutineId");
+            });
+
+            builder.Entity<RoutineAttempt>(entity =>
+            {
+                entity.Property(e => e.Comment).HasMaxLength(1000);
             });
         }
+
+        // TODO: map timespan (duration) to long
+        // TODO: AppUser.Name = restrict length, required
     }
 }

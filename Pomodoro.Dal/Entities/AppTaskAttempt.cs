@@ -2,7 +2,6 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
-using System.ComponentModel.DataAnnotations;
 using Pomodoro.Dal.Entities.Base;
 
 namespace Pomodoro.Dal.Entities
@@ -25,7 +24,6 @@ namespace Pomodoro.Dal.Entities
         /// <summary>
         /// Gets or sets optional comment.
         /// </summary>
-        [StringLength(1000)]
         public string? Comment { get; set; }
 
         /// <summary>
