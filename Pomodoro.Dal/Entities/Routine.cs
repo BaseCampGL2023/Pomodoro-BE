@@ -38,12 +38,12 @@ namespace Pomodoro.Dal.Entities
         /// <summary>
         /// Gets or sets DateTime when routine finished.
         /// </summary>
-        public DateTime FinishAt { get; set; }
+        public DateTime? FinishAt { get; set; }
 
         /// <summary>
         /// Gets or sets planned duration of the routine round.
         /// </summary>
-        public TimeSpan AllocatedDuration { get; set; }
+        public TimeSpan? AllocatedDuration { get; set; }
 
         /// <summary>
         /// Gets or sets planned start time.
