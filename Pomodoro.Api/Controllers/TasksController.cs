@@ -90,7 +90,7 @@ namespace Pomodoro.Api.Controllers
         [SwaggerResponse(500, "Something went wrong")]
         public async Task<ActionResult<IReadOnlyList<TaskViewModel>>> GetTasksByDate(DateTime startDate, DateTime endDate)
         {
-            var tasks = await this.tasksService.GetAllTasksByDate(startDate, endDate);
+            var tasks = await this.tasksService.GetAllTasksByDate(this.UserId, startDate, endDate);
             return this.Ok(this.mapper.Map<IReadOnlyList<TaskViewModel>>(tasks));
         }
 
