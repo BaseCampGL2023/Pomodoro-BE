@@ -9,7 +9,7 @@ namespace Pomodoro.Dal.Entities
     /// <summary>
     /// Describes user routine.
     /// </summary>
-    public class Routine : BaseEntity
+    public class Routine : BaseEntity, IOwnedByEntity
     {
         /// <summary>
         /// Gets or sets pattern of frequency of task execution.

@@ -9,7 +9,7 @@ namespace Pomodoro.Dal.Entities
     /// <summary>
     /// Represent pomodoro timer settings.
     /// </summary>
-    public class TimerSettings : BaseEntity
+    public class TimerSettings : BaseEntity, IOwnedByEntity
     {
         /// <summary>
         /// Gets or sets duration of working period.

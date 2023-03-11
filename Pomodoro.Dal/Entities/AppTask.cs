@@ -9,7 +9,7 @@ namespace Pomodoro.Dal.Entities
     /// <summary>
     /// Describes user task.
     /// </summary>
-    public class AppTask : BaseEntity
+    public class AppTask : BaseEntity, IOwnedByEntity
     {
         /// <summary>
         /// Gets or sets task title.
