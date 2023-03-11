@@ -94,7 +94,7 @@ namespace Pomodoro.Dal.Repositories.Base
         /// Retrieve all entites from database without adding them to ChangeTracker.
         /// </summary>
         /// <returns>IEnumerable collection of objects.</returns>
-        Task<IEnumerable<T>> GetAllIgnoreQueryFilters();
+        Task<IEnumerable<T>> GetAllAsNoTracking();
 
         /// <summary>
         /// Retrieve collection of entities that satisfying predicate.

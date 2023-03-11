@@ -110,8 +110,8 @@ namespace Pomodoro.Dal.Repositories.Base
             => await this.Table.ToListAsync();
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<T>> GetAllIgnoreQueryFilters()
-            => await this.Table.IgnoreQueryFilters().ToListAsync();
+        public async Task<IEnumerable<T>> GetAllAsNoTracking()
+            => await this.Table.AsNoTracking().ToListAsync();
 
         /// <inheritdoc/>
         public async Task<T?> GetByIdAsync(int id)
