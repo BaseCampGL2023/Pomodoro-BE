@@ -99,6 +99,8 @@ namespace Pomodoro.Dal.Data
 
             builder.Entity<TimerSettings>(entity =>
             {
+                entity.HasQueryFilter(e => e.IsActive == true);
+
                 entity.Property(e => e.Pomodoro)
                     .IsRequired().HasConversion<long>();
 
@@ -158,8 +160,5 @@ namespace Pomodoro.Dal.Data
                 entity.Property(e => e.Comment).HasMaxLength(1000);
             });
         }
-
-        // TODO: map timespan (duration) to long
-        // TODO: AppUser.Name = restrict length, required
     }
 }
