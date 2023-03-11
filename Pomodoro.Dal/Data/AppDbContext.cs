@@ -99,7 +99,15 @@ namespace Pomodoro.Dal.Data
 
             builder.Entity<TimerSettings>(entity =>
             {
+                entity.ToTable(MigrationHelpers.TimerSettingsTableName, "dbo");
+
                 entity.HasQueryFilter(e => e.IsActive == true);
+
+                entity.Property(e => e.IsActive)
+                    .HasColumnName(MigrationHelpers.TimerSettingsIsActiveAttribute);
+
+                entity.Property(e => e.AppUserId)
+                    .HasColumnName(MigrationHelpers.TimerSettingsUserIdAttribute);
 
                 entity.Property(e => e.Pomodoro)
                     .IsRequired().HasConversion<long>();

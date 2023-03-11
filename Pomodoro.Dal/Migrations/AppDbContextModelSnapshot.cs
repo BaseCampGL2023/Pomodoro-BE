@@ -383,10 +383,12 @@ namespace Pomodoro.Dal.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AppUserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("AppUserId");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnName("IsActive");
 
                     b.Property<bool>("IsAutoStart")
                         .HasColumnType("bit");
@@ -407,7 +409,7 @@ namespace Pomodoro.Dal.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.ToTable("TimerSettings");
+                    b.ToTable("TimerSettings", "dbo");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
