@@ -36,4 +36,8 @@
 		<InternalsVisibleTo Include="Pomodoro.Tests" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Pomodoro.Dal\Pomodoro.Dal.csproj" />
+	</ItemGroup>
+
 </Project>

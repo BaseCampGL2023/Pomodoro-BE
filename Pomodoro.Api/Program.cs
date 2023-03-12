@@ -3,6 +3,9 @@
 // </copyright>
 
 using Microsoft.OpenApi.Models;
+using Pomodoro.Api.Extensions;
+using Pomodoro.Api.Services;
+using Pomodoro.Dal.Extensions;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
@@ -12,6 +15,17 @@ var pomodoroSpecificOrigins = "_pomodoroSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services
+    .AddAppDbContext(builder.Configuration.GetConnectionString("LocalDB"));
+
+builder.Services.AddRepositories();
+
+builder.Services.AddIdentityEF();
+
+builder.Services.AddScoped<AuthService>();
+
+builder.Services.AddJwtAuthentication(builder.Configuration);
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
