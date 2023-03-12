@@ -52,6 +52,6 @@ namespace Pomodoro.Services
             return settings.Select(e => TimerSettingsModel.Create(e)).ToList();
         }
 
-        // TODO: add triger in DB for update.
+        // TODO: add triger in DB for update or maybe no?
     }
 }
