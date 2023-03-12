@@ -1,5 +1,5 @@
-﻿// <copyright file="ScheduleType.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+﻿// <copyright file="ScheduleType.cs" company="PomodoroGroup_GL_BaseCamp">
+// Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
 namespace Pomodoro.Services.Enums
@@ -20,38 +20,38 @@ namespace Pomodoro.Services.Enums
         WeekEnd = 1,
 
         /// <summary>
-        /// Every N days.
+        /// Defines a specific date of the year
         /// </summary>
-        EveryNDay = 2,
+        AnnualOnDate = 2,
 
         /// <summary>
         /// Template to select specific days of the week.
         /// </summary>
-        WeekTemplate = 3,
+        WeekTemplate = 4,
 
         /// <summary>
-        /// Template to select specific days of the month (dates 0..28).
+        /// Template to select specific days of the month (dates 0..31).
         /// </summary>
-        MonthTemplate = 4,
+        MonthTemplate = 5,
 
         /// <summary>
         /// Template to select specific days counting from the first day of the month.
         /// </summary>
-        MonthDayForward = 5,
+        MonthDayForwardTemplate = 7,
 
         /// <summary>
         /// Template to select specific days counting from the last day of the month.
         /// </summary>
-        MonthDayBackward = 6,
+        MonthDayBackwardTemplate = 8,
 
         /// <summary>
-        /// Defines a specific date of the year
+        /// Every N days.
         /// </summary>
-        AnnualOnDate = 7,
+        EveryNDay = 11,
 
         /// <summary>
         /// Defines a certain sequence of days in an interval of a specified duration.
         /// </summary>
-        Sequence = 8,
+        Sequence = 12,
     }
 }
