@@ -57,18 +57,17 @@ namespace Pomodoro.Services.Models
         /// <summary>
         /// Map from model to Dal entity.
         /// </summary>
-        /// <param name="model">Instance of TimerSettingsModel class <see cref="TimerSettingsModel"/>.</param>
         /// <param name="userId">Owner id.</param>
         /// <returns>Dal entity.</returns>
-        public static TimerSettings ToDalEntity(TimerSettingsModel model, Guid userId)
+        public TimerSettings ToDalEntity(Guid userId)
         {
             return new TimerSettings
             {
-                Pomodoro = TimeSpan.FromSeconds(model.Pomodoro),
-                ShortBrake = TimeSpan.FromSeconds(model.ShortBrake),
-                LongBreak = TimeSpan.FromSeconds(model.LongBrake),
-                IsAutoStart = model.IsAutoStart,
-                IsActive = model.IsActive,
+                Pomodoro = TimeSpan.FromSeconds(this.Pomodoro),
+                ShortBrake = TimeSpan.FromSeconds(this.ShortBrake),
+                LongBreak = TimeSpan.FromSeconds(this.LongBrake),
+                IsAutoStart = this.IsAutoStart,
+                IsActive = this.IsActive,
                 AppUserId = userId,
             };
         }
