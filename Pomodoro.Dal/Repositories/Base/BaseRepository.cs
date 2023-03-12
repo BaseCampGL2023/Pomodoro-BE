@@ -102,15 +102,15 @@ namespace Pomodoro.Dal.Repositories.Base
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
+        public async Task<ICollection<T>> FindAsync(Expression<Func<T, bool>> predicate)
             => await this.Table.Where(predicate).ToListAsync();
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public async Task<ICollection<T>> GetAllAsync()
             => await this.Table.ToListAsync();
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<T>> GetAllAsNoTracking()
+        public async Task<ICollection<T>> GetAllAsNoTracking()
             => await this.Table.AsNoTracking().ToListAsync();
 
         /// <inheritdoc/>

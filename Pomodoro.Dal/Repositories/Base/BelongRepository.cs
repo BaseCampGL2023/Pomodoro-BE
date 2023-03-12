@@ -31,13 +31,13 @@ namespace Pomodoro.Dal.Repositories.Base
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<T>> GetBelongingAll(Guid ownerId)
+        public async Task<ICollection<T>> GetBelongingAll(Guid ownerId)
         {
             return await this.Table.Where(e => e.AppUserId == ownerId).ToListAsync();
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<T>> GetBelongingAllAsNoTracking(Guid ownerId)
+        public async Task<ICollection<T>> GetBelongingAllAsNoTracking(Guid ownerId)
         {
             return await this.Table.Where(e => e.AppUserId == ownerId).AsNoTracking().ToListAsync();
         }

@@ -87,21 +87,21 @@ namespace Pomodoro.Dal.Repositories.Base
         /// <summary>
         /// Retrieve all entites from database.
         /// </summary>
-        /// <returns>IEnumerable collection of objects.</returns>
-        Task<IEnumerable<T>> GetAllAsync();
+        /// <returns>ICollection collection of objects.</returns>
+        Task<ICollection<T>> GetAllAsync();
 
         /// <summary>
         /// Retrieve all entites from database without adding them to ChangeTracker.
         /// </summary>
-        /// <returns>IEnumerable collection of objects.</returns>
-        Task<IEnumerable<T>> GetAllAsNoTracking();
+        /// <returns>ICollection collection of objects.</returns>
+        Task<ICollection<T>> GetAllAsNoTracking();
 
         /// <summary>
         /// Retrieve collection of entities that satisfying predicate.
         /// </summary>
         /// <param name="predicate">Expression for query filtration.</param>
-        /// <returns>IEnumerable collection of objects.</returns>
-        Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
+        /// <returns>ICollection collection of objects.</returns>
+        Task<ICollection<T>> FindAsync(Expression<Func<T, bool>> predicate);
 
         /// <summary>
         /// Check if object with this id already exist in database.

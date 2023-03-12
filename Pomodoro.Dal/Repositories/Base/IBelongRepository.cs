@@ -25,14 +25,14 @@ namespace Pomodoro.Dal.Repositories.Base
         /// Retrieve all belonging to the user entities from database.
         /// </summary>
         /// <param name="ownerId">Owner id.</param>
-        /// <returns>IEnumerable collection of objects.</returns>
-        public Task<IEnumerable<T>> GetBelongingAll(Guid ownerId);
+        /// <returns>ICollection collection of objects.</returns>
+        public Task<ICollection<T>> GetBelongingAll(Guid ownerId);
 
         /// <summary>
         /// Retrieve all belonging to the user entities from database without adding them to ChangeTracker.
         /// </summary>
         /// <param name="ownerId">Owner id.</param>
-        /// <returns>IEnumerable collection of objects.</returns>
-        public Task<IEnumerable<T>> GetBelongingAllAsNoTracking(Guid ownerId);
+        /// <returns>ICollection collection of objects.</returns>
+        public Task<ICollection<T>> GetBelongingAllAsNoTracking(Guid ownerId);
     }
 }
