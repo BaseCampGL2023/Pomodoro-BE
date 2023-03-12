@@ -54,6 +54,6 @@ namespace Pomodoro.Dal.Entities
         /// <summary>
         /// Gets or sets collection of task attempts.
         /// </summary>
-        public ICollection<AppTaskAttempt>? Attempts { get; set; }
+        public ICollection<AppTaskAttempt> Attempts { get; set; } = new List<AppTaskAttempt>();
     }
 }

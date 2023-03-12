@@ -29,16 +29,16 @@ namespace Pomodoro.Dal.Entities
         /// <summary>
         /// Gets or sets collection of user timer settings.
         /// </summary>
-        public ICollection<TimerSettings>? TimerSettings { get; set; }
+        public ICollection<TimerSettings> TimerSettings { get; set; } = new List<TimerSettings>();
 
         /// <summary>
         /// Gets or sets collection of user scheduled tasks.
         /// </summary>
-        public ICollection<Routine>? Routins { get; set; }
+        public ICollection<Routine> Routins { get; set; } = new List<Routine>();
 
         /// <summary>
         /// Gets or sets collection of user tasks.
         /// </summary>
-        public ICollection<AppTask>? Tasks { get; set; }
+        public ICollection<AppTask> Tasks { get; set; } = new List<AppTask>();
     }
 }

@@ -59,6 +59,6 @@ namespace Pomodoro.Dal.Entities
         /// <summary>
         /// Gets or sets collection of routine attempts.
         /// </summary>
-        public ICollection<RoutineAttempt>? Attempts { get; set; }
+        public ICollection<RoutineAttempt> Attempts { get; set; } = new List<RoutineAttempt>();
     }
 }
