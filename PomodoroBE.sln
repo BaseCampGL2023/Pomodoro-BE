@@ -3,19 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pomodoro.Api", "Pomodoro.Api\Pomodoro.Api.csproj", "{61A26389-E545-4D6C-BDC3-8403DB6548CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pomodoro.Api", "Pomodoro.Api\Pomodoro.Api.csproj", "{61A26389-E545-4D6C-BDC3-8403DB6548CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pomodoro.Tests", "Pomodoro.Tests\Pomodoro.Tests.csproj", "{B184E51F-FE80-49D2-B3DF-EA23CCEDFDAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pomodoro.Tests", "Pomodoro.Tests\Pomodoro.Tests.csproj", "{B184E51F-FE80-49D2-B3DF-EA23CCEDFDAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pomodoro.Dal", "Pomodoro.Dal\Pomodoro.Dal.csproj", "{45C6C0BB-431C-45D9-BEE5-40B8620CA90D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pomodoro.Dal", "Pomodoro.Dal\Pomodoro.Dal.csproj", "{45C6C0BB-431C-45D9-BEE5-40B8620CA90D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pomodoro.Services", "Pomodoro.Services\Pomodoro.Services.csproj", "{591C47F7-8EF2-4052-9D19-4A926122EF12}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{61A26389-E545-4D6C-BDC3-8403DB6548CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -30,5 +29,15 @@ Global
 		{45C6C0BB-431C-45D9-BEE5-40B8620CA90D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45C6C0BB-431C-45D9-BEE5-40B8620CA90D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45C6C0BB-431C-45D9-BEE5-40B8620CA90D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{591C47F7-8EF2-4052-9D19-4A926122EF12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{591C47F7-8EF2-4052-9D19-4A926122EF12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{591C47F7-8EF2-4052-9D19-4A926122EF12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{591C47F7-8EF2-4052-9D19-4A926122EF12}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E75508C7-52D2-40F8-9534-4958D3B2151B}
 	EndGlobalSection
 EndGlobal
