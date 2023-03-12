@@ -17,7 +17,7 @@ namespace Pomodoro.Dal.Repositories.Interfaces
         /// </summary>
         /// <param name="id">AppUser id.</param>
         /// <returns>AppUser object with related or NULL if object with this id don't exist.</returns>
-        public Task<AppUser?> GetByIdAsyncWithRelatedAsync(Guid id);
+        public Task<AppUser?> GetByIdWithRelatedAsync(Guid id);
 
         /// <summary>
         /// Get AppUser object by id with setings collection.
@@ -27,14 +27,14 @@ namespace Pomodoro.Dal.Repositories.Interfaces
         public Task<AppUser?> GetByIdWithSettingsAsync(Guid id);
 
         /// <summary>
-        /// Get AppUser object by id with user tasks collection.
+        /// Get AppUser object by id with user tasks collection (including attempts).
         /// </summary>
         /// <param name="id">AppUser id.</param>
         /// <returns>AppUser object with related or NULL if object with this id don't exist.</returns>
         public Task<AppUser?> GetByIdWithTasksAsync(Guid id);
 
         /// <summary>
-        /// Get AppUser object by id with user routines collection.
+        /// Get AppUser object by id with user routines collection (including attempts).
         /// </summary>
         /// <param name="id">AppUser id.</param>
         /// <returns>AppUser object with related or NULL if object with this id don't exist.</returns>

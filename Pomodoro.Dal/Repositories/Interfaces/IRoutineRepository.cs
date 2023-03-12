@@ -16,8 +16,7 @@ namespace Pomodoro.Dal.Repositories.Interfaces
         /// Get AppTask object by id with RoutineAttempts collection.
         /// </summary>
         /// <param name="id">AppTask id.</param>
-        /// <param name="ownerId">Owner id.</param>
         /// <returns>Queried object or null, if object with this id belonging to user doesn't exist in database.</returns>
-        Task<Routine?> GetByIdWithRelatedAsync(Guid id, Guid ownerId);
+        Task<Routine?> GetByIdWithRelatedAsync(Guid id);
     }
 }
