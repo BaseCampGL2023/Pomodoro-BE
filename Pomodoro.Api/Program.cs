@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using Pomodoro.Api.Extensions;
 using Pomodoro.Api.Services;
+using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Extensions;
+using Pomodoro.Services;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
@@ -25,6 +27,9 @@ builder.Services.AddRepositories();
 builder.Services.AddIdentityEF();
 
 builder.Services.AddScoped<AuthService>();
+
+// TODO: implement interfaces
+builder.Services.AddScoped<TimerSettingsService>();
 
 builder.Services.AddJwtAuthentication(builder.Configuration);
 
@@ -115,6 +120,7 @@ app.UseHttpsRedirection();
 
 app.UseCors(pomodoroSpecificOrigins);
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

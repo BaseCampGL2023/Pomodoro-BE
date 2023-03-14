@@ -34,6 +34,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Pomodoro.Dal\Pomodoro.Dal.csproj" />
+	  <ProjectReference Include="..\Pomodoro.Services\Pomodoro.Services.csproj" />
 	</ItemGroup>
 
 </Project>
