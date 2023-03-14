@@ -31,10 +31,11 @@ namespace Pomodoro.Services
         /// <returns>TRUE if value persist succesfully, FALSE otherwise.</returns>
         public async Task<bool> AddSettingsAsync(TimerSettingsModel model, Guid userId)
         {
-            var result = await this.repository.AddAsync(
-                model.ToDalEntity(userId), true);
+            var entity = model.ToDalEntity(userId);
+            var result = await this.repository.AddAsync(entity, true);
             if (result > 0)
             {
+                model.Id = entity.Id;
                 return true;
             }
 
@@ -52,6 +53,54 @@ namespace Pomodoro.Services
             return settings.Select(e => TimerSettingsModel.Create(e)).ToList();
         }
 
+        /// <summary>
+        /// Retrieve current user settings, or NULL if not exists.
+        /// </summary>
+        /// <param name="userId">Owner Id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<TimerSettingsModel?> GetBelongActiveAsync(Guid userId)
+        {
+            var result = await this.repository.GetCurrentTimerSettingsAsync(userId);
+            return result is null ? null : TimerSettingsModel.Create(result);
+        }
+
         // TODO: add triger in DB for update or maybe no?
+
+        /// <summary>
+        /// Return settings object by id, with owning check.
+        /// </summary>
+        /// <param name="id">Settings id.</param>
+        /// <param name="userId">Owner Id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<TimerSettingsModel?> GetBelongAsync(Guid id, Guid userId)
+        {
+            var result = await this.repository.GetByIdAsync(id);
+            if (result is null)
+            {
+                // TODO: result pattern
+                return null;
+            }
+
+            if (result.AppUserId != userId)
+            {
+                // TODO: forbid
+                return null;
+            }
+
+            return TimerSettingsModel.Create(result);
+        }
+
+        /// <summary>
+        /// Delete timer settings belonging to user from database.
+        /// </summary>
+        /// <param name="id">Settings id.</param>
+        /// <param name="userId">Owner id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<bool> DeleteOneOwnAsync(Guid id, Guid userId)
+        {
+            int result = await this.repository.DeleteOneBelongingAsync(id, userId, true);
+
+            return result > 0;
+        }
     }
 }

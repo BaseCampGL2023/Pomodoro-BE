@@ -13,6 +13,11 @@ namespace Pomodoro.Services.Models
     public class TimerSettingsModel
     {
         /// <summary>
+        /// Gets or sets settings id.
+        /// </summary>
+        public Guid Id { get; set; }
+
+        /// <summary>
         /// Gets or sets duration of working period for client.
         /// </summary>
         [Required(ErrorMessage = "Pomodoro duration value is required.")]
@@ -55,24 +60,6 @@ namespace Pomodoro.Services.Models
         public bool IsActive { get; set; }
 
         /// <summary>
-        /// Map from model to Dal entity.
-        /// </summary>
-        /// <param name="userId">Owner id.</param>
-        /// <returns>Dal entity.</returns>
-        public TimerSettings ToDalEntity(Guid userId)
-        {
-            return new TimerSettings
-            {
-                Pomodoro = TimeSpan.FromSeconds(this.Pomodoro),
-                ShortBrake = TimeSpan.FromSeconds(this.ShortBrake),
-                LongBreak = TimeSpan.FromSeconds(this.LongBrake),
-                IsAutoStart = this.IsAutoStart,
-                IsActive = this.IsActive,
-                AppUserId = userId,
-            };
-        }
-
-        /// <summary>
         /// Map from Dal entity to model object.
         /// </summary>
         /// <param name="entity">Instance of TimerSettings <see cref="TimerSettings"/>.</param>
@@ -81,12 +68,32 @@ namespace Pomodoro.Services.Models
         {
             return new TimerSettingsModel
             {
+                Id = entity.Id,
                 Pomodoro = (int)entity.Pomodoro.TotalSeconds,
                 ShortBrake = (int)entity.Pomodoro.TotalSeconds,
                 LongBrake = (int)entity.Pomodoro.TotalSeconds,
                 IsAutoStart = entity.IsAutoStart,
                 RestSequence = entity.RestSequence,
                 IsActive = entity.IsActive,
+            };
+        }
+
+        /// <summary>
+        /// Map from model to Dal entity.
+        /// </summary>
+        /// <param name="userId">Owner id.</param>
+        /// <returns>Dal entity.</returns>
+        public TimerSettings ToDalEntity(Guid userId)
+        {
+            return new TimerSettings
+            {
+                Id = this.Id,
+                Pomodoro = TimeSpan.FromSeconds(this.Pomodoro),
+                ShortBrake = TimeSpan.FromSeconds(this.ShortBrake),
+                LongBreak = TimeSpan.FromSeconds(this.LongBrake),
+                IsAutoStart = this.IsAutoStart,
+                IsActive = this.IsActive,
+                AppUserId = userId,
             };
         }
     }
