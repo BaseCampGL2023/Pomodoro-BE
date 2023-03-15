@@ -101,5 +101,27 @@ namespace Pomodoro.Api.Controllers
             bool result = await this.timerSettingsService.DeleteOneOwnAsync(id, this.UserId);
             return result ? this.NoContent() : this.BadRequest(id);
         }
+
+        /// <summary>
+        /// Update existing settings.
+        /// </summary>
+        /// <param name="id">Settings id.</param>
+        /// <param name="settings">Tracker settings <see cref="TimerSettingsModel"/>.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [SwaggerResponse(204, "Update successfully")]
+        [SwaggerResponse(400, "No settings with such id for this user")]
+        public async Task<ActionResult> UpdateOne(Guid id, TimerSettingsModel settings)
+        {
+            if (id != settings.Id)
+            {
+                return this.BadRequest();
+            }
+
+            var result = await this.timerSettingsService.UpdateOneOwnAsync(settings, this.UserId);
+            return result ? this.NoContent() : this.BadRequest(id);
+        }
     }
 }

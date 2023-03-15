@@ -25,6 +25,10 @@
 		</PackageReference>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Migrations\" />
+	</ItemGroup>
+
 	<PropertyGroup Condition="'$(BuildingInsideVisualStudio)' != 'true'">
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>
