@@ -86,6 +86,8 @@ namespace Pomodoro.Dal.Repositories.Base
             return persist ? await this.SaveChangesAsync() : 0;
         }
 
+        // TODO: Handling exception when delete no existing entity.
+
         /// <inheritdoc/>
         public async Task<int> DeleteAsync(Guid id, bool persist = false)
         {
@@ -129,15 +131,17 @@ namespace Pomodoro.Dal.Repositories.Base
         }
 
         /// <inheritdoc/>
-        public Task<int> UpdateAsync(T entity, bool persist = false)
+        public async Task<int> UpdateAsync(T entity, bool persist = false)
         {
-            throw new NotImplementedException();
+            this.Table.Update(entity);
+            return persist ? await this.SaveChangesAsync() : 0;
         }
 
         /// <inheritdoc/>
-        public Task<int> UpdateRangeAsync(IEnumerable<T> entities, bool persist = false)
+        public async Task<int> UpdateRangeAsync(IEnumerable<T> entities, bool persist = false)
         {
-            throw new NotImplementedException();
+            this.Table.UpdateRange(entities);
+            return persist ? await this.SaveChangesAsync() : 0;
         }
 
         /// <summary>
