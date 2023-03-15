@@ -65,6 +65,8 @@ namespace Pomodoro.Dal.Data
                 entity.Property(e => e.Name).IsRequired()
                     .HasMaxLength(50);
 
+                entity.Ignore(e => e.ActiveTimerSettings);
+
                 entity.HasIndex(e => e.AppIdentityUserId, "IX_Users_AspNetUserId")
                 .IsUnique();
 
@@ -117,6 +119,9 @@ namespace Pomodoro.Dal.Data
 
                 entity.Property(e => e.LongBreak)
                     .IsRequired().HasConversion<long>();
+
+                entity.Property(e => e.CreatedAt).IsRequired()
+                    .HasDefaultValueSql("GETDATE()");
             });
 
             builder.Entity<AppTask>(entity =>
@@ -129,6 +134,9 @@ namespace Pomodoro.Dal.Data
 
                 entity.Property(e => e.AllocatedDuration)
                     .HasConversion<long>();
+
+                entity.Property(e => e.CreatedDt).IsRequired()
+                    .HasDefaultValueSql("GETDATE()");
 
                 entity.HasMany(e => e.Attempts)
                     .WithOne(d => d.Task)
@@ -150,6 +158,9 @@ namespace Pomodoro.Dal.Data
             {
                 entity.Property(e => e.Title)
                     .IsRequired().HasMaxLength(100);
+
+                entity.Property(e => e.CreatedAt).IsRequired()
+                    .HasDefaultValueSql("GETDATE()");
 
                 entity.Property(e => e.Description).HasMaxLength(1000);
 
