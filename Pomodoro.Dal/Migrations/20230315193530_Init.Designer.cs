@@ -12,7 +12,7 @@ using Pomodoro.Dal.Data;
 namespace Pomodoro.Dal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230311135823_Init")]
+    [Migration("20230315193530_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -234,7 +234,9 @@ namespace Pomodoro.Dal.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedDt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
@@ -319,7 +321,9 @@ namespace Pomodoro.Dal.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
@@ -387,6 +391,11 @@ namespace Pomodoro.Dal.Migrations
                     b.Property<Guid>("AppUserId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("AppUserId");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit")

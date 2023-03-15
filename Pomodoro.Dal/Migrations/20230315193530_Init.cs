@@ -185,7 +185,7 @@ namespace Pomodoro.Dal.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    CreatedDt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedDt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     StartTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     FinishDt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     AllocatedDuration = table.Column<long>(type: "bigint", nullable: true),
@@ -210,7 +210,7 @@ namespace Pomodoro.Dal.Migrations
                     Template = table.Column<long>(type: "bigint", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     FinishAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     AllocatedDuration = table.Column<long>(type: "bigint", nullable: true),
                     StartTime = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -239,6 +239,7 @@ namespace Pomodoro.Dal.Migrations
                     IsAutoStart = table.Column<bool>(type: "bit", nullable: false),
                     RestSequence = table.Column<byte>(type: "tinyint", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -367,7 +368,9 @@ namespace Pomodoro.Dal.Migrations
                 table: "TimerSettings",
                 column: "AppUserId");
 
+            MigrationHelpers.CreateTimerSettingsDeleteTrigger(migrationBuilder);
             MigrationHelpers.CreateTimerSettingsInsertTrigger(migrationBuilder);
+            MigrationHelpers.CreateTimerSettingsUpdateTrigger(migrationBuilder);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -412,7 +415,9 @@ namespace Pomodoro.Dal.Migrations
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
+            MigrationHelpers.DropTimerSettingsDeleteTrigger(migrationBuilder);
             MigrationHelpers.DropTimerSettingsInsertTrigger(migrationBuilder);
+            MigrationHelpers.DropTimerSettingsUpdateTrigger(migrationBuilder);
         }
     }
 }
