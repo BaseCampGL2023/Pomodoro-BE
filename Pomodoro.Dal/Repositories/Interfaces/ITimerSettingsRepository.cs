@@ -12,5 +12,11 @@ namespace Pomodoro.Dal.Repositories.Interfaces
     /// </summary>
     public interface ITimerSettingsRepository : IBelongRepository<TimerSettings>
     {
+        /// <summary>
+        /// Return active settings to specified user.
+        /// </summary>
+        /// <param name="ownerId">Owner id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public Task<TimerSettings?> GetCurrentTimerSettingsAsync(Guid ownerId);
     }
 }

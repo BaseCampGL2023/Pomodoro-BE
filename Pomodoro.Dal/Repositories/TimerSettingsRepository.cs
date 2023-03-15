@@ -32,6 +32,18 @@ namespace Pomodoro.Dal.Repositories
         }
 
         /// <inheritdoc/>
+        public async Task<int> DeleteOneBelongingAsync(Guid id, Guid ownerId, bool persist = false)
+        {
+            TimerSettings settings = new ()
+            {
+                Id = id,
+                AppUserId = ownerId,
+            };
+            this.Context.Entry<TimerSettings>(settings).State = EntityState.Deleted;
+            return persist ? await this.SaveChangesAsync() : 0;
+        }
+
+        /// <inheritdoc/>
         public async Task<ICollection<TimerSettings>> GetBelongingAll(Guid ownerId)
         {
             return await this.Table.IgnoreQueryFilters()
@@ -46,10 +58,9 @@ namespace Pomodoro.Dal.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<TimerSettings?> GetBelongingByIdAsync(Guid id, Guid ownerId)
+        public async Task<TimerSettings?> GetCurrentTimerSettingsAsync(Guid ownerId)
         {
-            return await this.Table.IgnoreQueryFilters()
-                .FirstOrDefaultAsync(e => e.Id == id && e.AppUserId == ownerId);
+            return await this.Table.FirstOrDefaultAsync(e => e.AppUserId == ownerId);
         }
     }
 }

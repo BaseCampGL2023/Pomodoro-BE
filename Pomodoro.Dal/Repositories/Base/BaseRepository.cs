@@ -114,7 +114,7 @@ namespace Pomodoro.Dal.Repositories.Base
             => await this.Table.AsNoTracking().ToListAsync();
 
         /// <inheritdoc/>
-        public async Task<T?> GetByIdAsync(int id)
+        public async Task<T?> GetByIdAsync(Guid id)
             => await this.Table.FindAsync(id);
 
         /// <inheritdoc/>

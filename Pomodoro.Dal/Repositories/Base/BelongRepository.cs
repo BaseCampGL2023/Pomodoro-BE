@@ -30,6 +30,18 @@ namespace Pomodoro.Dal.Repositories.Base
         {
         }
 
+        /// <inheritdoc />
+        public async Task<int> DeleteOneBelongingAsync(Guid id, Guid ownerId, bool persist = false)
+        {
+            T entity = new ()
+            {
+                Id = id,
+                AppUserId = ownerId,
+            };
+            this.Context.Entry<T>(entity).State = EntityState.Deleted;
+            return persist ? await this.SaveChangesAsync() : 0;
+        }
+
         /// <inheritdoc/>
         public async Task<ICollection<T>> GetBelongingAll(Guid ownerId)
         {
@@ -40,12 +52,6 @@ namespace Pomodoro.Dal.Repositories.Base
         public async Task<ICollection<T>> GetBelongingAllAsNoTracking(Guid ownerId)
         {
             return await this.Table.Where(e => e.AppUserId == ownerId).AsNoTracking().ToListAsync();
-        }
-
-        /// <inheritdoc/>
-        public async Task<T?> GetBelongingByIdAsync(Guid id, Guid ownerId)
-        {
-            return await this.Table.FirstOrDefaultAsync(e => e.Id == id && e.AppUserId == ownerId);
         }
     }
 }

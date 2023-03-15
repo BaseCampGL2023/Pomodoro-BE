@@ -82,7 +82,7 @@ namespace Pomodoro.Dal.Repositories.Base
         /// </summary>
         /// <param name="id">Entity id.</param>
         /// <returns>Queried object or null, if object with this id doesn't exist in database.</returns>
-        Task<T?> GetByIdAsync(int id);
+        Task<T?> GetByIdAsync(Guid id);
 
         /// <summary>
         /// Retrieve all entites from database.

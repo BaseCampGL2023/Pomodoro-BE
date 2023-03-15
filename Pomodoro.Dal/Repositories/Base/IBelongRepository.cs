@@ -14,14 +14,6 @@ namespace Pomodoro.Dal.Repositories.Base
         where T : IBelongEntity
     {
         /// <summary>
-        /// Retrieve belonging to the user entity from database by id.
-        /// </summary>
-        /// <param name="id">Entity id.</param>
-        /// <param name="ownerId">Owner id.</param>
-        /// <returns>Queried object or null, if object with this id belonging to user doesn't exist in database.</returns>
-        public Task<T?> GetBelongingByIdAsync(Guid id, Guid ownerId);
-
-        /// <summary>
         /// Retrieve all belonging to the user entities from database.
         /// </summary>
         /// <param name="ownerId">Owner id.</param>
@@ -34,5 +26,15 @@ namespace Pomodoro.Dal.Repositories.Base
         /// <param name="ownerId">Owner id.</param>
         /// <returns>ICollection collection of objects.</returns>
         public Task<ICollection<T>> GetBelongingAllAsNoTracking(Guid ownerId);
+
+        /// <summary>
+        /// Delete entity belonging to user.
+        /// </summary>
+        /// <param name="id">Entity id.</param>
+        /// <param name="ownerId">Owner id.</param>
+        /// <param name="persist">Parameter determines whether the repository executes SaveChanges()
+        /// immediately when method are called.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public Task<int> DeleteOneBelongingAsync(Guid id, Guid ownerId, bool persist = false);
     }
 }
