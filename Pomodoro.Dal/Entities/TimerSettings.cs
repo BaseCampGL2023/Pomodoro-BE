@@ -45,6 +45,11 @@ namespace Pomodoro.Dal.Entities
         public bool IsActive { get; set; }
 
         /// <summary>
+        /// Gets or sets creation time.
+        /// </summary>
+        public DateTime CreatedAt { get; set; }
+
+        /// <summary>
         /// Gets or sets foreign key to AppUser entity.
         /// </summary>
         public Guid AppUserId { get; set; }

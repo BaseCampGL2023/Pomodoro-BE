@@ -32,6 +32,14 @@ namespace Pomodoro.Dal.Entities
         public ICollection<TimerSettings> TimerSettings { get; set; } = new List<TimerSettings>();
 
         /// <summary>
+        /// Gets active timer settings.
+        /// </summary>
+        public TimerSettings? ActiveTimerSettings
+        {
+            get => this.TimerSettings.FirstOrDefault(e => e.IsActive);
+        }
+
+        /// <summary>
         /// Gets or sets collection of user scheduled tasks.
         /// </summary>
         public ICollection<Routine> Routins { get; set; } = new List<Routine>();
