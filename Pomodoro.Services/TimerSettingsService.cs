@@ -31,6 +31,11 @@ namespace Pomodoro.Services
         /// <returns>TRUE if value persist succesfully, FALSE otherwise.</returns>
         public async Task<bool> AddSettingsAsync(TimerSettingsModel model, Guid userId)
         {
+            if (!model.IsActive)
+            {
+                model.IsActive = true;
+            }
+
             var entity = model.ToDalEntity(userId);
             var result = await this.repository.AddAsync(entity, true);
             if (result > 0)
@@ -63,8 +68,6 @@ namespace Pomodoro.Services
             var result = await this.repository.GetCurrentTimerSettingsAsync(userId);
             return result is null ? null : TimerSettingsModel.Create(result);
         }
-
-        // TODO: add triger in DB for update or maybe no?
 
         /// <summary>
         /// Return settings object by id, with owning check.
@@ -101,6 +104,25 @@ namespace Pomodoro.Services
             int result = await this.repository.DeleteOneBelongingAsync(id, userId, true);
 
             return result > 0;
+        }
+
+        /// <summary>
+        /// Update existing user tracker settings.
+        /// </summary>
+        /// <param name="model">Tracker settings.</param>
+        /// <param name="userId">User id.</param>
+        /// <returns>TRUE if value persist succesfully, FALSE otherwise.</returns>
+        public async Task<bool> UpdateOneOwnAsync(TimerSettingsModel model, Guid userId)
+        {
+            var entity = model.ToDalEntity(userId);
+            int result = await this.repository.UpdateAsync(entity, true);
+            if (result > 0)
+            {
+                model.Id = entity.Id;
+                return true;
+            }
+
+            return false;
         }
     }
 }
