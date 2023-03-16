@@ -15,7 +15,7 @@ namespace Pomodoro.Services.Realizations
             this._completedRepository = repository;
         }
         
-        public async Task<DailyStatistics> GetDailyStatisticsAsync(Guid userId, DateOnly day)
+        public async Task<DailyStatistics> GetDailyStatisticsAsync(Guid userId, DateTime day)
         {
             DailyStatistics dailyStatistics = new DailyStatistics();
 

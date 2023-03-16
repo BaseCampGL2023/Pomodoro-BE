@@ -57,7 +57,7 @@ namespace Pomodoro.Api.Controllers
         public async Task<ActionResult<DailyStatisticsViewModel>> GetDailyStatistics(DateTime day)
         {
             var result = await this.statisticsService
-                .GetDailyStatisticsAsync(this.UserId, DateOnly.FromDateTime(day));
+                .GetDailyStatisticsAsync(this.UserId, day);
 
             if (result is null)
             {
