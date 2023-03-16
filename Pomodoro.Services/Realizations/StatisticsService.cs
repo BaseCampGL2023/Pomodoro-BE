@@ -15,7 +15,7 @@ namespace Pomodoro.Services.Realizations
             this._completedRepository = repository;
         }
         
-        public async Task<DailyStatistics?> GetDailyStatisticsAsync(Guid userId, DateTime day)
+        public async Task<DailyStatistics> GetDailyStatisticsAsync(Guid userId, DateTime day)
         {
             var statistics = await _completedRepository.FindAsync(
                 u=>u.Task != null &&
@@ -24,10 +24,6 @@ namespace Pomodoro.Services.Realizations
                    u.ActualDate.Month == day.Month && 
                    u.ActualDate.Day == day.Day
             );
-            if (!statistics.Any())
-            {
-                return null;
-            }
 
             var dailyStatistics = new DailyStatistics
             {
@@ -57,7 +53,7 @@ namespace Pomodoro.Services.Realizations
 
         }
 
-        public async Task<MonthlyStatistics?> GetMonthlyStatisticsAsync(Guid userId, int year, int month)
+        public async Task<MonthlyStatistics> GetMonthlyStatisticsAsync(Guid userId, int year, int month)
         {
             var statistics = await _completedRepository.FindAsync(
                 m => m.Task != null &&
@@ -65,10 +61,6 @@ namespace Pomodoro.Services.Realizations
                     m.ActualDate.Year == year &&
                     m.ActualDate.Month == month
             );
-            if (!statistics.Any())
-            {
-                return null;
-            }
 
             float totalPomodorosCount = statistics.Sum(c => c.PomodorosCount);
 
@@ -83,17 +75,13 @@ namespace Pomodoro.Services.Realizations
             };
         }
 
-        public async Task<AnnualStatistics?> GetAnnualStatisticsAsync(Guid userId, int year)
+        public async Task<AnnualStatistics> GetAnnualStatisticsAsync(Guid userId, int year)
         {
             var statistics = await _completedRepository.FindAsync(
                 a => a.Task != null &&
                      a.Task.UserId == userId &&
                      a.ActualDate.Year == year
             );
-            if (!statistics.Any())
-            {
-                return null;
-            }
 
             var annualStatistics = new AnnualStatistics
             {
