@@ -3,6 +3,7 @@
 // </copyright>
 
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pomodoro.Api.ActionFilterAttributes;
 using Pomodoro.Api.Controllers.Base;
@@ -17,6 +18,7 @@ namespace Pomodoro.Api.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class StatisticsController : BaseController
     {
         private readonly IMapper mapper;
