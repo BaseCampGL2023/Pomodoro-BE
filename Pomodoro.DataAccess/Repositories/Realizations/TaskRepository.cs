@@ -4,7 +4,6 @@ using Pomodoro.DataAccess.Entities;
 using Pomodoro.DataAccess.Repositories.Interfaces;
 using System;
 using System.Linq.Expressions;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Pomodoro.DataAccess.Repositories.Realizations
 {
@@ -20,7 +19,7 @@ namespace Pomodoro.DataAccess.Repositories.Realizations
             return await context.Set<TaskEntity>()
                 .Where(t => t.Id == id)
                 .Include(t => t.Frequency)
-                .Include(t => t.Frequency.FrequencyType)
+                    .ThenInclude(f => f.FrequencyType)
                 .FirstOrDefaultAsync();
         }
 
@@ -29,7 +28,7 @@ namespace Pomodoro.DataAccess.Repositories.Realizations
             return await context.Set<TaskEntity>()
                 .Where(predicate)
                 .Include(t => t.Frequency)
-                .Include(t => t.Frequency.FrequencyType)
+                    .ThenInclude(f => f.FrequencyType)
                 .ToListAsync();
         }
 
@@ -37,7 +36,7 @@ namespace Pomodoro.DataAccess.Repositories.Realizations
         {
             return await context.Set<TaskEntity>()
                 .Include(t => t.Frequency)
-                .Include(t => t.Frequency.FrequencyType)
+                    .ThenInclude(f => f.FrequencyType)
                 .ToListAsync();
         }
     }
