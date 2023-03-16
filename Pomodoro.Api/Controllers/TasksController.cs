@@ -142,7 +142,7 @@ namespace Pomodoro.Api.Controllers
         {
             task.UserId = this.UserId;
             var result = await this.tasksService.PostTask(this.mapper.Map<TaskModel>(task));
-            return this.CreatedAtAction(nameof(this.GetTaskById), new { id = result.TaskId }, this.mapper.Map<TaskViewModel>(result));
+            return this.CreatedAtAction(nameof(this.GetTaskById), new { id = result.Id }, this.mapper.Map<TaskViewModel>(result));
         }
 
         /// <summary>

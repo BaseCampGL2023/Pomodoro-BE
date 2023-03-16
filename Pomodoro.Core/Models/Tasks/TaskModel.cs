@@ -14,7 +14,7 @@ namespace Pomodoro.Core.Models.Tasks
         /// <summary>
         /// Gets or sets a value of the id of the task.
         /// </summary>
-        public Guid TaskId { get; set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Gets or sets a value of the title of the task.
@@ -34,6 +34,6 @@ namespace Pomodoro.Core.Models.Tasks
         /// <summary>
         /// Gets or sets an information about the frequency used in the task.
         /// </summary>
-        public FrequencyModel? FrequencyData { get; set; }
+        public FrequencyModel? Frequency { get; set; }
     }
 }

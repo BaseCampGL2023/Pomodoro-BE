@@ -7,10 +7,10 @@ using Pomodoro.Core.Models.Frequency;
 using Pomodoro.Core.Models.Tasks;
 using Pomodoro.DataAccess.Entities;
 
-namespace Pomodoro.Api.Mapping.Frequencies
+namespace Pomodoro.Api.Mapping
 {
     /// <summary>
-    /// Provides mapping configuration for frequnecy manipulation model.
+    /// Provides mapping configuration for frequnecy model.
     /// Loaded by the <see cref="AutoMapper"/>.
     /// </summary>
     public class FrequencyProfile : Profile
@@ -20,15 +20,14 @@ namespace Pomodoro.Api.Mapping.Frequencies
         /// </summary>
         public FrequencyProfile()
         {
-            this.CreateMap<TaskModel, FrequencyModel>()
-                .ForMember(f => f.FrequencyTypeValue, o => o.MapFrom(s => s.FrequencyData.FrequencyTypeValue))
-                .ForMember(f => f.IsCustom, o => o.MapFrom(s => s.FrequencyData.IsCustom))
-                .ForMember(f => f.Every, o => o.MapFrom(s => s.FrequencyData.Every));
-            this.CreateMap<Frequency, FrequencyModel>()
+            CreateMap<TaskModel, FrequencyModel>()
+                .ForMember(f => f.FrequencyTypeValue, o => o.MapFrom(s => s.Frequency.FrequencyTypeValue))
+                .ForMember(f => f.IsCustom, o => o.MapFrom(s => s.Frequency.IsCustom))
+                .ForMember(f => f.Every, o => o.MapFrom(s => s.Frequency.Every));
+            CreateMap<Frequency, FrequencyModel>()
                 .ForMember(f => f.FrequencyTypeValue, o => o.MapFrom(s => s.FrequencyType.Value));
-            this.CreateMap<FrequencyModel, Frequency>();
-            this.CreateMap<FrequencyViewModel, FrequencyModel>();
-            this.CreateMap<FrequencyModel, FrequencyViewModel>();
+            CreateMap<FrequencyModel, Frequency>()
+                .ForMember(f => f.FrequencyType.Value, o => o.MapFrom(s => s.FrequencyTypeValue));
         }
     }
 }

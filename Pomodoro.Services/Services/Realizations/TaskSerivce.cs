@@ -9,87 +9,87 @@ namespace Pomodoro.Services.Services.Realizations
 {
     public class TaskService : ITaskService
     {
-        private readonly ITaskRepository tasksRepo;
-        private readonly IMapper mapper;
-        private readonly IFrequencyService freqService;
+        private readonly ITaskRepository _tasksRepo;
+        private readonly IMapper _mapper;
+        private readonly IFrequencyService _freqService;
 
         public TaskService(
             ITaskRepository tasksRepo,
             IFrequencyService freqService,
             IMapper mapper)
         {
-            this.tasksRepo = tasksRepo;
-            this.mapper = mapper;
-            this.freqService = freqService;
+            this._tasksRepo = tasksRepo;
+            this._mapper = mapper;
+            this._freqService = freqService;
         }
 
         public async Task<IEnumerable<TaskModel>> GetAllTasksAsyncTest()
         {
-            var data = await tasksRepo.GetAllTasks();
-            var result = mapper.Map<IEnumerable<TaskEntity>, IEnumerable<TaskModel>>(data);
+            var data = await _tasksRepo.GetAllTasks();
+            var result = _mapper.Map<IEnumerable<TaskEntity>, IEnumerable<TaskModel>>(data);
             return result;
         }
 
         public async Task<IEnumerable<TaskModel>> GetAllTasksAsync(Guid userId)
         {
-            var data = await tasksRepo.FindAllAsync(x => x.UserId == userId);
-            var result = mapper.Map<IEnumerable<TaskEntity>, IEnumerable<TaskModel>>(data);
+            var data = await _tasksRepo.FindAllAsync(x => x.UserId == userId);
+            var result = _mapper.Map<IEnumerable<TaskEntity>, IEnumerable<TaskModel>>(data);
             return result;
         }
 
         public async Task<TaskModel?> GetTaskByIdAsync(Guid taskId)
         {
-            var data = await tasksRepo.FindOneTaskAsync(taskId);
-            var result = mapper.Map<TaskEntity?, TaskModel?>(data);
+            var data = await _tasksRepo.FindOneTaskAsync(taskId);
+            var result = _mapper.Map<TaskEntity?, TaskModel?>(data);
             return result;
         }
 
         public async Task<TaskModel> PostTask(TaskModel task)
         {
-            var freqData = mapper.Map<TaskModel, FrequencyModel>(task);
-            Guid freqId = await freqService.GetFrequencyId(freqData);
+            var freqData = _mapper.Map<TaskModel, FrequencyModel>(task);
+            Guid freqId = await _freqService.GetFrequencyId(freqData);
 
-            var data = mapper.Map<TaskModel, TaskEntity>(task);
+            var data = _mapper.Map<TaskModel, TaskEntity>(task);
             data.FrequencyId = freqId;
 
-            await tasksRepo.AddAsync(data);
-            await tasksRepo.SaveChangesAsync();
-            task.TaskId = data.Id;
+            await _tasksRepo.AddAsync(data);
+            await _tasksRepo.SaveChangesAsync();
+            task.Id = data.Id;
             return task;
         }
 
         public async Task<TaskModel> UpdateTask(TaskModel task)
         {
-            var freqData = mapper.Map<TaskModel, FrequencyModel>(task);
-            Guid freqId = await freqService.GetFrequencyId(freqData);
+            var freqData = _mapper.Map<TaskModel, FrequencyModel>(task);
+            Guid freqId = await _freqService.GetFrequencyId(freqData);
 
-            var data = mapper.Map<TaskModel, TaskEntity>(task);
+            var data = _mapper.Map<TaskModel, TaskEntity>(task);
             data.FrequencyId = freqId;
 
-            tasksRepo.Update(data);
-            await tasksRepo.SaveChangesAsync();
+            _tasksRepo.Update(data);
+            await _tasksRepo.SaveChangesAsync();
             return task;
         }
 
         public async Task<TaskModel> DeleteTask(TaskModel task)
         {
-            var freqData = mapper.Map<TaskModel, FrequencyModel>(task);
-            Guid freqId = await freqService.GetFrequencyId(freqData);
+            var freqData = _mapper.Map<TaskModel, FrequencyModel>(task);
+            Guid freqId = await _freqService.GetFrequencyId(freqData);
 
-            var data = mapper.Map<TaskModel, TaskEntity>(task);
+            var data = _mapper.Map<TaskModel, TaskEntity>(task);
             data.FrequencyId = freqId;
 
-            tasksRepo.Remove(data);
-            await tasksRepo.SaveChangesAsync();
+            _tasksRepo.Remove(data);
+            await _tasksRepo.SaveChangesAsync();
             return task;
         }
 
         public async Task<IEnumerable<TaskModel>> GetAllTasksByDate(Guid userId, DateTime startDate, DateTime endDate)
         {
             IEnumerable<TaskEntity> data = endDate == DateTime.MinValue ?
-                await tasksRepo.FindAllAsync(x => x.UserId == userId && x.InitialDate >= startDate) :
-                await tasksRepo.FindAllAsync(x => x.UserId == userId && x.InitialDate >= startDate && x.InitialDate <= endDate);
-            var result = mapper.Map<IEnumerable<TaskEntity>, IEnumerable<TaskModel>>(data);
+                await _tasksRepo.FindAllAsync(x => x.UserId == userId && x.InitialDate >= startDate) :
+                await _tasksRepo.FindAllAsync(x => x.UserId == userId && x.InitialDate >= startDate && x.InitialDate <= endDate);
+            var result = _mapper.Map<IEnumerable<TaskEntity>, IEnumerable<TaskModel>>(data);
             return result;
         }
     }
