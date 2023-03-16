@@ -15,13 +15,8 @@ namespace Pomodoro.Services.Realizations
             this._completedRepository = repository;
         }
         
-        public async Task<DailyStatistics> GetDailyStatisticsAsync(Guid userId, DateTime day)
+        public async Task<DailyStatistics?> GetDailyStatisticsAsync(Guid userId, DateTime day)
         {
-            DailyStatistics dailyStatistics = new DailyStatistics();
-
-            dailyStatistics.UserId = userId;
-            dailyStatistics.Day = day;
-            
             var statistics = await _completedRepository.FindAsync(
                 u=>u.Task != null &&
                    u.Task.UserId == userId &&
@@ -29,7 +24,17 @@ namespace Pomodoro.Services.Realizations
                    u.ActualDate.Month == day.Month && 
                    u.ActualDate.Day == day.Day
             );
-            
+            if (!statistics.Any())
+            {
+                return null;
+            }
+
+            var dailyStatistics = new DailyStatistics
+            {
+                UserId = userId,
+                Day = day
+            };
+
             for (int i = 0; i < 24; i+=2) 
             {
                 AnalyticsPerHour analytics = new AnalyticsPerHour();
@@ -52,45 +57,50 @@ namespace Pomodoro.Services.Realizations
 
         }
 
-        public async Task<MonthlyStatistics> GetMonthlyStatisticsAsync(Guid userId, int year, int month)
+        public async Task<MonthlyStatistics?> GetMonthlyStatisticsAsync(Guid userId, int year, int month)
         {
-            MonthlyStatistics monthlyStatistics = new MonthlyStatistics();
-            
-            monthlyStatistics.UserId = userId;
-            monthlyStatistics.Year = year;
-            monthlyStatistics.Month = (Month)month;
-
             var statistics = await _completedRepository.FindAsync(
-                m=> m.Task != null &&
-                    m.Task.UserId == userId && 
-                    m.ActualDate.Year == year && 
-                    m.ActualDate.Month == month );
-            
-            monthlyStatistics.TasksCompleted = statistics.Count();
+                m => m.Task != null &&
+                    m.Task.UserId == userId &&
+                    m.ActualDate.Year == year &&
+                    m.ActualDate.Month == month
+            );
+            if (!statistics.Any())
+            {
+                return null;
+            }
 
-            float totalPomodorosCount = statistics.Sum(c=>c.PomodorosCount);
+            float totalPomodorosCount = statistics.Sum(c => c.PomodorosCount);
 
-            monthlyStatistics.PomodorosDone = Convert.ToInt32(totalPomodorosCount);
-
-            monthlyStatistics.TimeSpent = statistics.Sum(c=>c.TimeSpent);
-
-            return monthlyStatistics;
+            return new MonthlyStatistics
+            {
+                UserId = userId,
+                Year = year,
+                Month = (Month)month,
+                TasksCompleted = statistics.Count(),
+                PomodorosDone = Convert.ToInt32(totalPomodorosCount),
+                TimeSpent = statistics.Sum(c => c.TimeSpent)
+            };
         }
 
-        public async Task<AnnualStatistics> GetAnnualStatisticsAsync(Guid userId, int year)
+        public async Task<AnnualStatistics?> GetAnnualStatisticsAsync(Guid userId, int year)
         {
-            AnnualStatistics annualStatistics = new AnnualStatistics();
-            
-            annualStatistics.UserId = userId;
-            annualStatistics.Year = year;
-            
             var statistics = await _completedRepository.FindAsync(
                 a => a.Task != null &&
-                     a.Task.UserId == userId && 
+                     a.Task.UserId == userId &&
                      a.ActualDate.Year == year
             );
-            
-            
+            if (!statistics.Any())
+            {
+                return null;
+            }
+
+            var annualStatistics = new AnnualStatistics
+            {
+                UserId = userId,
+                Year = year
+            };
+
             foreach (int m in Enum.GetValues(typeof(Month)))
             {
                 
