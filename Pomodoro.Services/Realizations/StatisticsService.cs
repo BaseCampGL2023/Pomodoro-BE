@@ -49,7 +49,7 @@ namespace Pomodoro.Services.Realizations
 
                 analytics.TimeSpent = hours.Sum(c=>c.TimeSpent);
 
-                dailyStatistics.AnalyticsPerHours?.Add(analytics);
+                dailyStatistics.AnalyticsPerHours.Add(analytics);
 
             }
 
@@ -114,7 +114,7 @@ namespace Pomodoro.Services.Realizations
 
                 temp.PomodorosDone = Convert.ToInt32(totalPomodorosCount);
 
-                annualStatistics.AnalyticsPerMonths?.Add(temp);
+                annualStatistics.AnalyticsPerMonths.Add(temp);
             }
 
             return annualStatistics;

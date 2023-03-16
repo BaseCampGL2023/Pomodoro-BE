@@ -6,6 +6,7 @@ namespace Pomodoro.Core.Models.Statistics
     {
         public DateTime Day { get; set; }
 
-        public List<AnalyticsPerHour>? AnalyticsPerHours { get; set; }
+        public List<AnalyticsPerHour> AnalyticsPerHours { get; set; }
+            = new List<AnalyticsPerHour>();
     }
 }
