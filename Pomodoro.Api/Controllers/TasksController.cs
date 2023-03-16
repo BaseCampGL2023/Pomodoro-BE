@@ -163,7 +163,7 @@ namespace Pomodoro.Api.Controllers
         {
             task.UserId = this.UserId;
 
-            if (id != task.TaskId)
+            if (id != task.Id)
             {
                 return this.BadRequest();
             }
@@ -193,7 +193,7 @@ namespace Pomodoro.Api.Controllers
             Guid id,
             [FromBody] TaskViewModel task)
         {
-            if (id != task.TaskId)
+            if (id != task.Id)
             {
                 return this.BadRequest();
             }

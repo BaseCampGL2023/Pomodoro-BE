@@ -33,6 +33,11 @@ namespace Pomodoro.DataAccess.Repositories.Realizations
         public async Task<T?> GetByIdAsync(Guid id)
             => await context.Set<T>().FindAsync(id);
 
+        public async Task<bool> HasByIdAsync(Guid id)
+            => await context.Set<T>()
+            .Where(entity => entity.Id == id)
+            .AnyAsync();
+
         public void Remove(T entity)
         {
             context.Set<T>().Remove(entity);

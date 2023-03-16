@@ -1,6 +1,7 @@
 ﻿// <copyright file="TaskViewModel.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
+using Pomodoro.Api.ViewModels.Base;
 using Pomodoro.Core.Enums;
 using Pomodoro.Core.Models.Frequency;
 
@@ -9,12 +10,12 @@ namespace Pomodoro.Core.Models.Tasks
     /// <summary>
     /// Represents a view model for task.
     /// </summary>
-    public class TaskViewModel : BaseUserOrientedModel
+    public class TaskViewModel : BaseUserOrientedViewModel
     {
         /// <summary>
         /// Gets or sets a value of the id of the task.
         /// </summary>
-        public Guid TaskId { get; set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Gets or sets a value of the title of the task.
@@ -34,6 +35,6 @@ namespace Pomodoro.Core.Models.Tasks
         /// <summary>
         /// Gets or sets an information about the frequency used in the task.
         /// </summary>
-        public FrequencyViewModel? FrequencyData { get; set; }
+        public FrequencyViewModel? Frequency { get; set; }
     }
 }

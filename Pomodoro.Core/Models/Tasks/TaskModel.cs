@@ -1,7 +1,7 @@
 ﻿// <copyright file="TaskModel.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
-using Pomodoro.Core.Enums;
+using Pomodoro.Core.Models.Base;
 using Pomodoro.Core.Models.Frequency;
 
 namespace Pomodoro.Core.Models.Tasks
