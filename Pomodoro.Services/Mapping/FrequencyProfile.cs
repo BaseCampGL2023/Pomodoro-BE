@@ -7,7 +7,7 @@ using Pomodoro.Core.Models.Frequency;
 using Pomodoro.Core.Models.Tasks;
 using Pomodoro.DataAccess.Entities;
 
-namespace Pomodoro.Api.Mapping
+namespace Pomodoro.Services.Mapping
 {
     /// <summary>
     /// Provides mapping configuration for frequnecy model.

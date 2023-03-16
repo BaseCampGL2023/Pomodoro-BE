@@ -4,7 +4,7 @@ using Pomodoro.Core.Models.Frequency;
 using Pomodoro.DataAccess.Entities;
 using Pomodoro.DataAccess.Repositories.Interfaces;
 
-namespace Pomodoro.Services.Services.Realizations
+namespace Pomodoro.Services.Realizations
 {
     public class FrequencyService : IFrequencyService
     {
@@ -16,9 +16,9 @@ namespace Pomodoro.Services.Services.Realizations
             IFrequencyRepository freqRepo,
             IMapper mapper)
         {
-            this._mapper = mapper;
-            this._freqTypeRepo = freqTypeRepo;
-            this._freqRepo = freqRepo;
+            _mapper = mapper;
+            _freqTypeRepo = freqTypeRepo;
+            _freqRepo = freqRepo;
         }
 
         public async Task<Guid> GetFrequencyId(FrequencyModel freqModel)

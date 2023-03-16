@@ -4,15 +4,10 @@
 
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Pomodoro.Api.Controllers.Base;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.Core.Models.Tasks;
-using Pomodoro.DataAccess.Entities;
-using Pomodoro.DataAccess.Repositories.Interfaces;
-using Pomodoro.Services.Services;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Pomodoro.Api.Controllers

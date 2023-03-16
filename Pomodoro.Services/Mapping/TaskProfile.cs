@@ -6,7 +6,7 @@ using AutoMapper;
 using Pomodoro.Core.Models.Tasks;
 using Pomodoro.DataAccess.Entities;
 
-namespace Pomodoro.Api.Mapping.Tasks
+namespace Pomodoro.Services.Mapping
 {
     /// <summary>
     /// Provides mapping configuration for task model.
@@ -19,8 +19,8 @@ namespace Pomodoro.Api.Mapping.Tasks
         /// </summary>
         public TaskProfile()
         {
-            this.CreateMap<TaskEntity, TaskModel>();
-            this.CreateMap<TaskModel, TaskEntity>();
+            CreateMap<TaskEntity, TaskModel>();
+            CreateMap<TaskModel, TaskEntity>();
         }
     }
 }

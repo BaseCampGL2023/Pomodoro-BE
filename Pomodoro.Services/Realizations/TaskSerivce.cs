@@ -5,7 +5,7 @@ using Pomodoro.Core.Models.Tasks;
 using Pomodoro.DataAccess.Entities;
 using Pomodoro.DataAccess.Repositories.Interfaces;
 
-namespace Pomodoro.Services.Services.Realizations
+namespace Pomodoro.Services.Realizations
 {
     public class TaskService : ITaskService
     {
@@ -18,9 +18,9 @@ namespace Pomodoro.Services.Services.Realizations
             IFrequencyService freqService,
             IMapper mapper)
         {
-            this._tasksRepo = tasksRepo;
-            this._mapper = mapper;
-            this._freqService = freqService;
+            _tasksRepo = tasksRepo;
+            _mapper = mapper;
+            _freqService = freqService;
         }
 
         public async Task<IEnumerable<TaskModel>> GetAllTasksAsyncTest()

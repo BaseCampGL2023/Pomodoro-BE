@@ -10,7 +10,7 @@ using Pomodoro.Api.Extensions;
 using Pomodoro.Api.Services;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.DataAccess.Extensions;
-using Pomodoro.Services.Services.Realizations;
+using Pomodoro.Services.Realizations;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
