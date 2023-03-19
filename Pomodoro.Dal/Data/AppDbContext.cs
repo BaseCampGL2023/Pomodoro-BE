@@ -52,6 +52,8 @@ namespace Pomodoro.Dal.Data
         /// </summary>
         public DbSet<RoutineAttempt> RoutineAttempts => this.Set<RoutineAttempt>();
 
+        // TODO: Add category to task and routines?
+
         /// <summary>
         /// Configure entities mapping and relations.
         /// </summary>

@@ -28,6 +28,6 @@ namespace Pomodoro.Services.Models
         /// </summary>
         public int PeriodDuration { get; set; }*/
 
-        // TODO: Add validation.
+        // TODO: Add validation schedule
     }
 }
