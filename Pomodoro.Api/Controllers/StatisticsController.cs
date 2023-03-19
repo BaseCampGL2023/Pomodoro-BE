@@ -47,22 +47,15 @@ namespace Pomodoro.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerResponse(200, "Returns an object containing daily user statistics.")]
         [SwaggerResponse(400, "The model state is invalid or validation error occured.")]
         [SwaggerResponse(401, "An unauthorized request cannot be processed.")]
-        [SwaggerResponse(404, "No statistics found for the required day.")]
         [SwaggerResponse(500, "An unhandled exception occurred on the server while executing the request.")]
         public async Task<ActionResult<DailyStatisticsViewModel>> GetDailyStatistics(DateTime day)
         {
             var result = await this.statisticsService
                 .GetDailyStatisticsAsync(this.UserId, day);
-
-            if (result is null)
-            {
-                return this.NotFound("No statistics found for the required day.");
-            }
 
             var resultViewModel = this.mapper.Map<DailyStatisticsViewModel>(result);
             return this.Ok(resultViewModel);
@@ -80,22 +73,15 @@ namespace Pomodoro.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerResponse(200, "Returns an object containing monthly user statistics.")]
         [SwaggerResponse(400, "The model state is invalid or validation error occured.")]
         [SwaggerResponse(401, "An unauthorized request cannot be processed.")]
-        [SwaggerResponse(404, "No statistics found for the required month.")]
         [SwaggerResponse(500, "An unhandled exception occurred on the server while executing the request.")]
         public async Task<ActionResult<MonthlyStatisticsViewModel>> GetMonthlyStatistics(int year, int month)
         {
             var result = await this.statisticsService
                 .GetMonthlyStatisticsAsync(this.UserId, year, month);
-
-            if (result is null)
-            {
-                return this.NotFound("No statistics found for the required month.");
-            }
 
             var resultViewModel = this.mapper.Map<MonthlyStatisticsViewModel>(result);
             return this.Ok(resultViewModel);
@@ -111,22 +97,15 @@ namespace Pomodoro.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerResponse(200, "Returns an object containing annual user statistics.")]
         [SwaggerResponse(400, "The model state is invalid or validation error occured.")]
         [SwaggerResponse(401, "An unauthorized request cannot be processed.")]
-        [SwaggerResponse(404, "No statistics found for the required year.")]
         [SwaggerResponse(500, "An unhandled exception occurred on the server while executing the request.")]
         public async Task<ActionResult<AnnualStatisticsViewModel>> GetAnnualStatistics(int year)
         {
             var result = await this.statisticsService
                 .GetAnnualStatisticsAsync(this.UserId, year);
-
-            if (result is null)
-            {
-                return this.NotFound("No statistics found for the required year.");
-            }
 
             var resultViewModel = this.mapper.Map<AnnualStatisticsViewModel>(result);
             return this.Ok(resultViewModel);

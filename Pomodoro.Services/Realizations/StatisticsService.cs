@@ -17,19 +17,23 @@ namespace Pomodoro.Services.Realizations
         
         public async Task<DailyStatistics> GetDailyStatisticsAsync(Guid userId, DateTime day)
         {
-            var statistics = await _completedRepository.FindAsync(
-                u=>u.Task != null &&
-                   u.Task.UserId == userId &&
-                   u.ActualDate.Year == day.Year &&
-                   u.ActualDate.Month == day.Month && 
-                   u.ActualDate.Day == day.Day
-            );
-
             var dailyStatistics = new DailyStatistics
             {
                 UserId = userId,
                 Day = day
             };
+
+            var statistics = await _completedRepository.FindAsync(
+                u => u.Task != null &&
+                   u.Task.UserId == userId &&
+                   u.ActualDate.Year == day.Year &&
+                   u.ActualDate.Month == day.Month &&
+                   u.ActualDate.Day == day.Day
+            );
+            if (!statistics.Any())
+            {
+                return dailyStatistics;
+            }
 
             for (int i = 0; i < 24; i+=2) 
             {
@@ -77,17 +81,21 @@ namespace Pomodoro.Services.Realizations
 
         public async Task<AnnualStatistics> GetAnnualStatisticsAsync(Guid userId, int year)
         {
-            var statistics = await _completedRepository.FindAsync(
-                a => a.Task != null &&
-                     a.Task.UserId == userId &&
-                     a.ActualDate.Year == year
-            );
-
             var annualStatistics = new AnnualStatistics
             {
                 UserId = userId,
                 Year = year
             };
+
+            var statistics = await _completedRepository.FindAsync(
+                a => a.Task != null &&
+                     a.Task.UserId == userId &&
+                     a.ActualDate.Year == year
+            );
+            if (!statistics.Any())
+            {
+                return annualStatistics;
+            }
 
             foreach (int m in Enum.GetValues(typeof(Month)))
             {
