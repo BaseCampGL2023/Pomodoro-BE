@@ -12,6 +12,11 @@ namespace Pomodoro.Dal.Entities
     public class TimerSettings : BaseEntity, IBelongEntity
     {
         /// <summary>
+        /// Gets or sets settings name.
+        /// </summary>
+        public string? Name { get; set; }
+
+        /// <summary>
         /// Gets or sets duration of working period.
         /// </summary>
         public TimeSpan Pomodoro { get; set; }

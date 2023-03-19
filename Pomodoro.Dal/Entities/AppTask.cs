@@ -22,14 +22,25 @@ namespace Pomodoro.Dal.Entities
         public string? Description { get; set; }
 
         /// <summary>
+        /// Gets or sets task number in sequence for tasks with a schedule.
+        /// Sets 1 for non-periodic tasks.
+        /// </summary>
+        public int SequenceNumber { get; set; }
+
+        /// <summary>
         /// Gets or sets DateTime when task created.
         /// </summary>
         public DateTime CreatedDt { get; set; }
 
         /// <summary>
+        /// Gets or sets DateTime when task modified.
+        /// </summary>
+        public DateTime? ModifiedDt { get; set; }
+
+        /// <summary>
         /// Gets or sets planned start time.
         /// </summary>
-        public DateTime? StartTime { get; set; }
+        public DateTime? StartDt { get; set; }
 
         /// <summary>
         /// Gets or sets DateTime when task performing completed.
@@ -52,8 +63,28 @@ namespace Pomodoro.Dal.Entities
         public AppUser? AppUser { get; set; }
 
         /// <summary>
+        /// Gets or sets foreign key to Schedule entity.
+        /// </summary>
+        public Guid? ScheduleId { get; set; }
+
+        /// <summary>
+        /// Gets or sets Schedule, if task scheduled, optional.
+        /// </summary>
+        public Schedule? Schedule { get; set; }
+
+        /// <summary>
+        /// Gets or sets foreign key to Category entity.
+        /// </summary>
+        public Guid? CategoryId { get; set; }
+
+        /// <summary>
+        /// Gets or sets category for task, optional.
+        /// </summary>
+        public Category? Category { get; set; }
+
+        /// <summary>
         /// Gets or sets collection of task attempts.
         /// </summary>
-        public ICollection<AppTaskAttempt> Attempts { get; set; } = new List<AppTaskAttempt>();
+        public ICollection<PomoUnit> Pomodoros { get; set; } = new List<PomoUnit>();
     }
 }

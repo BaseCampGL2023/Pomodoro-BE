@@ -27,11 +27,6 @@ namespace Pomodoro.Dal.Entities
         public AppIdentityUser? AppIdentityUser { get; set; }
 
         /// <summary>
-        /// Gets or sets collection of user timer settings.
-        /// </summary>
-        public ICollection<TimerSettings> TimerSettings { get; set; } = new List<TimerSettings>();
-
-        /// <summary>
         /// Gets active timer settings.
         /// </summary>
         public TimerSettings? ActiveTimerSettings
@@ -40,13 +35,23 @@ namespace Pomodoro.Dal.Entities
         }
 
         /// <summary>
+        /// Gets or sets collection of user timer settings.
+        /// </summary>
+        public ICollection<TimerSettings> TimerSettings { get; set; } = new List<TimerSettings>();
+
+        /// <summary>
         /// Gets or sets collection of user scheduled tasks.
         /// </summary>
-        public ICollection<Routine> Routins { get; set; } = new List<Routine>();
+        public ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
 
         /// <summary>
         /// Gets or sets collection of user tasks.
         /// </summary>
         public ICollection<AppTask> Tasks { get; set; } = new List<AppTask>();
+
+        /// <summary>
+        /// Gets or sets collection of user categories.
+        /// </summary>
+        public ICollection<Category> Categories { get; set; } = new List<Category>();
     }
 }

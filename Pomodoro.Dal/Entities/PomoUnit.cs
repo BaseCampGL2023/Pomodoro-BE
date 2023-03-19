@@ -1,4 +1,4 @@
-﻿// <copyright file="AppTaskAttempt.cs" company="PomodoroGroup_GL_BaseCamp">
+﻿// <copyright file="PomoUnit.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
@@ -9,7 +9,7 @@ namespace Pomodoro.Dal.Entities
     /// <summary>
     /// Describes task performance round.
     /// </summary>
-    public class AppTaskAttempt : BaseEntity
+    public class PomoUnit : BaseEntity
     {
         /// <summary>
         /// Gets or sets DateTime when task performing started.
@@ -35,5 +35,15 @@ namespace Pomodoro.Dal.Entities
         /// Gets or sets navigation property represents AppTask.
         /// </summary>
         public AppTask? Task { get; set; }
+
+        /// <summary>
+        /// Gets or sets foreign key to TimerSettings entity.
+        /// </summary>
+        public Guid? TimerSettingsId { get; set; }
+
+        /// <summary>
+        /// Gets or sets navigation property represents TimerSettings.
+        /// </summary>
+        public TimerSettings? TimerSettings { get; set; }
     }
 }
