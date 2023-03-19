@@ -7,6 +7,8 @@ using Pomodoro.Services.Models;
 
 namespace Pomodoro.Services
 {
+    // TODO: check to not delete same settings
+
     /// <summary>
     /// Perform operations with timer settings.
     /// </summary>
