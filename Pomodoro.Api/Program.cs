@@ -121,6 +121,7 @@ app.UseHttpsRedirection();
 app.UseCors(pomodoroSpecificOrigins);
 
 app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();
