@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Pomodoro.Dal.Entities;
+using Pomodoro.Dal.Enums;
 
 namespace Pomodoro.Dal.Data
 {
@@ -38,21 +39,19 @@ namespace Pomodoro.Dal.Data
         public DbSet<AppTask> AppTasks => this.Set<AppTask>();
 
         /// <summary>
-        /// Gets a DbSet that can be used to query and save AppTaskAttempt instances.
+        /// Gets a DbSet that can be used to query and save PomoUnit instances.
         /// </summary>
-        public DbSet<AppTaskAttempt> AppTaskAttempts => this.Set<AppTaskAttempt>();
+        public DbSet<PomoUnit> PomoUnits => this.Set<PomoUnit>();
 
         /// <summary>
-        /// Gets a DbSet that can be used to query and save Routine instances.
+        /// Gets a DbSet that can be used to query and save Schedule instances.
         /// </summary>
-        public DbSet<Routine> Routines => this.Set<Routine>();
+        public DbSet<Schedule> Schedules => this.Set<Schedule>();
 
         /// <summary>
-        /// Gets a DbSet that can be used to query and save RoutineAttempt instances.
+        /// Gets a DbSet that can be used to query and save Category instances.
         /// </summary>
-        public DbSet<RoutineAttempt> RoutineAttempts => this.Set<RoutineAttempt>();
-
-        // TODO: Add category to task and routines?
+        public DbSet<Category> Categories => this.Set<Category>();
 
         /// <summary>
         /// Configure entities mapping and relations.
@@ -83,17 +82,23 @@ namespace Pomodoro.Dal.Data
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_TimerSettings_AppUser_AppUserId");
 
-                entity.HasMany(e => e.Routins)
+                entity.HasMany(e => e.Schedules)
                     .WithOne(d => d.AppUser)
                     .HasForeignKey(d => d.AppUserId)
                     .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK_Routins_AppUser_AppIserId");
+                    .HasConstraintName("FK_Schedules_AppUser_AppUserId");
 
                 entity.HasMany(e => e.Tasks)
                     .WithOne(d => d.AppUser)
                     .HasForeignKey(d => d.AppUserId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_AppTasks_AppUser_AppUserId");
+
+                entity.HasMany(e => e.Categories)
+                    .WithOne(d => d.AppUser)
+                    .HasForeignKey(d => d.AppUserId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_Categories_AppUser_AppUserId");
             });
 
             builder.Entity<AppIdentityUser>(entity =>
@@ -105,7 +110,7 @@ namespace Pomodoro.Dal.Data
             {
                 entity.ToTable(MigrationHelpers.TimerSettingsTableName, "dbo");
 
-                entity.HasQueryFilter(e => e.IsActive == true);
+                entity.HasQueryFilter(e => e.IsActive);
 
                 entity.Property(e => e.IsActive)
                     .HasColumnName(MigrationHelpers.TimerSettingsIsActiveAttribute);
@@ -123,7 +128,9 @@ namespace Pomodoro.Dal.Data
                     .IsRequired().HasConversion<long>();
 
                 entity.Property(e => e.CreatedAt).IsRequired()
-                    .HasDefaultValueSql("GETDATE()");
+                    .HasDefaultValueSql("GETUTCDATE()");
+
+                entity.Property(e => e.Name).HasMaxLength(50);
             });
 
             builder.Entity<AppTask>(entity =>
@@ -134,51 +141,92 @@ namespace Pomodoro.Dal.Data
                 entity.Property(e => e.Description)
                     .HasMaxLength(1000);
 
+                entity.Property(e => e.SequenceNumber).IsRequired()
+                    .HasDefaultValue(1);
+
                 entity.Property(e => e.AllocatedDuration)
                     .HasConversion<long>();
 
                 entity.Property(e => e.CreatedDt).IsRequired()
-                    .HasDefaultValueSql("GETDATE()");
+                    .HasDefaultValueSql("GETUTCDATE()");
 
-                entity.HasMany(e => e.Attempts)
+                entity.HasMany(e => e.Pomodoros)
                     .WithOne(d => d.Task)
                     .HasForeignKey(d => d.TaskId)
                     .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK_AppTaskAttempts_AppTask_AppTaskId");
+                    .HasConstraintName("FK_Pomodoros_AppTask_AppTaskId");
+
+                entity.HasOne(e => e.Schedule)
+                    .WithMany(p => p.Tasks)
+                    .HasForeignKey(e => e.ScheduleId)
+                    .OnDelete(DeleteBehavior.NoAction)
+                    .HasConstraintName("FK_AppTask_Schedule_SheduleId");
             });
 
-            builder.Entity<AppTaskAttempt>(entity =>
+            builder.Entity<PomoUnit>(entity =>
             {
+                entity.ToTable("Pomodoros");
+
                 entity.Property(e => e.Comment)
                     .HasMaxLength(1000);
 
                 entity.Property(e => e.Duration)
                     .IsRequired().HasConversion<long>();
+
+                entity.HasOne(e => e.TimerSettings)
+                    .WithMany()
+                    .HasForeignKey(e => e.TimerSettingsId)
+                    .OnDelete(DeleteBehavior.NoAction)
+                    .HasConstraintName("FK_Pomodoros_TimerSettings_TimerSettingsId");
             });
 
-            builder.Entity<Routine>(entity =>
+            builder.Entity<Schedule>(entity =>
             {
+                int scheduleTypeLimit = Enum.GetValues(typeof(ScheduleType))
+                    .Cast<int>().Max() + 1;
+
                 entity.Property(e => e.Title)
                     .IsRequired().HasMaxLength(100);
 
-                entity.Property(e => e.CreatedAt).IsRequired()
-                    .HasDefaultValueSql("GETDATE()");
+                entity.Property(e => e.Template).IsRequired()
+                    .HasMaxLength(370);
+
+                entity.Property(e => e.ScheduleType).IsRequired()
+                .HasColumnName("ScheduleType").HasConversion<byte>();
+
+                entity.Property(e => e.CreatedDt).IsRequired()
+                    .HasDefaultValueSql("GETUTCDATE()");
 
                 entity.Property(e => e.Description).HasMaxLength(1000);
 
                 entity.Property(e => e.AllocatedDuration)
                     .HasConversion<long>();
 
-                entity.HasMany(e => e.Attempts)
-                    .WithOne(d => d.Routine)
-                    .HasForeignKey(d => d.RoutineId)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK_RoutineAttemts_Routine_RoutineId");
+                entity.HasCheckConstraint(
+                    "ScheduleType",
+                    $"ScheduleType >= 0 AND ScheduleType < {scheduleTypeLimit}");
+
+                entity.HasOne(e => e.Previous)
+                    .WithOne();
             });
 
-            builder.Entity<RoutineAttempt>(entity =>
+            builder.Entity<Category>(entity =>
             {
-                entity.Property(e => e.Comment).HasMaxLength(1000);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(60);
+
+                entity.Property(e => e.Description).HasMaxLength(1000);
+
+                entity.HasMany(p => p.Tasks)
+                    .WithOne(d => d.Category)
+                    .HasForeignKey(d => d.CategoryId)
+                    .OnDelete(DeleteBehavior.NoAction)
+                    .HasConstraintName("FK_Categories_AppTasks_CategoryId");
+
+                entity.HasMany(p => p.Schedules)
+                    .WithOne(d => d.Category)
+                    .HasForeignKey(d => d.CategoryId)
+                    .OnDelete(DeleteBehavior.NoAction)
+                    .HasConstraintName("FK_Schedules_Categories_CategoryId");
             });
         }
     }
