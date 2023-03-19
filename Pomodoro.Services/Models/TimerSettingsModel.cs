@@ -18,6 +18,12 @@ namespace Pomodoro.Services.Models
         public Guid Id { get; set; }
 
         /// <summary>
+        /// Gets or sets settings name.
+        /// </summary>
+        [StringLength(50)]
+        public string? Name { get; set; }
+
+        /// <summary>
         /// Gets or sets duration of working period for client.
         /// </summary>
         [Required(ErrorMessage = "Pomodoro duration value is required.")]
@@ -69,6 +75,7 @@ namespace Pomodoro.Services.Models
             return new TimerSettingsModel
             {
                 Id = entity.Id,
+                Name = entity.Name,
                 Pomodoro = (int)entity.Pomodoro.TotalSeconds,
                 ShortBrake = (int)entity.Pomodoro.TotalSeconds,
                 LongBrake = (int)entity.Pomodoro.TotalSeconds,
@@ -88,6 +95,7 @@ namespace Pomodoro.Services.Models
             return new TimerSettings
             {
                 Id = this.Id,
+                Name = this.Name,
                 Pomodoro = TimeSpan.FromSeconds(this.Pomodoro),
                 ShortBrake = TimeSpan.FromSeconds(this.ShortBrake),
                 LongBreak = TimeSpan.FromSeconds(this.LongBrake),

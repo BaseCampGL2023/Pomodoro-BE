@@ -12,13 +12,13 @@ namespace Pomodoro.Services
     /// </summary>
     public class TimerSettingsService
     {
-        private readonly ITimerSettingsRepository repository;
+        private readonly ITimerSettingRepository repository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TimerSettingsService"/> class.
         /// </summary>
-        /// <param name="repository">Instance of ITimerSettingsRepository <see cref="ITimerSettingsRepository"/>.</param>
-        public TimerSettingsService(ITimerSettingsRepository repository)
+        /// <param name="repository">Instance of ITimerSettingsRepository <see cref="ITimerSettingRepository"/>.</param>
+        public TimerSettingsService(ITimerSettingRepository repository)
         {
             this.repository = repository;
         }
@@ -27,7 +27,7 @@ namespace Pomodoro.Services
         /// Persist new user tracker settings.
         /// </summary>
         /// <param name="model">Tracker settings.</param>
-        /// <param name="userId">User id.</param>
+        /// <param name="userId">AppUser id.</param>
         /// <returns>TRUE if value persist succesfully, FALSE otherwise.</returns>
         public async Task<bool> AddSettingsAsync(TimerSettingsModel model, Guid userId)
         {
@@ -110,7 +110,7 @@ namespace Pomodoro.Services
         /// Update existing user tracker settings.
         /// </summary>
         /// <param name="model">Tracker settings.</param>
-        /// <param name="userId">User id.</param>
+        /// <param name="userId">AppUser id.</param>
         /// <returns>TRUE if value persist succesfully, FALSE otherwise.</returns>
         public async Task<bool> UpdateOneOwnAsync(TimerSettingsModel model, Guid userId)
         {
