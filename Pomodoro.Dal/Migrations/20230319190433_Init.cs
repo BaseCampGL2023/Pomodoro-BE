@@ -179,48 +179,19 @@ namespace Pomodoro.Dal.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AppTasks",
+                name: "Categories",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    CreatedDt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
-                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    FinishDt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    AllocatedDuration = table.Column<long>(type: "bigint", nullable: true),
                     AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AppTasks", x => x.Id);
+                    table.PrimaryKey("PK_Categories", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AppTasks_AppUser_AppUserId",
-                        column: x => x.AppUserId,
-                        principalTable: "AppUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Routines",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Template = table.Column<long>(type: "bigint", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
-                    FinishAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    AllocatedDuration = table.Column<long>(type: "bigint", nullable: true),
-                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Routines", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Routins_AppUser_AppIserId",
+                        name: "FK_Categories_AppUser_AppUserId",
                         column: x => x.AppUserId,
                         principalTable: "AppUsers",
                         principalColumn: "Id",
@@ -233,13 +204,14 @@ namespace Pomodoro.Dal.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Pomodoro = table.Column<long>(type: "bigint", nullable: false),
                     ShortBrake = table.Column<long>(type: "bigint", nullable: false),
                     LongBreak = table.Column<long>(type: "bigint", nullable: false),
                     IsAutoStart = table.Column<bool>(type: "bit", nullable: false),
                     RestSequence = table.Column<byte>(type: "tinyint", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
                     AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -254,58 +226,126 @@ namespace Pomodoro.Dal.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AppTaskAttempts",
+                name: "Schedules",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Template = table.Column<string>(type: "nvarchar(370)", maxLength: 370, nullable: false),
+                    ScheduleType = table.Column<byte>(type: "tinyint", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedDt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    ModifiedDt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    FinishDt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    AllocatedDuration = table.Column<long>(type: "bigint", nullable: true),
+                    StartDt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PreviousId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Schedules", x => x.Id);
+                    table.CheckConstraint("ScheduleType", "ScheduleType >= 0 AND ScheduleType < 13");
+                    table.ForeignKey(
+                        name: "FK_Schedules_AppUser_AppUserId",
+                        column: x => x.AppUserId,
+                        principalTable: "AppUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Schedules_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Schedules_Schedules_PreviousId",
+                        column: x => x.PreviousId,
+                        principalTable: "Schedules",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppTasks",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    SequenceNumber = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
+                    CreatedDt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    ModifiedDt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    StartDt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    FinishDt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    AllocatedDuration = table.Column<long>(type: "bigint", nullable: true),
+                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ScheduleId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppTasks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AppTask_Schedule_SheduleId",
+                        column: x => x.ScheduleId,
+                        principalTable: "Schedules",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_AppTasks_AppUser_AppUserId",
+                        column: x => x.AppUserId,
+                        principalTable: "AppUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Categories_AppTasks_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Pomodoros",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     StartDt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Duration = table.Column<long>(type: "bigint", nullable: false),
                     Comment = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    TaskId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    TaskId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TimerSettingsId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AppTaskAttempts", x => x.Id);
+                    table.PrimaryKey("PK_Pomodoros", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AppTaskAttempts_AppTask_AppTaskId",
+                        name: "FK_Pomodoros_AppTask_AppTaskId",
                         column: x => x.TaskId,
                         principalTable: "AppTasks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RoutineAttempts",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NumberInSequence = table.Column<int>(type: "int", nullable: false),
-                    StartDt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FinishDt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Comment = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    IsSuccesful = table.Column<bool>(type: "bit", nullable: false),
-                    RoutineId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RoutineAttempts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RoutineAttemts_Routine_RoutineId",
-                        column: x => x.RoutineId,
-                        principalTable: "Routines",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_Pomodoros_TimerSettings_TimerSettingsId",
+                        column: x => x.TimerSettingsId,
+                        principalSchema: "dbo",
+                        principalTable: "TimerSettings",
+                        principalColumn: "Id");
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AppTaskAttempts_TaskId",
-                table: "AppTaskAttempts",
-                column: "TaskId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppTasks_AppUserId",
                 table: "AppTasks",
                 column: "AppUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppTasks_CategoryId",
+                table: "AppTasks",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppTasks_ScheduleId",
+                table: "AppTasks",
+                column: "ScheduleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_AspNetUserId",
@@ -353,14 +393,36 @@ namespace Pomodoro.Dal.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RoutineAttempts_RoutineId",
-                table: "RoutineAttempts",
-                column: "RoutineId");
+                name: "IX_Categories_AppUserId",
+                table: "Categories",
+                column: "AppUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Routines_AppUserId",
-                table: "Routines",
+                name: "IX_Pomodoros_TaskId",
+                table: "Pomodoros",
+                column: "TaskId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Pomodoros_TimerSettingsId",
+                table: "Pomodoros",
+                column: "TimerSettingsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schedules_AppUserId",
+                table: "Schedules",
                 column: "AppUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schedules_CategoryId",
+                table: "Schedules",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schedules_PreviousId",
+                table: "Schedules",
+                column: "PreviousId",
+                unique: true,
+                filter: "[PreviousId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TimerSettings_AppUserId",
@@ -369,15 +431,12 @@ namespace Pomodoro.Dal.Migrations
                 column: "AppUserId");
 
             MigrationHelpers.CreateTimerSettingsDeleteTrigger(migrationBuilder);
-            MigrationHelpers.CreateTimerSettingsInsertTrigger(migrationBuilder);
             MigrationHelpers.CreateTimerSettingsUpdateTrigger(migrationBuilder);
+            MigrationHelpers.CreateTimerSettingsInsertTrigger(migrationBuilder);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "AppTaskAttempts");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -394,20 +453,23 @@ namespace Pomodoro.Dal.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "RoutineAttempts");
+                name: "Pomodoros");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "AppTasks");
 
             migrationBuilder.DropTable(
                 name: "TimerSettings",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "AppTasks");
+                name: "Schedules");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "Routines");
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "AppUsers");
@@ -416,8 +478,8 @@ namespace Pomodoro.Dal.Migrations
                 name: "AspNetUsers");
 
             MigrationHelpers.DropTimerSettingsDeleteTrigger(migrationBuilder);
-            MigrationHelpers.DropTimerSettingsInsertTrigger(migrationBuilder);
             MigrationHelpers.DropTimerSettingsUpdateTrigger(migrationBuilder);
+            MigrationHelpers.DropTimerSettingsInsertTrigger(migrationBuilder);
         }
     }
 }

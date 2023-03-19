@@ -12,7 +12,7 @@ using Pomodoro.Dal.Data;
 namespace Pomodoro.Dal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230315193530_Init")]
+    [Migration("20230319190433_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -233,10 +233,13 @@ namespace Pomodoro.Dal.Migrations
                     b.Property<Guid>("AppUserId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("CreatedDt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
@@ -245,7 +248,18 @@ namespace Pomodoro.Dal.Migrations
                     b.Property<DateTime?>("FinishDt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("StartTime")
+                    b.Property<DateTime?>("ModifiedDt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ScheduleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SequenceNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.Property<DateTime?>("StartDt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
@@ -257,33 +271,11 @@ namespace Pomodoro.Dal.Migrations
 
                     b.HasIndex("AppUserId");
 
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("ScheduleId");
+
                     b.ToTable("AppTasks");
-                });
-
-            modelBuilder.Entity("Pomodoro.Dal.Entities.AppTaskAttempt", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Comment")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<long>("Duration")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("StartDt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("TaskId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TaskId");
-
-                    b.ToTable("AppTaskAttempts");
                 });
 
             modelBuilder.Entity("Pomodoro.Dal.Entities.AppUser", b =>
@@ -308,7 +300,63 @@ namespace Pomodoro.Dal.Migrations
                     b.ToTable("AppUsers");
                 });
 
-            modelBuilder.Entity("Pomodoro.Dal.Entities.Routine", b =>
+            modelBuilder.Entity("Pomodoro.Dal.Entities.Category", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AppUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("Pomodoro.Dal.Entities.PomoUnit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<long>("Duration")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("StartDt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("TaskId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TimerSettingsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TaskId");
+
+                    b.HasIndex("TimerSettingsId");
+
+                    b.ToTable("Pomodoros", (string)null);
+                });
+
+            modelBuilder.Entity("Pomodoro.Dal.Entities.Schedule", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -320,23 +368,41 @@ namespace Pomodoro.Dal.Migrations
                     b.Property<Guid>("AppUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<Guid?>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<DateTime?>("FinishAt")
+                    b.Property<DateTime?>("FinishDt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("StartTime")
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedDt")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("Template")
-                        .HasColumnType("bigint");
+                    b.Property<Guid?>("PreviousId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte>("ScheduleType")
+                        .HasColumnType("tinyint")
+                        .HasColumnName("ScheduleType");
+
+                    b.Property<DateTime?>("StartDt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Template")
+                        .IsRequired()
+                        .HasMaxLength(370)
+                        .HasColumnType("nvarchar(370)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -347,39 +413,15 @@ namespace Pomodoro.Dal.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.ToTable("Routines");
-                });
+                    b.HasIndex("CategoryId");
 
-            modelBuilder.Entity("Pomodoro.Dal.Entities.RoutineAttempt", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.HasIndex("PreviousId")
+                        .IsUnique()
+                        .HasFilter("[PreviousId] IS NOT NULL");
 
-                    b.Property<string>("Comment")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                    b.ToTable("Schedules");
 
-                    b.Property<DateTime>("FinishDt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsSuccesful")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("NumberInSequence")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("RoutineId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("StartDt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoutineId");
-
-                    b.ToTable("RoutineAttempts");
+                    b.HasCheckConstraint("ScheduleType", "ScheduleType >= 0 AND ScheduleType < 13");
                 });
 
             modelBuilder.Entity("Pomodoro.Dal.Entities.TimerSettings", b =>
@@ -395,7 +437,7 @@ namespace Pomodoro.Dal.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit")
@@ -406,6 +448,10 @@ namespace Pomodoro.Dal.Migrations
 
                     b.Property<long>("LongBreak")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<long>("Pomodoro")
                         .HasColumnType("bigint");
@@ -483,19 +529,23 @@ namespace Pomodoro.Dal.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_AppTasks_AppUser_AppUserId");
 
+                    b.HasOne("Pomodoro.Dal.Entities.Category", "Category")
+                        .WithMany("Tasks")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .HasConstraintName("FK_Categories_AppTasks_CategoryId");
+
+                    b.HasOne("Pomodoro.Dal.Entities.Schedule", "Schedule")
+                        .WithMany("Tasks")
+                        .HasForeignKey("ScheduleId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .HasConstraintName("FK_AppTask_Schedule_SheduleId");
+
                     b.Navigation("AppUser");
-                });
 
-            modelBuilder.Entity("Pomodoro.Dal.Entities.AppTaskAttempt", b =>
-                {
-                    b.HasOne("Pomodoro.Dal.Entities.AppTask", "Task")
-                        .WithMany("Attempts")
-                        .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_AppTaskAttempts_AppTask_AppTaskId");
+                    b.Navigation("Category");
 
-                    b.Navigation("Task");
+                    b.Navigation("Schedule");
                 });
 
             modelBuilder.Entity("Pomodoro.Dal.Entities.AppUser", b =>
@@ -509,28 +559,62 @@ namespace Pomodoro.Dal.Migrations
                     b.Navigation("AppIdentityUser");
                 });
 
-            modelBuilder.Entity("Pomodoro.Dal.Entities.Routine", b =>
+            modelBuilder.Entity("Pomodoro.Dal.Entities.Category", b =>
                 {
                     b.HasOne("Pomodoro.Dal.Entities.AppUser", "AppUser")
-                        .WithMany("Routins")
+                        .WithMany("Categories")
                         .HasForeignKey("AppUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_Routins_AppUser_AppIserId");
+                        .HasConstraintName("FK_Categories_AppUser_AppUserId");
 
                     b.Navigation("AppUser");
                 });
 
-            modelBuilder.Entity("Pomodoro.Dal.Entities.RoutineAttempt", b =>
+            modelBuilder.Entity("Pomodoro.Dal.Entities.PomoUnit", b =>
                 {
-                    b.HasOne("Pomodoro.Dal.Entities.Routine", "Routine")
-                        .WithMany("Attempts")
-                        .HasForeignKey("RoutineId")
+                    b.HasOne("Pomodoro.Dal.Entities.AppTask", "Task")
+                        .WithMany("Pomodoros")
+                        .HasForeignKey("TaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_RoutineAttemts_Routine_RoutineId");
+                        .HasConstraintName("FK_Pomodoros_AppTask_AppTaskId");
 
-                    b.Navigation("Routine");
+                    b.HasOne("Pomodoro.Dal.Entities.TimerSettings", "TimerSettings")
+                        .WithMany()
+                        .HasForeignKey("TimerSettingsId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .HasConstraintName("FK_Pomodoros_TimerSettings_TimerSettingsId");
+
+                    b.Navigation("Task");
+
+                    b.Navigation("TimerSettings");
+                });
+
+            modelBuilder.Entity("Pomodoro.Dal.Entities.Schedule", b =>
+                {
+                    b.HasOne("Pomodoro.Dal.Entities.AppUser", "AppUser")
+                        .WithMany("Schedules")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Schedules_AppUser_AppUserId");
+
+                    b.HasOne("Pomodoro.Dal.Entities.Category", "Category")
+                        .WithMany("Schedules")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .HasConstraintName("FK_Schedules_Categories_CategoryId");
+
+                    b.HasOne("Pomodoro.Dal.Entities.Schedule", "Previous")
+                        .WithOne()
+                        .HasForeignKey("Pomodoro.Dal.Entities.Schedule", "PreviousId");
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Previous");
                 });
 
             modelBuilder.Entity("Pomodoro.Dal.Entities.TimerSettings", b =>
@@ -552,21 +636,30 @@ namespace Pomodoro.Dal.Migrations
 
             modelBuilder.Entity("Pomodoro.Dal.Entities.AppTask", b =>
                 {
-                    b.Navigation("Attempts");
+                    b.Navigation("Pomodoros");
                 });
 
             modelBuilder.Entity("Pomodoro.Dal.Entities.AppUser", b =>
                 {
-                    b.Navigation("Routins");
+                    b.Navigation("Categories");
+
+                    b.Navigation("Schedules");
 
                     b.Navigation("Tasks");
 
                     b.Navigation("TimerSettings");
                 });
 
-            modelBuilder.Entity("Pomodoro.Dal.Entities.Routine", b =>
+            modelBuilder.Entity("Pomodoro.Dal.Entities.Category", b =>
                 {
-                    b.Navigation("Attempts");
+                    b.Navigation("Schedules");
+
+                    b.Navigation("Tasks");
+                });
+
+            modelBuilder.Entity("Pomodoro.Dal.Entities.Schedule", b =>
+                {
+                    b.Navigation("Tasks");
                 });
 #pragma warning restore 612, 618
         }
