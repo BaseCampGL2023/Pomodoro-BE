@@ -45,11 +45,11 @@ namespace Pomodoro.Dal.Extensions
             this IServiceCollection services)
         {
             services.AddScoped<IAppUserRepository, AppUserRepository>();
-            services.AddScoped<ITimerSettingsRepository, TimerSettingsRepository>();
+            services.AddScoped<ITimerSettingRepository, TimerSettingRepository>();
             services.AddScoped<IAppTaskRepository, AppTaskRepository>();
-            services.AddScoped<IAppTaskAttemptRepository, AppTaskAttemptRepository>();
-            services.AddScoped<IRoutineRepository, RoutineRepository>();
-            services.AddScoped<IRoutineAttemptRepository, RoutineAttemptRepository>();
+            services.AddScoped<IPomoUnitRepository, PomoUnitsRepository>();
+            services.AddScoped<IScheduleRepository, ScheduleRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
 
             return services;
         }
