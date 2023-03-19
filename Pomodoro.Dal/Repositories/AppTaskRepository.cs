@@ -40,19 +40,19 @@ namespace Pomodoro.Dal.Repositories
         /// <inheritdoc/>
         public async Task<ICollection<AppTask>> GetBelonginPrisitineAllAsync(Guid ownerId)
         {
-            return await this.Table.Include(e => e.Attempts).Where(e => e.Attempts.Count() == 0).ToListAsync();
+            return await this.Table.Include(e => e.Pomodoros).Where(e => !e.Pomodoros.Any()).ToListAsync();
         }
 
         /// <inheritdoc/>
         public async Task<ICollection<AppTask>> GetBelonginStartedAllAsync(Guid ownerId)
         {
-            return await this.Table.Include(e => e.Attempts).Where(e => e.Attempts.Count() > 0).ToListAsync();
+            return await this.Table.Include(e => e.Pomodoros).Where(e => e.Pomodoros.Any()).ToListAsync();
         }
 
         /// <inheritdoc/>
         public async Task<AppTask?> GetByIdWithRelatedAsync(Guid id)
         {
-            return await this.Table.Include(e => e.Attempts)
+            return await this.Table.Include(e => e.Pomodoros)
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
     }

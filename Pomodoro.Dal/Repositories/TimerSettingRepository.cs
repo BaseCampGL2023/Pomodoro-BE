@@ -1,4 +1,4 @@
-﻿// <copyright file="TimerSettingsRepository.cs" company="PomodoroGroup_GL_BaseCamp">
+﻿// <copyright file="TimerSettingRepository.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
@@ -11,22 +11,22 @@ using Pomodoro.Dal.Repositories.Interfaces;
 namespace Pomodoro.Dal.Repositories
 {
     /// <inheritdoc/>
-    public class TimerSettingsRepository : BaseRepository<TimerSettings>, ITimerSettingsRepository
+    public class TimerSettingRepository : BaseRepository<TimerSettings>, ITimerSettingRepository
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TimerSettingsRepository"/> class.
+        /// Initializes a new instance of the <see cref="TimerSettingRepository"/> class.
         /// </summary>
         /// <param name="context">Instance of AppDbContext class <see cref="AppDbContext"/>.</param>
-        public TimerSettingsRepository(AppDbContext context)
+        public TimerSettingRepository(AppDbContext context)
             : base(context)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TimerSettingsRepository"/> class without using DI container.
+        /// Initializes a new instance of the <see cref="TimerSettingRepository"/> class without using DI container.
         /// </summary>
         /// <param name="options">>Instance of DbContextOptions to instantiate AppDbContext.</param>
-        internal TimerSettingsRepository(DbContextOptions<AppDbContext> options)
+        internal TimerSettingRepository(DbContextOptions<AppDbContext> options)
             : base(options)
         {
         }

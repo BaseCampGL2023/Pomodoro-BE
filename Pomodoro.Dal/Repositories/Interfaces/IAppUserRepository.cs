@@ -38,6 +38,6 @@ namespace Pomodoro.Dal.Repositories.Interfaces
         /// </summary>
         /// <param name="id">AppUser id.</param>
         /// <returns>AppUser object with related or NULL if object with this id don't exist.</returns>
-        public Task<AppUser?> GetByIdWithRoutinesAsync(Guid id);
+        public Task<AppUser?> GetByIdWithSchedulesAsync(Guid id);
     }
 }

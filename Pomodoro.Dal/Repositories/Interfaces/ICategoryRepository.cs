@@ -1,4 +1,4 @@
-﻿// <copyright file="IRoutineAttemptRepository.cs" company="PomodoroGroup_GL_BaseCamp">
+﻿// <copyright file="ICategoryRepository.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
@@ -8,9 +8,9 @@ using Pomodoro.Dal.Repositories.Base;
 namespace Pomodoro.Dal.Repositories.Interfaces
 {
     /// <summary>
-    /// Providing operations with RoutineAttempt objects.
+    /// Perform operations with categories.
     /// </summary>
-    public interface IRoutineAttemptRepository : IRepository<RoutineAttempt>
+    public interface ICategoryRepository : IBelongRepository<Category>
     {
     }
 }

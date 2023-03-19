@@ -1,4 +1,4 @@
-﻿// <copyright file="ITimerSettingsRepository.cs" company="PomodoroGroup_GL_BaseCamp">
+﻿// <copyright file="ITimerSettingRepository.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
@@ -10,7 +10,7 @@ namespace Pomodoro.Dal.Repositories.Interfaces
     /// <summary>
     /// Providing operations with TimerSettings objects.
     /// </summary>
-    public interface ITimerSettingsRepository : IBelongRepository<TimerSettings>
+    public interface ITimerSettingRepository : IBelongRepository<TimerSettings>
     {
         /// <summary>
         /// Return active settings to specified user.

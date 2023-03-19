@@ -34,16 +34,15 @@ namespace Pomodoro.Dal.Repositories
         /// <inheritdoc/>
         public async Task<AppUser?> GetByIdWithRelatedAsync(Guid id)
         {
-            return await this.Table.Include(e => e.Routins)
+            return await this.Table.Include(e => e.Schedules)
                 .Include(e => e.Tasks).Include(e => e.TimerSettings)
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
 
         /// <inheritdoc/>
-        public async Task<AppUser?> GetByIdWithRoutinesAsync(Guid id)
+        public async Task<AppUser?> GetByIdWithSchedulesAsync(Guid id)
         {
-            return await this.Table.Include(e => e.Routins)
-                .ThenInclude(r => r.Attempts).FirstOrDefaultAsync(e => e.Id == id);
+            return await this.Table.Include(e => e.Schedules).FirstOrDefaultAsync(e => e.Id == id);
         }
 
         /// <inheritdoc/>
@@ -57,7 +56,7 @@ namespace Pomodoro.Dal.Repositories
         public async Task<AppUser?> GetByIdWithTasksAsync(Guid id)
         {
            return await this.Table.Include(e => e.Tasks)
-                .ThenInclude(r => r.Attempts).FirstOrDefaultAsync(e => e.Id == id);
+                .ThenInclude(r => r.Pomodoros).FirstOrDefaultAsync(e => e.Id == id);
         }
     }
 }
