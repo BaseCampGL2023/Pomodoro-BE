@@ -2,7 +2,6 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
-using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Repositories.Interfaces;
 using Pomodoro.Services.Models;
 using Pomodoro.Services.Models.Results;
@@ -26,7 +25,7 @@ namespace Pomodoro.Services
         }
 
         /// <summary>
-        /// Return belonging for user task by id.
+        /// Return belonging to user task by id.
         /// </summary>
         /// <param name="id">Task id.</param>
         /// <param name="ownerId">Owner id.</param>
@@ -108,5 +107,7 @@ namespace Pomodoro.Services
 
             return result > 0;
         }
+
+        // TODO: ModifiedAt
     }
 }

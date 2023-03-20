@@ -3,7 +3,9 @@
 // </copyright>
 
 using System.ComponentModel.DataAnnotations;
-using Pomodoro.Services.Enums;
+using System.Text.Json.Serialization;
+using Pomodoro.Dal.Entities;
+using Pomodoro.Dal.Enums;
 
 namespace Pomodoro.Services.Models
 {
@@ -13,16 +15,140 @@ namespace Pomodoro.Services.Models
     public class ScheduleModel
     {
         /// <summary>
-        /// Gets or sets schedule type.
+        /// Gets or sets task id.
         /// </summary>
-        [Required]
-        public ScheduleType Type { get; set; }
+        public Guid Id { get; set; }
 
         /// <summary>
-        /// Gets or sets array of active days in period.
+        /// Gets or sets schedule type.
         /// </summary>
-        public int[] Days { get; set; } = Array.Empty<int>();
+        [Required(ErrorMessage = "Schedule type is required")]
+        public ScheduleType ScheduleType { get; set; }
 
-        // TODO: Add validation schedule
+        /// <summary>
+        /// Gets or sets pattern of frequency of task execution.
+        /// </summary>
+        public string Template { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets routine title.
+        /// </summary>
+        public string Title { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the schedule is active.
+        /// </summary>
+        public bool IsActive { get; set; }
+
+        /// <summary>
+        /// Gets or sets routine description, optional.
+        /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public string? Description { get; set; }
+
+        /// <summary>
+        /// Gets or sets DateTime when routine created.
+        /// </summary>
+        public DateTime CreatedDt { get; set; }
+
+        /// <summary>
+        /// Gets or sets DateTime when routine finished.
+        /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public DateTime? FinishDt { get; set; }
+
+        /// <summary>
+        /// Gets or sets planned start time.
+        /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public DateTime? StartDt { get; set; }
+
+        /// <summary>
+        /// Gets or sets planned duration of the routine round.
+        /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public int AllocatedDuration { get; set; }
+
+        /// <summary>
+        /// Gets or sets CategoryId.
+        /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public Guid? CategoryId { get; set; }
+
+        /// <summary>
+        /// Gets or sets Category name.
+        /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public string? Category { get; set; }
+
+        /// <summary>
+        /// Gets or sets foreign key to Schedule entity.
+        /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public Guid? PreviousId { get; set; }
+
+        /// <summary>
+        /// Gets or sets collection of TaskModel related to this schedule.
+        /// </summary>
+        public ICollection<TaskModel> Tasks { get; set; } = new List<TaskModel>();
+
+        /// <summary>
+        /// Map from Dal entity to model object.
+        /// </summary>
+        /// <param name="entity">Instance of Schedule <see cref="Schedule"/>.</param>
+        /// <returns>Model object.</returns>
+        public static ScheduleModel Create(Schedule entity)
+        {
+            return new ScheduleModel
+            {
+                Id = entity.Id,
+                Title = entity.Title,
+                Description = entity.Description,
+                ScheduleType = entity.ScheduleType,
+                Template = entity.Template,
+                CreatedDt = entity.CreatedDt,
+                FinishDt = entity.FinishDt,
+                StartDt = entity.StartDt,
+                IsActive = entity.IsActive,
+                AllocatedDuration = entity.AllocatedDuration.HasValue ?
+                    (int)entity.AllocatedDuration.Value.TotalSeconds : 0,
+                Category = entity.Category?.Name,
+                CategoryId = entity.Category?.Id,
+                PreviousId = entity.PreviousId,
+                Tasks = entity.Tasks.Any() ?
+                    entity.Tasks.Select(e => TaskModel.Create(e)).ToList() : new List<TaskModel>(),
+            };
+        }
+
+        /// <summary>
+        /// Map from model to Dal entity.
+        /// </summary>
+        /// <param name="userId">Owner id.</param>
+        /// <returns>Dal entity.</returns>
+        public Schedule ToDalEntity(Guid userId)
+        {
+            return new Schedule
+            {
+                Id = this.Id,
+                Title = this.Title,
+                ScheduleType = this.ScheduleType,
+                Template = this.Template,
+                Description = this.Description,
+                CreatedDt = this.CreatedDt == DateTime.MinValue
+                    ? DateTime.UtcNow : this.CreatedDt,
+                StartDt = this.StartDt,
+                FinishDt = this.FinishDt,
+                AllocatedDuration = this.AllocatedDuration > 0 ?
+                    TimeSpan.FromSeconds(this.AllocatedDuration) : null,
+                CategoryId = this.CategoryId,
+                AppUserId = userId,
+                IsActive = this.IsActive,
+                PreviousId = this.PreviousId,
+                Tasks = this.Tasks.Any() ?
+                    this.Tasks.Select(e => e.ToDalEntity(userId)).ToList() : new List<AppTask>(),
+            };
+        }
+
+        // TODO: Add validation schedule, ModifiedAt
     }
 }
