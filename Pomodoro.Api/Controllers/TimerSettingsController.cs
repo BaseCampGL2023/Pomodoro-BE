@@ -60,7 +60,7 @@ namespace Pomodoro.Api.Controllers
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [SwaggerResponse(200, "The execution was succesful")]
+        [SwaggerResponse(201, "Settings created")]
         [SwaggerResponse(400, "The request was invalid")]
         public async Task<ActionResult<TimerSettingsModel>> AddOne(TimerSettingsModel model)
         {
@@ -91,7 +91,7 @@ namespace Pomodoro.Api.Controllers
         /// </summary>
         /// <param name="id">TImer settings object.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        [HttpDelete]
+        [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(204, "Delete successfully")]
