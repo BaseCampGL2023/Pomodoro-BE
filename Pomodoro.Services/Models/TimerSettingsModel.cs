@@ -20,7 +20,7 @@ namespace Pomodoro.Services.Models
         /// <summary>
         /// Gets or sets settings name.
         /// </summary>
-        [StringLength(50)]
+        [StringLength(50, ErrorMessage = "Should be less or equal than 50 letters.")]
         public string? Name { get; set; }
 
         /// <summary>

@@ -23,11 +23,6 @@ namespace Pomodoro.Services.Models
         /// </summary>
         public int[] Days { get; set; } = Array.Empty<int>();
 
-        /*/// <summary>
-        /// Gets or sets of period duration.
-        /// </summary>
-        public int PeriodDuration { get; set; }*/
-
         // TODO: Add validation schedule
     }
 }
