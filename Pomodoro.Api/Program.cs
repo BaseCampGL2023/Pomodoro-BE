@@ -31,6 +31,8 @@ builder.Services.AddScoped<AuthService>();
 // TODO: implement interfaces
 builder.Services.AddScoped<TimerSettingsService>();
 
+builder.Services.AddScoped<TaskService>();
+
 builder.Services.AddJwtAuthentication(builder.Configuration);
 
 builder.Services.AddCors(options =>
