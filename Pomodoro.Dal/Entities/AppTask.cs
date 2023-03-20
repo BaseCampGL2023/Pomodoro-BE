@@ -45,7 +45,7 @@ namespace Pomodoro.Dal.Entities
         /// <summary>
         /// Gets or sets DateTime when task performing completed.
         /// </summary>
-        public DateTime? FinishDt { get; set; } = null;
+        public DateTime? FinishDt { get; set; }
 
         /// <summary>
         /// Gets or sets planned duration of the task.
@@ -83,7 +83,7 @@ namespace Pomodoro.Dal.Entities
         public Category? Category { get; set; }
 
         /// <summary>
-        /// Gets or sets collection of task attempts.
+        /// Gets or sets collection of pomodoros spent to task.
         /// </summary>
         public ICollection<PomoUnit> Pomodoros { get; set; } = new List<PomoUnit>();
     }
