@@ -7,7 +7,7 @@ using Pomodoro.Services.Models;
 
 namespace Pomodoro.Services
 {
-    // TODO: check to not delete same settings
+    // TODO: check to not insert same settings
 
     /// <summary>
     /// Perform operations with timer settings.
@@ -120,6 +120,7 @@ namespace Pomodoro.Services
             int result = await this.repository.UpdateAsync(entity, true);
             if (result > 0)
             {
+                // TODO: why I use it?
                 model.Id = entity.Id;
                 return true;
             }
