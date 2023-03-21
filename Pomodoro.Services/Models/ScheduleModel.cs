@@ -13,9 +13,7 @@ namespace Pomodoro.Services.Models
     /// <summary>
     /// Represents the schedule.
     /// </summary>
-    public class ScheduleModel : BaseModel<Schedule>
-        
-        //BaseModel, IBelongModel<ScheduleModel, Schedule>
+    public class ScheduleModel : IBaseModel<Schedule>
     {
         /// <summary>
         /// Gets or sets task id.
@@ -85,6 +83,12 @@ namespace Pomodoro.Services.Models
         public string? Category { get; set; }
 
         /// <summary>
+        /// Gets or sets owner id.
+        /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public Guid OwnerId { get; set; }
+
+        /// <summary>
         /// Gets or sets foreign key to Schedule entity.
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
@@ -99,28 +103,26 @@ namespace Pomodoro.Services.Models
         /// Map from Dal entity to model object.
         /// </summary>
         /// <param name="entity">Instance of Schedule <see cref="Schedule"/>.</param>
-        /// <returns>Model object.</returns>
-        public void Assign(Schedule entity)
+        /// <param name="isMapOwner">If TRUE add owner id to DTO.</param>
+        public void Assign(Schedule entity, bool isMapOwner = false)
         {
-            //return new ScheduleModel
-            //{
             this.Id = entity.Id;
-                this.Title = entity.Title;
-                this.Description = entity.Description;
-                this.ScheduleType = entity.ScheduleType;
-                this.Template = entity.Template;
-                this.CreatedDt = entity.CreatedDt;
-                this.FinishDt = entity.FinishDt;
-                this.StartDt = entity.StartDt;
-                this.IsActive = entity.IsActive;
-                this.AllocatedDuration = entity.AllocatedDuration.HasValue ?
-                    (int)entity.AllocatedDuration.Value.TotalSeconds : 0;
-                this.Category = entity.Category?.Name;
-                this.CategoryId = entity.Category?.Id;
-                this.PreviousId = entity.PreviousId;
-                this.Tasks = entity.Tasks.Any() ?
-                    entity.Tasks.Select(e => TaskModel.Create(e)).ToList() : new List<TaskModel>();
-            //};
+            this.Title = entity.Title;
+            this.Description = entity.Description;
+            this.ScheduleType = entity.ScheduleType;
+            this.Template = entity.Template;
+            this.CreatedDt = entity.CreatedDt;
+            this.FinishDt = entity.FinishDt;
+            this.StartDt = entity.StartDt;
+            this.IsActive = entity.IsActive;
+            this.AllocatedDuration = entity.AllocatedDuration.HasValue ?
+                (int)entity.AllocatedDuration.Value.TotalSeconds : 0;
+            this.Category = entity.Category?.Name;
+            this.CategoryId = entity.Category?.Id;
+            this.OwnerId = isMapOwner ? entity.AppUserId : Guid.Empty;
+            this.PreviousId = entity.PreviousId;
+            this.Tasks = entity.Tasks.Any() ?
+                entity.Tasks.Select(e => TaskModel.Create(e)).ToList() : new List<TaskModel>();
         }
 
         /// <summary>
@@ -153,5 +155,6 @@ namespace Pomodoro.Services.Models
         }
 
         // TODO: Add validation schedule, ModifiedAt
+        // TODO: Map AppUserId.
     }
 }

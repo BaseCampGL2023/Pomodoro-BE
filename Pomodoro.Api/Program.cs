@@ -33,6 +33,8 @@ builder.Services.AddScoped<TimerSettingsService>();
 
 builder.Services.AddScoped<TaskService>();
 
+builder.Services.AddScoped<ScheduleService>();
+
 builder.Services.AddJwtAuthentication(builder.Configuration);
 
 builder.Services.AddCors(options =>

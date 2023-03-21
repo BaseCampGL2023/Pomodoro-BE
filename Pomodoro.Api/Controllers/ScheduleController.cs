@@ -1,4 +1,4 @@
-﻿// <copyright file="TaskController.cs" company="PomodoroGroup_GL_BaseCamp">
+﻿// <copyright file="ScheduleController.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
@@ -13,41 +13,43 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace Pomodoro.Api.Controllers
 {
     /// <summary>
-    /// Manage tasks.
+    /// Manage schedule.
     /// </summary>
-    [Route("api/[controller]")]
-    [ApiController]
     [Authorize]
-    public class TaskController : BaseController
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ScheduleController : BaseController
     {
-        private readonly TaskService service;
+        private readonly ScheduleService service;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TaskController"/> class.
+        /// Initializes a new instance of the <see cref="ScheduleController"/> class.
         /// </summary>
-        /// <param name="service">Instance of IAppTaskRepository <see cref="TaskService">.</see>/>.</param>
-        public TaskController(TaskService service)
+        /// <param name="service">Instance of Schedule service.</param>
+        public ScheduleController(ScheduleService service)
         {
             this.service = service;
         }
 
+        // TODO: add 401 response
+
         /// <summary>
-        /// Return all user tasks.
+        /// Return all user schedules.
         /// </summary>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [SwaggerResponse(200, "Retrieved all user's tasks")]
-        public async Task<ActionResult<ICollection<TaskModel>>> GetOwnAll()
+        [SwaggerResponse(200, "Retrieved all user's schedules")]
+        public async Task<ActionResult<ICollection<ScheduleModel>>> GetOwnAll()
         {
             return this.Ok(await this.service.GetOwnAllAsync(this.UserId));
         }
 
         /// <summary>
-        /// Return task by id, or 404 if not exist.
+        /// Return schedule by id, or 404 if not exist.
         /// </summary>
-        /// <param name="id">Task id.</param>
+        /// <param name="id">Schedule id.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         [HttpGet("{id}")]
         [Produces("application/json")]
@@ -55,9 +57,9 @@ namespace Pomodoro.Api.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [SwaggerResponse(200, "The execution was successful")]
-        [SwaggerResponse(403, "This task don't belong to current user")]
-        [SwaggerResponse(404, "Task not found")]
-        public async Task<ActionResult<TaskModel>> GetById(Guid id)
+        [SwaggerResponse(403, "This shedule don't belong to current user")]
+        [SwaggerResponse(404, "Schedule not found")]
+        public async Task<ActionResult<ScheduleModel>> GetById(Guid id)
         {
             var result = await this.service.GetOwnByIdAsync(id, this.UserId);
 
@@ -75,37 +77,37 @@ namespace Pomodoro.Api.Controllers
         }
 
         /// <summary>
-        /// Persist new user task.
+        /// Persist new user schedule.
         /// </summary>
-        /// <param name="task">New task.</param>
+        /// <param name="model">New schedule.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         [HttpPost]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [SwaggerResponse(201, "Task created")]
+        [SwaggerResponse(201, "Schedule created")]
         [SwaggerResponse(400, "The request was invalid")]
-        public async Task<ActionResult<TaskModel>> AddOne(TaskModel task)
+        public async Task<ActionResult<ScheduleModel>> AddOne(ScheduleModel model)
         {
-            var result = await this.service.AddOwnTaskAsync(task, this.UserId);
-            if (result.Success)
+            var result = await this.service.AddOneOwnAsync(model, this.UserId);
+            if (result)
             {
-                return this.CreatedAtAction(nameof(this.GetById), new { task.Id }, task);
+                return this.CreatedAtAction(nameof(this.GetById), new { model.Id }, model);
             }
 
-            return this.BadRequest(task);
+            return this.BadRequest(model);
         }
 
         /// <summary>
-        /// Delete task by id.
+        /// Delete schedule by id.
         /// </summary>
-        /// <param name="id">Task id.</param>
+        /// <param name="id">Schedule id.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(204, "Delete successfully")]
-        [SwaggerResponse(400, "No task with such id for this user")]
+        [SwaggerResponse(400, "No schedule with such id for this user")]
         public async Task<ActionResult> DeleteOne(Guid id)
         {
             var result = await this.service.DeleteOneOwnAsync(id, this.UserId);
@@ -113,24 +115,24 @@ namespace Pomodoro.Api.Controllers
         }
 
         /// <summary>
-        /// Update existing task.
+        /// Update existing schedule.
         /// </summary>
         /// <param name="id">Task id.</param>
-        /// <param name="task">Existing task.</param>
+        /// <param name="model">Existing task.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(204, "Update successfully")]
         [SwaggerResponse(400, "No schedule with such id for this user")]
-        public async Task<ActionResult> UpdateOne(Guid id, TaskModel task)
+        public async Task<ActionResult> UpdateOne(Guid id, ScheduleModel model)
         {
-            if (id != task.Id)
+            if (id != model.Id)
             {
                 return this.BadRequest();
             }
 
-            var result = await this.service.UpdateOneOwnAsync(task, this.UserId);
+            var result = await this.service.UpdateOneOwnAsync(model, this.UserId);
             return result ? this.NoContent() : this.BadRequest(id);
         }
     }
