@@ -6,13 +6,16 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Enums;
+using Pomodoro.Services.Models.Interfaces;
 
 namespace Pomodoro.Services.Models
 {
     /// <summary>
     /// Represents the schedule.
     /// </summary>
-    public class ScheduleModel
+    public class ScheduleModel : BaseModel<Schedule>
+        
+        //BaseModel, IBelongModel<ScheduleModel, Schedule>
     {
         /// <summary>
         /// Gets or sets task id.
@@ -97,27 +100,27 @@ namespace Pomodoro.Services.Models
         /// </summary>
         /// <param name="entity">Instance of Schedule <see cref="Schedule"/>.</param>
         /// <returns>Model object.</returns>
-        public static ScheduleModel Create(Schedule entity)
+        public void Assign(Schedule entity)
         {
-            return new ScheduleModel
-            {
-                Id = entity.Id,
-                Title = entity.Title,
-                Description = entity.Description,
-                ScheduleType = entity.ScheduleType,
-                Template = entity.Template,
-                CreatedDt = entity.CreatedDt,
-                FinishDt = entity.FinishDt,
-                StartDt = entity.StartDt,
-                IsActive = entity.IsActive,
-                AllocatedDuration = entity.AllocatedDuration.HasValue ?
-                    (int)entity.AllocatedDuration.Value.TotalSeconds : 0,
-                Category = entity.Category?.Name,
-                CategoryId = entity.Category?.Id,
-                PreviousId = entity.PreviousId,
-                Tasks = entity.Tasks.Any() ?
-                    entity.Tasks.Select(e => TaskModel.Create(e)).ToList() : new List<TaskModel>(),
-            };
+            //return new ScheduleModel
+            //{
+            this.Id = entity.Id;
+                this.Title = entity.Title;
+                this.Description = entity.Description;
+                this.ScheduleType = entity.ScheduleType;
+                this.Template = entity.Template;
+                this.CreatedDt = entity.CreatedDt;
+                this.FinishDt = entity.FinishDt;
+                this.StartDt = entity.StartDt;
+                this.IsActive = entity.IsActive;
+                this.AllocatedDuration = entity.AllocatedDuration.HasValue ?
+                    (int)entity.AllocatedDuration.Value.TotalSeconds : 0;
+                this.Category = entity.Category?.Name;
+                this.CategoryId = entity.Category?.Id;
+                this.PreviousId = entity.PreviousId;
+                this.Tasks = entity.Tasks.Any() ?
+                    entity.Tasks.Select(e => TaskModel.Create(e)).ToList() : new List<TaskModel>();
+            //};
         }
 
         /// <summary>

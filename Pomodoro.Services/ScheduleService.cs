@@ -2,7 +2,9 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
+using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Repositories.Interfaces;
+using Pomodoro.Services.Base;
 using Pomodoro.Services.Models;
 using Pomodoro.Services.Models.Results;
 
@@ -11,20 +13,21 @@ namespace Pomodoro.Services
     /// <summary>
     /// Perform operations with schedules.
     /// </summary>
-    public class ScheduleService
+    public class ScheduleService : BaseService<Schedule, ScheduleModel>
     {
-        private readonly IScheduleRepository scheduleRepo;
+        //private readonly IScheduleRepository scheduleRepo;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduleService"/> class.
         /// </summary>
         /// <param name="repo">Implementation of IScheduleRepository <see cref="IScheduleRepository"/>.</param>
-        public ScheduleService(IScheduleRepository repo)
+        public ScheduleService(IScheduleRepository repo) 
+            : base(repo)
         {
-            this.scheduleRepo = repo;
+            //this.scheduleRepo = repo;
         }
 
-        /// <summary>
+        /*/// <summary>
         /// Return belonging to user schedule by id.
         /// </summary>
         /// <param name="id">Task id.</param>
@@ -45,6 +48,6 @@ namespace Pomodoro.Services
             {
                 return new ServiceResponse<ScheduleModel> { Result = ResponseType.Ok, Data = ScheduleModel.Create(result) };
             }
-        }
+        }*/
     }
 }
