@@ -46,10 +46,11 @@ namespace Pomodoro.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [SwaggerResponse(200, "The task was found")]
-        [SwaggerResponse(400, "Invalid data")]
-        [SwaggerResponse(404, "The task with this id wasn`t found")]
-        [SwaggerResponse(500, "Something went wrong")]
+        [SwaggerResponse(200, "The task was found.")]
+        [SwaggerResponse(400, "Invalid data.")]
+        [SwaggerResponse(401, "An unauthorized request cannot be processed.")]
+        [SwaggerResponse(404, "The task with this id wasn`t found.")]
+        [SwaggerResponse(500, "An unhandled exception occurred on the server while executing the request.")]
         public async Task<ActionResult<TaskViewModel>> GetTaskById(Guid id)
         {
             if (id == Guid.Empty)

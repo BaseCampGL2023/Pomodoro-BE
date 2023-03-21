@@ -21,13 +21,13 @@ namespace Pomodoro.Services.Mapping
         public FrequencyProfile()
         {
             CreateMap<TaskModel, FrequencyModel>()
-                .ForMember(f => f.FrequencyTypeValue, o => o.MapFrom(s => s.Frequency.FrequencyTypeValue))
+                .ForMember(f => f.FrequencyType, o => o.MapFrom(s => s.Frequency.FrequencyType))
                 .ForMember(f => f.IsCustom, o => o.MapFrom(s => s.Frequency.IsCustom))
                 .ForMember(f => f.Every, o => o.MapFrom(s => s.Frequency.Every));
             CreateMap<Frequency, FrequencyModel>()
-                .ForMember(f => f.FrequencyTypeValue, o => o.MapFrom(s => s.FrequencyType.Value));
+                .ForMember(f => f.FrequencyType, o => o.MapFrom(s => s.FrequencyType.Value));
             CreateMap<FrequencyModel, Frequency>()
-                .ForMember(f => f.FrequencyType.Value, o => o.MapFrom(s => s.FrequencyTypeValue));
+                .ForMember(f => f.FrequencyType.Value, o => o.MapFrom(s => s.FrequencyType));
         }
     }
 }

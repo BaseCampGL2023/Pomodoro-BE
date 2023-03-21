@@ -13,9 +13,14 @@ namespace Pomodoro.Core.Models.Frequency
     public class FrequencyModel
     {
         /// <summary>
+        /// Gets or sets a value of the id of the frequency.
+        /// </summary>
+        public Guid Id { get; set; }
+
+        /// <summary>
         /// Gets or sets a type of frequency that is used by user in this task.
         /// </summary>
-        public FrequencyValue FrequencyTypeValue { get; set; } = FrequencyValue.None;
+        public FrequencyValue FrequencyType { get; set; } = FrequencyValue.None;
 
         /// <summary>
         /// Gets or sets a value indicating whether it is a custom frequency or not.

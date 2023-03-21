@@ -36,7 +36,7 @@ namespace Pomodoro.Services.Realizations
         public async Task<Guid> FindFrequencyTypeId(FrequencyModel freq)
         {
             var freqTypeData = await _freqTypeRepo.FindAsync(x =>
-                x.Value == freq.FrequencyTypeValue
+                x.Value == freq.FrequencyType
             );
 
             return freqTypeData.FirstOrDefault().Id;
