@@ -5,6 +5,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pomodoro.Api.Controllers.Base;
+using Pomodoro.Dal.Entities;
 using Pomodoro.Services;
 using Pomodoro.Services.Models;
 using Pomodoro.Services.Models.Results;
@@ -18,20 +19,20 @@ namespace Pomodoro.Api.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class ScheduleController : BaseController
+    public class ScheduleController : BaseController<ScheduleService, Schedule, ScheduleModel>
     {
-        private readonly ScheduleService service;
+        //private readonly ScheduleService service;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduleController"/> class.
         /// </summary>
         /// <param name="service">Instance of Schedule service.</param>
-        public ScheduleController(ScheduleService service)
+        public ScheduleController(ScheduleService service) : base(service)
         {
-            this.service = service;
+            //this.service = service;
         }
 
-        // TODO: add 401 response
+        /*// TODO: add 401 response
 
         /// <summary>
         /// Return all user schedules.
@@ -134,6 +135,6 @@ namespace Pomodoro.Api.Controllers
 
             var result = await this.service.UpdateOneOwnAsync(model, this.UserId);
             return result ? this.NoContent() : this.BadRequest(id);
-        }
+        }*/
     }
 }
