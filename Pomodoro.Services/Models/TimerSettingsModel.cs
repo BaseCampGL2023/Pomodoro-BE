@@ -4,13 +4,14 @@
 
 using System.ComponentModel.DataAnnotations;
 using Pomodoro.Dal.Entities;
+using Pomodoro.Services.Models.Interfaces;
 
 namespace Pomodoro.Services.Models
 {
     /// <summary>
     /// Represent pomodoro timer settings for client.
     /// </summary>
-    public class TimerSettingsModel
+    public class TimerSettingsModel : IBaseModel<TimerSettings>
     {
         /// <summary>
         /// Gets or sets settings id.
@@ -69,20 +70,17 @@ namespace Pomodoro.Services.Models
         /// Map from Dal entity to model object.
         /// </summary>
         /// <param name="entity">Instance of TimerSettings <see cref="TimerSettings"/>.</param>
-        /// <returns>Model object.</returns>
-        public static TimerSettingsModel Create(TimerSettings entity)
+        /// <param name="isMapOwner">If TRUE add owner id to DTO.</param>
+        public void Assign(TimerSettings entity, bool isMapOwner = false)
         {
-            return new TimerSettingsModel
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                Pomodoro = (int)entity.Pomodoro.TotalSeconds,
-                ShortBrake = (int)entity.Pomodoro.TotalSeconds,
-                LongBrake = (int)entity.Pomodoro.TotalSeconds,
-                IsAutoStart = entity.IsAutoStart,
-                RestSequence = entity.RestSequence,
-                IsActive = entity.IsActive,
-            };
+            this.Id = entity.Id;
+            this.Name = entity.Name;
+            this.Pomodoro = (int)entity.Pomodoro.TotalSeconds;
+            this.ShortBrake = (int)entity.Pomodoro.TotalSeconds;
+            this.LongBrake = (int)entity.Pomodoro.TotalSeconds;
+            this.IsAutoStart = entity.IsAutoStart;
+            this.RestSequence = entity.RestSequence;
+            this.IsActive = entity.IsActive;
         }
 
         /// <summary>

@@ -2,6 +2,9 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
+// TODO: fix triggers, if no IsActive settings added, at least one should be isActive.
+// ISSUE: I can add a lot of settings without isActive and shouldn't have any active settings.
+
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Pomodoro.Dal.Data

@@ -107,17 +107,7 @@ namespace Pomodoro.Api.Controllers.Base
         {
             var result = await this.service.GetOwnByIdAsync(id, this.UserId);
 
-            if (result.Result == ResponseType.NotFound)
-            {
-                return this.NotFound();
-            }
-
-            if (result.Result == ResponseType.Forbid)
-            {
-                return this.Forbid();
-            }
-
-            return this.Ok(result.Data);
+            return this.MapServiceResponse(result);
         }
 
         /// <summary>

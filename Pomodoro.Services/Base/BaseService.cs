@@ -43,7 +43,7 @@ namespace Pomodoro.Services.Base
         /// <param name="id">Object id.</param>
         /// <param name="ownerId">Object owner id.</param>
         /// <returns>Return object without related objects.</returns>
-        public async Task<ServiceResponse<TV>> GetOwnByIdAsync(Guid id, Guid ownerId)
+        public virtual async Task<ServiceResponse<TV>> GetOwnByIdAsync(Guid id, Guid ownerId)
         {
             var result = await this.repo.GetByIdAsync(id);
             if (result is null)
@@ -72,7 +72,7 @@ namespace Pomodoro.Services.Base
         /// <param name="model">Object for persisting.</param>
         /// <param name="ownerId">Object owner id.</param>
         /// <returns>TRUE if value persist succesfully, FALSE otherwise.</returns>
-        public async Task<bool> AddOneOwnAsync(TV model, Guid ownerId)
+        public virtual async Task<bool> AddOneOwnAsync(TV model, Guid ownerId)
         {
             var entity = model.ToDalEntity(ownerId);
             int result = await this.repo.AddAsync(entity, true);
@@ -90,7 +90,7 @@ namespace Pomodoro.Services.Base
         /// </summary>
         /// <param name="ownerId">Owner id.</param>
         /// <returns>Belongin to user objects collection.</returns>
-        public async Task<ICollection<TV>> GetOwnAllAsync(Guid ownerId)
+        public virtual async Task<ICollection<TV>> GetOwnAllAsync(Guid ownerId)
         {
             var collection = await this.repo.GetBelongingAllAsNoTracking(ownerId);
             var result = new List<TV>();
@@ -110,7 +110,7 @@ namespace Pomodoro.Services.Base
         /// <param name="model">Model object.</param>
         /// <param name="ownerId">Object owner Id.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        public async Task<bool> UpdateOneOwnAsync(TV model, Guid ownerId)
+        public virtual async Task<bool> UpdateOneOwnAsync(TV model, Guid ownerId)
         {
             var entity = model.ToDalEntity(ownerId);
             int result = await this.repo.UpdateAsync(entity, true);
@@ -123,10 +123,12 @@ namespace Pomodoro.Services.Base
         /// <param name="id">Object id.</param>
         /// <param name="ownerId">Owner id.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        public async Task<bool> DeleteOneOwnAsync(Guid id, Guid ownerId)
+        public virtual async Task<bool> DeleteOneOwnAsync(Guid id, Guid ownerId)
         {
             int result = await this.repo.DeleteOneBelongingAsync(id, ownerId, true);
             return result > 0;
         }
+
+        // TODO: intercept foreign keys constraint exceptions.
     }
 }
