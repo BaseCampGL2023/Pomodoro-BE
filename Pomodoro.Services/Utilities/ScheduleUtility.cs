@@ -2,7 +2,6 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
-
 using Pomodoro.Services.Models;
 
 namespace Pomodoro.Services.Utilities
@@ -12,12 +11,12 @@ namespace Pomodoro.Services.Utilities
     /// </summary>
     internal static class ScheduleUtility
     {
-        /// <summary>
+        /*/// <summary>
         /// Convert ScheduleModel to long number.
         /// </summary>
         /// <param name="model">ScheduleModel instance <see cref="ScheduleModel"/>.</param>
         /// <returns>8 byte number.</returns>
-        /*public static long ConvertToLong(ScheduleModel model)
+        public static long ConvertToLong(ScheduleModel model)
         {
             byte scheduleTemplate = (byte)model.Type;
             int duration;
@@ -39,7 +38,7 @@ namespace Pomodoro.Services.Utilities
             }
 
             return (template << 16) | ((uint)duration << 8) | scheduleTemplate;
-        }*/
+        }
 
         /// <summary>
         /// Convert long number to ScheduleModel.
@@ -47,7 +46,7 @@ namespace Pomodoro.Services.Utilities
         /// <param name="schedule">8 byte number.</param>
         /// <returns>Schedule model object.</returns>
         /// <exception cref="ArgumentException">Throws if template can't be parsed.</exception>
-        /*public static ScheduleModel ConvertToScheduleModel(long schedule)
+        public static ScheduleModel ConvertToScheduleModel(long schedule)
         {
             var scheduleType = (ScheduleType)(((ulong)schedule) & 0b_1111_1111);
             ScheduleModel model = new ()
@@ -77,10 +76,10 @@ namespace Pomodoro.Services.Utilities
             }
 
             return model;
-        }*/
+        }
 
-        private static int[] ParseTemplate(long template)
-        {
+       private static int[] ParseTemplate(long template)
+       {
             template >>= 8;
             var duration = (int)(template & 0b_1111_1111);
             if (duration > 45)
@@ -104,6 +103,6 @@ namespace Pomodoro.Services.Utilities
             }
 
             return arr;
-        }
+        }*/
     }
 }

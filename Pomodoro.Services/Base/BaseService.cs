@@ -21,7 +21,7 @@ namespace Pomodoro.Services.Base
         /// <summary>
         /// Repository instance.
         /// </summary>
-        protected readonly IBelongRepository<T> repo;
+        private readonly IBelongRepository<T> repo;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseService{T, V}"/> class.
@@ -31,6 +31,11 @@ namespace Pomodoro.Services.Base
         {
             this.repo = repo;
         }
+
+        /// <summary>
+        /// Gets instance of entity repository.
+        /// </summary>
+        protected IBelongRepository<T> Repo => this.repo;
 
         /// <summary>
         /// Return belonging to user object by id.

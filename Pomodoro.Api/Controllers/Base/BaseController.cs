@@ -2,15 +2,14 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pomodoro.Dal.Entities.Base;
 using Pomodoro.Services.Base;
-using Pomodoro.Services.Models;
 using Pomodoro.Services.Models.Interfaces;
 using Pomodoro.Services.Models.Results;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Security.Claims;
 
 namespace Pomodoro.Api.Controllers.Base
 {
@@ -34,7 +33,7 @@ namespace Pomodoro.Api.Controllers.Base
         /// <summary>
         /// Service for business logic.
         /// </summary>
-        protected readonly T service;
+        private readonly T service;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseController{T, TE, TM}"/> class.
@@ -44,6 +43,11 @@ namespace Pomodoro.Api.Controllers.Base
         {
             this.service = service;
         }
+
+        /// <summary>
+        /// Gets instance of service.
+        /// </summary>
+        protected T Service => this.service;
 
         /// <summary>
         /// Gets authenticated user id Guid.Empty
@@ -73,13 +77,11 @@ namespace Pomodoro.Api.Controllers.Base
                 ?? "User Unknown";
         }
 
-        // TODO: add 401 response
-
         /// <summary>
         /// Return all objects belonging to user.
         /// </summary>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        [HttpGet]
+        [HttpGet("own")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [SwaggerResponse(200, "Retrieved all user's objects.")]
@@ -93,7 +95,7 @@ namespace Pomodoro.Api.Controllers.Base
         /// </summary>
         /// <param name="id">Schedule id.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        [HttpGet("{id}")]
+        [HttpGet("own/{id}")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -145,7 +147,7 @@ namespace Pomodoro.Api.Controllers.Base
         /// </summary>
         /// <param name="id">Object id.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        [HttpDelete("{id}")]
+        [HttpDelete("own/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(204, "Delete successfully")]
@@ -162,7 +164,7 @@ namespace Pomodoro.Api.Controllers.Base
         /// <param name="id">Object id.</param>
         /// <param name="model">Exisitng object.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        [HttpPut("{id}")]
+        [HttpPut("own/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(204, "Update successfully")]
@@ -178,6 +180,12 @@ namespace Pomodoro.Api.Controllers.Base
             return result ? this.NoContent() : this.BadRequest(id);
         }
 
+        /// <summary>
+        /// Map service response to ActionResult.
+        /// </summary>
+        /// <typeparam name="TR">Service response data type (object, collection or plain value).</typeparam>
+        /// <param name="response">Service response object.</param>
+        /// <returns>ActionResult corresponding to service response.</returns>
         protected ActionResult MapServiceResponse<TR>(ServiceResponse<TR> response)
         {
             return response.Result switch
