@@ -121,8 +121,12 @@ namespace Pomodoro.Services.Models
             this.CategoryId = entity.Category?.Id;
             this.OwnerId = isMapOwner ? entity.AppUserId : Guid.Empty;
             this.PreviousId = entity.PreviousId;
-            this.Tasks = entity.Tasks.Any() ?
-                entity.Tasks.Select(e => TaskModel.Create(e)).ToList() : new List<TaskModel>();
+            foreach (var task in entity.Tasks)
+            {
+                var model = new TaskModel();
+                model.Assign(task);
+                this.Tasks.Add(model);
+            }
         }
 
         /// <summary>

@@ -2,6 +2,7 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pomodoro.Dal.Entities.Base;
@@ -9,7 +10,6 @@ using Pomodoro.Services.Base;
 using Pomodoro.Services.Models.Interfaces;
 using Pomodoro.Services.Models.Results;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Security.Claims;
 
 namespace Pomodoro.Api.Controllers.Base
 {

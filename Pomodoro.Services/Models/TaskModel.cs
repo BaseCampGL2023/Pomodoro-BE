@@ -5,13 +5,14 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using Pomodoro.Dal.Entities;
+using Pomodoro.Services.Models.Interfaces;
 
 namespace Pomodoro.Services.Models
 {
     /// <summary>
     /// Represent task for client.
     /// </summary>
-    public class TaskModel
+    public class TaskModel : IBaseModel<AppTask>
     {
         /// <summary>
         /// Gets or sets task id.
@@ -76,6 +77,12 @@ namespace Pomodoro.Services.Models
         public Guid? CategoryId { get; set; }
 
         /// <summary>
+        /// Gets or sets owner id.
+        /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public Guid OwnerId { get; set; }
+
+        /// <summary>
         /// Gets or sets Schedule title.
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
@@ -96,25 +103,23 @@ namespace Pomodoro.Services.Models
         /// Map from Dal entity to model object.
         /// </summary>
         /// <param name="entity">Instance of AppTask <see cref="AppTask"/>.</param>
-        /// <returns>Model object.</returns>
-        public static TaskModel Create(AppTask entity)
+        /// <param name="isMapOwner">If TRUE add owner id to DTO.</param>
+        public void Assign(AppTask entity, bool isMapOwner = false)
         {
-            return new TaskModel
-            {
-                Id = entity.Id,
-                Title = entity.Title,
-                Description = entity.Description,
-                SequenceNumber = entity.ScheduleId != null ? entity.SequenceNumber : 0,
-                CreatedDt = entity.CreatedDt,
-                StartDt = entity.StartDt,
-                FinishDt = entity.FinishDt,
-                AllocatedDuration = entity.AllocatedDuration.HasValue ?
-                    (int)entity.AllocatedDuration.Value.TotalSeconds : 0,
-                Category = entity.Category?.Name,
-                Schedule = entity.Schedule?.Title,
-                Pomodoros = entity.Pomodoros.Any() ?
-                    entity.Pomodoros.Select(e => PomoModel.Create(e)).ToList() : new List<PomoModel>(),
-            };
+            this.Id = entity.Id;
+            this.Title = entity.Title;
+            this.Description = entity.Description;
+            this.SequenceNumber = entity.ScheduleId != null ? entity.SequenceNumber : 0;
+            this.CreatedDt = entity.CreatedDt;
+            this.StartDt = entity.StartDt;
+            this.FinishDt = entity.FinishDt;
+            this.AllocatedDuration = entity.AllocatedDuration.HasValue ?
+                (int)entity.AllocatedDuration.Value.TotalSeconds : 0;
+            this.Category = entity.Category?.Name;
+            this.OwnerId = isMapOwner ? entity.AppUserId : Guid.Empty;
+            this.Schedule = entity.Schedule?.Title;
+            this.Pomodoros = entity.Pomodoros.Any() ?
+                entity.Pomodoros.Select(e => PomoModel.Create(e)).ToList() : new List<PomoModel>();
         }
 
         /// <summary>

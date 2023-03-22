@@ -2,7 +2,9 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
+using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Repositories.Interfaces;
+using Pomodoro.Services.Base;
 using Pomodoro.Services.Models;
 using Pomodoro.Services.Models.Results;
 
@@ -11,9 +13,18 @@ namespace Pomodoro.Services
     /// <summary>
     /// Perform operations with tasks.
     /// </summary>
-    public class TaskService
+    public class TaskService : BaseService<AppTask, TaskModel>
     {
-        private readonly IAppTaskRepository taskRepo;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TaskService"/> class.
+        /// </summary>
+        /// <param name="repo">Implementation of IAppTaskRepository <see cref="IAppTaskRepository"/>.</param>
+        public TaskService(IAppTaskRepository repo)
+            : base(repo)
+        {
+        }
+
+        /*private readonly IAppTaskRepository taskRepo;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TaskService"/> class.
@@ -108,6 +119,6 @@ namespace Pomodoro.Services
             return result > 0;
         }
 
-        // TODO: ModifiedAt
+        // TODO: ModifiedAt*/
     }
 }

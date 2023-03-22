@@ -6,7 +6,6 @@ using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Repositories.Interfaces;
 using Pomodoro.Services.Base;
 using Pomodoro.Services.Models;
-using Pomodoro.Services.Models.Results;
 
 namespace Pomodoro.Services
 {

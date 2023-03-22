@@ -8,8 +8,6 @@ using Pomodoro.Api.Controllers.Base;
 using Pomodoro.Dal.Entities;
 using Pomodoro.Services;
 using Pomodoro.Services.Models;
-using Pomodoro.Services.Models.Results;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace Pomodoro.Api.Controllers
 {
