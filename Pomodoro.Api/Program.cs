@@ -35,6 +35,8 @@ builder.Services.AddScoped<TaskService>();
 
 builder.Services.AddScoped<ScheduleService>();
 
+builder.Services.AddScoped<CategoryService>();
+
 builder.Services.AddJwtAuthentication(builder.Configuration);
 
 builder.Services.AddCors(options =>

@@ -34,7 +34,7 @@ namespace Pomodoro.Dal.Entities
         /// <summary>
         /// Gets or sets collection of schedules.
         /// </summary>
-        public ICollection<Schedule>? Schedules { get; set; } = new List<Schedule>();
+        public ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
 
         /// <summary>
         /// Gets or sets collection of tasks.
