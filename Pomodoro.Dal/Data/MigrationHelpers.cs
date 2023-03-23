@@ -1,10 +1,6 @@
 ﻿// <copyright file="MigrationHelpers.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
-
-// TODO: fix triggers, if no IsActive settings added, at least one should be isActive.
-// ISSUE: I can add a lot of settings without isActive and shouldn't have any active settings.
-
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Pomodoro.Dal.Data
@@ -44,14 +40,39 @@ namespace Pomodoro.Dal.Data
 
                     IF @@ROWCOUNT <> 1 RETURN;
 
-                    UPDATE {TimerSettingsTableName}
-                    SET {TimerSettingsIsActiveAttribute} = 0
-                    WHERE {TimerSettingsUserIdAttribute} = (SELECT {TimerSettingsUserIdAttribute} FROM inserted)
-                        AND Id != (SELECT Id FROM inserted)
+                    IF EXISTS (SELECT * FROM inserted WHERE IsActive = 1)
+                        BEGIN
+
+                            UPDATE {TimerSettingsTableName}
+                            SET {TimerSettingsIsActiveAttribute} = 0
+                            WHERE {TimerSettingsUserIdAttribute} = (SELECT {TimerSettingsUserIdAttribute} FROM inserted)
+                                AND Id != (SELECT Id FROM inserted)
+
+                        END
+                    ELSE
+                        BEGIN
+                            DECLARE @SettingsId UNIQUEIDENTIFIER,
+                                @UserId UNIQUEIDENTIFIER                       
+
+                            SET @UserId = (SELECT {TimerSettingsUserIdAttribute} FROM inserted)
+                            IF EXISTS (SELECT * FROM {TimerSettingsTableName} 
+                                WHERE IsActive = 1 AND {TimerSettingsUserIdAttribute} = @UserId)
+                                RETURN
+                        
+                            SET @SettingsId = (SELECT Id FROM {TimerSettingsTableName}
+                                WHERE {TimerSettingsUserIdAttribute} = @UserId AND
+                                CreatedAt = (SELECT MAX(CreatedAt) FROM {TimerSettingsTableName} 
+                                    WHERE {TimerSettingsUserIdAttribute} = @UserId))
+                            
+                            IF @SettingsId IS NOT NULL
+                                BEGIN
+                                    UPDATE {TimerSettingsTableName}
+                                    SET {TimerSettingsIsActiveAttribute} = 1
+                                    WHERE Id = @SettingsId
+                                END
+                        END
                 ')");
         }
-
-        // TODO: CreatedAt move to const
 
         /// <summary>
         /// Adds after delete trigger for TimerSettings table which set IsActive = true for latest
