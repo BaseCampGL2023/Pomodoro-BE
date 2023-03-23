@@ -6,6 +6,7 @@ using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Repositories.Interfaces;
 using Pomodoro.Services.Base;
 using Pomodoro.Services.Models;
+using Pomodoro.Services.Utilities;
 
 namespace Pomodoro.Services
 {
@@ -22,5 +23,30 @@ namespace Pomodoro.Services
             : base(repo)
         {
         }
+
+        /// <inheritdoc/>
+        public override async Task<bool> AddOneOwnAsync(ScheduleModel model, Guid ownerId)
+        {
+            // We can't save non-active schedule.
+            model.IsActive = true;
+            if (model.Tasks.Any())
+            {
+               // TODO: how validate task?
+               return await base.AddOneOwnAsync(model, ownerId);
+            }
+
+            // TODO: check finisdDt, check finishDt in modelValidation
+
+            // TODO: check UTC time
+            var task = ScheduleUtility.CreateFirstTask(model, ownerId);
+            var schedule = model.ToDalEntity(ownerId);
+            schedule.Tasks.Add(task);
+            var result = await this.Repo.AddAsync(schedule, true);
+            model.Id = task.Id;
+
+            return result > 0;
+        }
+
+        // TODO: implement custom exceptions.
     }
 }

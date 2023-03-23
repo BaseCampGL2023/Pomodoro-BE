@@ -2,107 +2,133 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
+using Pomodoro.Dal.Entities;
+using Pomodoro.Dal.Enums;
 using Pomodoro.Services.Models;
 
 namespace Pomodoro.Services.Utilities
 {
     /// <summary>
-    /// Convert ScheduleModel to long number and vice versa.
+    /// Working with schedules.
     /// </summary>
     internal static class ScheduleUtility
     {
-        /*/// <summary>
-        /// Convert ScheduleModel to long number.
-        /// </summary>
-        /// <param name="model">ScheduleModel instance <see cref="ScheduleModel"/>.</param>
-        /// <returns>8 byte number.</returns>
-        public static long ConvertToLong(ScheduleModel model)
-        {
-            byte scheduleTemplate = (byte)model.Type;
-            int duration;
-            long template = 0;
-
-            if (scheduleTemplate < 4)
-            {
-                return (long)scheduleTemplate;
-            }
-
-            duration = model.Days.Length;
-            for (int i = 0; i < duration; i++)
-            {
-                if (model.Days[i] != 0)
-                {
-                    long day = (long)Math.Pow(2, i);
-                    template |= day;
-                }
-            }
-
-            return (template << 16) | ((uint)duration << 8) | scheduleTemplate;
-        }
-
         /// <summary>
-        /// Convert long number to ScheduleModel.
+        /// Create first task for corresponding schedule.
         /// </summary>
-        /// <param name="schedule">8 byte number.</param>
-        /// <returns>Schedule model object.</returns>
-        /// <exception cref="ArgumentException">Throws if template can't be parsed.</exception>
-        public static ScheduleModel ConvertToScheduleModel(long schedule)
+        /// <param name="model">Schedule.</param>
+        /// <param name="ownerId">Owner Id.</param>
+        /// <returns>Task.</returns>
+        public static AppTask CreateFirstTask(ScheduleModel model, Guid ownerId)
         {
-            var scheduleType = (ScheduleType)(((ulong)schedule) & 0b_1111_1111);
-            ScheduleModel model = new ()
+            AppTask task = new ()
             {
-                Type = scheduleType,
+                Title = model.Title,
+                Description = model.Description,
+                SequenceNumber = 1,
+                AllocatedDuration = TimeSpan.FromSeconds(model.AllocatedDuration),
+                CategoryId = model.CategoryId,
+                AppUserId = model.OwnerId != Guid.Empty ? model.OwnerId : ownerId,
             };
-            switch (scheduleType)
+
+            var date = model.StartDt > DateTime.UtcNow ? model.StartDt
+                : new DateTime(
+                    DateTime.UtcNow.Year,
+                    DateTime.UtcNow.Month,
+                    DateTime.UtcNow.Day,
+                    model.StartDt.Hour,
+                    model.StartDt.Minute,
+                    model.StartDt.Second);
+            var template = model.Template.ToCharArray();
+
+            switch (model.ScheduleType)
             {
-                case ScheduleType.WeekEnd:
-                    model.Days = new int[] { 1, 0, 0, 0, 0, 0, 1 };
+                case ScheduleType.EveryDay:
+                    task.StartDt = model.StartDt.AddDays(1);
                     break;
                 case ScheduleType.WorkDay:
-                    model.Days = new int[] { 0, 1, 1, 1, 1, 1, 0 };
+                    while (date.DayOfWeek == DayOfWeek.Sunday
+                            || date.DayOfWeek == DayOfWeek.Saturday)
+                    {
+                        date = date.AddDays(1);
+                    }
+
+                    task.StartDt = date;
+                    break;
+                case ScheduleType.WeekEnd:
+                    while (date.DayOfWeek != DayOfWeek.Sunday
+                        && date.DayOfWeek != DayOfWeek.Saturday)
+                    {
+                        date = date.AddDays(1);
+                    }
+
+                    task.StartDt = date;
                     break;
                 case ScheduleType.AnnualOnDate:
+                    task.StartDt = model.StartDt.AddYears(1);
                     break;
                 case ScheduleType.WeekTemplate:
-                case ScheduleType.MonthTemplate:
-                case ScheduleType.MonthDayForwardTemplate:
-                case ScheduleType.MonthDayBackwardTemplate:
-                case ScheduleType.EveryNDay:
-                case ScheduleType.Sequence:
-                    model.Days = ParseTemplate(schedule);
+                    while (template[(int)date.DayOfWeek] != '1')
+                    {
+                        date = date.AddDays(1);
+                    }
+
+                    task.StartDt = date;
                     break;
-                default:
-                    throw new ArgumentException("Can't parse scheduleType");
+                case ScheduleType.MonthTemplate:
+                    // TODO: Delete month day forward
+                case ScheduleType.MonthDayForwardTemplate:
+                    while (template[date.Day] != '1')
+                    {
+                        date = date.AddDays(1);
+                    }
+
+                    task.StartDt = date;
+                    break;
+                case ScheduleType.MonthDayBackwardTemplate:
+                    int diff = DateTime.DaysInMonth(date.Year, date.Month) - 31;
+                    while (template[date.Day] != '1'
+                        && date.AddDays(diff) > model.StartDt)
+                    {
+                        date = date.AddDays(1);
+                    }
+
+                    date = date.AddDays(diff);
+                    task.StartDt = date;
+                    break;
+
+                case ScheduleType.EveryNDay:
+                    date = model.StartDt;
+                    // TODO: check diff between now and startDate, in Sequance template to.
+                    while (date < DateTime.UtcNow)
+                    {
+                        date = date.AddDays(template.Length);
+                    }
+
+                    task.StartDt = date;
+                    break;
+                case ScheduleType.Sequence:
+                    date = model.StartDt;
+                    while (date < DateTime.UtcNow)
+                    {
+                        for (int i = 0; i < template.Length; i++)
+                        {
+                            if (template[i] == '1')
+                            {
+                                date = date.AddDays(i + 1);
+                                if (date > DateTime.UtcNow)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    task.StartDt = date;
+                    break;
             }
 
-            return model;
+            return task;
         }
-
-       private static int[] ParseTemplate(long template)
-       {
-            template >>= 8;
-            var duration = (int)(template & 0b_1111_1111);
-            if (duration > 45)
-            {
-                throw new ArgumentException("Duration of period more than 45");
-            }
-
-            int[] arr = new int[duration];
-            template >>= 8;
-            if (template == 0)
-            {
-                throw new ArgumentException("Empty template");
-            }
-
-            for (int i = 0; i < duration; i++)
-            {
-                if ((template & (long)Math.Pow(2, i)) != 0)
-                {
-                    arr[i] = 1;
-                }
-            }
-
-            return arr;
-        }*/
     }
 }
