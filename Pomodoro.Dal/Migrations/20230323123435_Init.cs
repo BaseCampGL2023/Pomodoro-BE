@@ -240,14 +240,14 @@ namespace Pomodoro.Dal.Migrations
                     ModifiedDt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     FinishDt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     AllocatedDuration = table.Column<long>(type: "bigint", nullable: true),
-                    StartDt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    StartDt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PreviousId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Schedules", x => x.Id);
-                    table.CheckConstraint("ScheduleType", "ScheduleType >= 0 AND ScheduleType < 13");
+                    table.CheckConstraint("ScheduleType", "ScheduleType >= 1 AND ScheduleType < 11");
                     table.ForeignKey(
                         name: "FK_Schedules_AppUser_AppUserId",
                         column: x => x.AppUserId,
@@ -431,8 +431,8 @@ namespace Pomodoro.Dal.Migrations
                 column: "AppUserId");
 
             MigrationHelpers.CreateTimerSettingsDeleteTrigger(migrationBuilder);
-            MigrationHelpers.CreateTimerSettingsUpdateTrigger(migrationBuilder);
             MigrationHelpers.CreateTimerSettingsInsertTrigger(migrationBuilder);
+            MigrationHelpers.CreateTimerSettingsUpdateTrigger(migrationBuilder);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -478,8 +478,8 @@ namespace Pomodoro.Dal.Migrations
                 name: "AspNetUsers");
 
             MigrationHelpers.DropTimerSettingsDeleteTrigger(migrationBuilder);
-            MigrationHelpers.DropTimerSettingsUpdateTrigger(migrationBuilder);
             MigrationHelpers.DropTimerSettingsInsertTrigger(migrationBuilder);
+            MigrationHelpers.DropTimerSettingsUpdateTrigger(migrationBuilder);
         }
     }
 }
