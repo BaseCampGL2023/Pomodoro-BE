@@ -10,29 +10,34 @@ namespace Pomodoro.Dal.Enums
     public enum ScheduleType
     {
         /// <summary>
+        /// Template for everyday tasks.
+        /// </summary>
+        EveryDay = 1,
+
+        /// <summary>
         /// Every work day: monday, tuesday, wednesday, thursday, friday.
         /// </summary>
-        WorkDay = 0,
+        WorkDay = 2,
 
         /// <summary>
         /// Saturady and sunday.
         /// </summary>
-        WeekEnd = 1,
+        WeekEnd = 3,
 
         /// <summary>
         /// Defines a specific date of the year
         /// </summary>
-        AnnualOnDate = 2,
+        AnnualOnDate = 4,
 
         /// <summary>
         /// Template to select specific days of the week.
         /// </summary>
-        WeekTemplate = 4,
+        WeekTemplate = 5,
 
         /// <summary>
         /// Template to select specific days of the month (dates 0..31).
         /// </summary>
-        MonthTemplate = 5,
+        MonthTemplate = 6,
 
         /// <summary>
         /// Template to select specific days counting from the first day of the month.
@@ -47,11 +52,11 @@ namespace Pomodoro.Dal.Enums
         /// <summary>
         /// Every N days.
         /// </summary>
-        EveryNDay = 11,
+        EveryNDay = 9,
 
         /// <summary>
         /// Defines a certain sequence of days in an interval of a specified duration.
         /// </summary>
-        Sequence = 12,
+        Sequence = 10,
     }
 }
