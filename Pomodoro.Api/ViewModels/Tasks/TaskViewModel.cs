@@ -1,15 +1,14 @@
 ﻿// <copyright file="TaskViewModel.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
-using Pomodoro.Core.Enums;
-using Pomodoro.Core.Models.Frequency;
+using Pomodoro.Api.ViewModels.Frequency;
 
-namespace Pomodoro.Core.Models.Tasks
+namespace Pomodoro.Api.ViewModels.Tasks
 {
     /// <summary>
     /// Represents a view model for task.
     /// </summary>
-    public class TaskViewModel : BaseUserOrientedModel
+    public class TaskViewModel : BaseUserOrientedViewModel
     {
         /// <summary>
         /// Gets or sets a value of the id of the task.

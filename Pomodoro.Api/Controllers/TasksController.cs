@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Pomodoro.Api.Controllers.Base;
+using Pomodoro.Api.ViewModels.Tasks;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.Core.Models.Tasks;
 using Pomodoro.DataAccess.Entities;

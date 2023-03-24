@@ -2,9 +2,8 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 using Pomodoro.Core.Enums;
-using Pomodoro.Core.Models.Tasks;
 
-namespace Pomodoro.Core.Models.Frequency
+namespace Pomodoro.Api.ViewModels.Frequency
 {
     /// <summary>
     /// Represents a view model for Frequency information.
