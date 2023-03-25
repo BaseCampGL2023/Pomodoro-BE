@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pomodoro.Api.Controllers.Base;
 using Pomodoro.Dal.Entities;
+using Pomodoro.Dal.Repositories.Interfaces;
 using Pomodoro.Services;
 using Pomodoro.Services.Models;
 
@@ -17,7 +18,7 @@ namespace Pomodoro.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class TaskController : BaseController<TaskService, AppTask, TaskModel>
+    public class TaskController : BaseController<TaskService, AppTask, TaskModel, IAppTaskRepository>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TaskController"/> class.

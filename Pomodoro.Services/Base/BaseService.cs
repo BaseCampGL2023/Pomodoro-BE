@@ -14,20 +14,22 @@ namespace Pomodoro.Services.Base
     /// </summary>
     /// <typeparam name="T">Dal entity type.</typeparam>
     /// <typeparam name="TV">Model type.</typeparam>
-    public abstract class BaseService<T, TV>
+    /// <typeparam name="TR">Repository type.</typeparam>
+    public abstract class BaseService<T, TV, TR> : IBaseService<T, TV, TR>
         where T : IBelongEntity
         where TV : IBaseModel<T>, new()
+        where TR : IBelongRepository<T>
     {
         /// <summary>
         /// Repository instance.
         /// </summary>
-        private readonly IBelongRepository<T> repo;
+        private readonly TR repo;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BaseService{T, V}"/> class.
+        /// Initializes a new instance of the <see cref="BaseService{T, TV, TR}"/> class.
         /// </summary>
-        /// <param name="repo">Implementation of IBelongRepository.</param>
-        protected BaseService(IBelongRepository<T> repo)
+        /// <param name="repo">Implementation of IBelongRepository<typeparamref name="T"/>.</param>
+        protected BaseService(TR repo)
         {
             this.repo = repo;
         }
@@ -35,7 +37,7 @@ namespace Pomodoro.Services.Base
         /// <summary>
         /// Gets instance of entity repository.
         /// </summary>
-        protected IBelongRepository<T> Repo => this.repo;
+        protected TR Repo => this.repo;
 
         /// <summary>
         /// Return belonging to user object by id.

@@ -13,7 +13,7 @@ namespace Pomodoro.Services
     /// <summary>
     /// Perform operations with schedules.
     /// </summary>
-    public class ScheduleService : BaseService<Schedule, ScheduleModel>
+    public class ScheduleService : BaseService<Schedule, ScheduleModel, IScheduleRepository>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduleService"/> class.

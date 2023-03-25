@@ -12,7 +12,7 @@ namespace Pomodoro.Services
     /// <summary>
     /// Perform operations with categories.
     /// </summary>
-    public class CategoryService : BaseService<Category, CategoryModel>
+    public class CategoryService : BaseService<Category, CategoryModel, ICategoryRepository>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CategoryService"/> class.

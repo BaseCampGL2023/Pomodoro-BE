@@ -12,7 +12,7 @@ namespace Pomodoro.Services
     /// <summary>
     /// Perform operations with tasks.
     /// </summary>
-    public class TaskService : BaseService<AppTask, TaskModel>
+    public class TaskService : BaseService<AppTask, TaskModel, IAppTaskRepository>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TaskService"/> class.

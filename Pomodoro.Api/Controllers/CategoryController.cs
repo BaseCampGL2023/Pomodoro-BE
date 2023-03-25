@@ -4,6 +4,7 @@
 
 using Pomodoro.Api.Controllers.Base;
 using Pomodoro.Dal.Entities;
+using Pomodoro.Dal.Repositories.Interfaces;
 using Pomodoro.Services;
 using Pomodoro.Services.Models;
 
@@ -12,7 +13,7 @@ namespace Pomodoro.Api.Controllers
     /// <summary>
     /// Manage category.
     /// </summary>
-    public class CategoryController : BaseController<CategoryService, Category, CategoryModel>
+    public class CategoryController : BaseController<CategoryService, Category, CategoryModel, ICategoryRepository>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CategoryController"/> class.

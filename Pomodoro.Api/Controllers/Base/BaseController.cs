@@ -6,6 +6,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pomodoro.Dal.Entities.Base;
+using Pomodoro.Dal.Repositories.Base;
 using Pomodoro.Services.Base;
 using Pomodoro.Services.Models.Interfaces;
 using Pomodoro.Services.Models.Results;
@@ -17,29 +18,31 @@ namespace Pomodoro.Api.Controllers.Base
     /// Extended ControllerBase <see cref="ControllerBase"/> by adding UserName and
     /// UserId property and add actions for base CRUD operations.
     /// </summary>
-    /// <typeparam name="T">Service object.</typeparam>
+    /// <typeparam name="TS">Service object.</typeparam>
     /// <typeparam name="TE">Entity type.</typeparam>
     /// <typeparam name="TM">DTO type.</typeparam>
+    /// <typeparam name="TR">Repository type, used by service.</typeparam>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [SwaggerResponse(401, "This endpoints available only for registered users")]
-    public abstract class BaseController<T, TE, TM> : ControllerBase
-        where T : BaseService<TE, TM>
+    public abstract class BaseController<TS, TE, TM, TR> : ControllerBase
+        where TS : IBaseService<TE, TM, TR>
         where TE : IBelongEntity, new()
         where TM : IBaseModel<TE>, new()
+        where TR : IBelongRepository<TE>
     {
         /// <summary>
         /// Service for business logic.
         /// </summary>
-        private readonly T service;
+        private readonly TS service;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BaseController{T, TE, TM}"/> class.
+        /// Initializes a new instance of the <see cref="BaseController{TS, TE, TM, TR}"/> class.
         /// </summary>
         /// <param name="service">Service implemented business logic.</param>
-        protected BaseController(T service)
+        protected BaseController(TS service)
         {
             this.service = service;
         }
@@ -47,7 +50,7 @@ namespace Pomodoro.Api.Controllers.Base
         /// <summary>
         /// Gets instance of service.
         /// </summary>
-        protected T Service => this.service;
+        protected TS Service => this.service;
 
         /// <summary>
         /// Gets authenticated user id Guid.Empty
@@ -173,10 +176,10 @@ namespace Pomodoro.Api.Controllers.Base
         /// <summary>
         /// Map service response to ActionResult.
         /// </summary>
-        /// <typeparam name="TR">Service response data type (object, collection or plain value).</typeparam>
+        /// <typeparam name="TSR">Service response data type (object, collection or plain value).</typeparam>
         /// <param name="response">Service response object.</param>
         /// <returns>ActionResult corresponding to service response.</returns>
-        protected ActionResult MapServiceResponse<TR>(ServiceResponse<TR> response)
+        protected ActionResult MapServiceResponse<TSR>(ServiceResponse<TSR> response)
         {
             return response.Result switch
             {

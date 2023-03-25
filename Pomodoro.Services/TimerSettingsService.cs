@@ -5,6 +5,7 @@
 using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Repositories.Interfaces;
 using Pomodoro.Services.Base;
+using Pomodoro.Services.Interfaces;
 using Pomodoro.Services.Models;
 using Pomodoro.Services.Models.Results;
 
@@ -17,10 +18,8 @@ namespace Pomodoro.Services
     /// <summary>
     /// Perform operations with timer settings.
     /// </summary>
-    public class TimerSettingsService : BaseService<TimerSettings, TimerSettingsModel>
+    public class TimerSettingsService : BaseService<TimerSettings, TimerSettingsModel, ITimerSettingRepository>, ITimerSettingsService
     {
-        private readonly ITimerSettingRepository repository;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="TimerSettingsService"/> class.
         /// </summary>
@@ -28,7 +27,6 @@ namespace Pomodoro.Services
         public TimerSettingsService(ITimerSettingRepository repo)
             : base(repo)
         {
-            this.repository = repo;
         }
 
         /// <summary>
@@ -38,7 +36,7 @@ namespace Pomodoro.Services
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         public async Task<ServiceResponse<TimerSettingsModel>> GetOwnActiveAsync(Guid userId)
         {
-            var result = await this.repository.GetCurrentTimerSettingsAsync(userId);
+            var result = await this.Repo.GetCurrentTimerSettingsAsync(userId);
             if (result is null)
             {
                 return new ServiceResponse<TimerSettingsModel> { Result = ResponseType.NotFound };
