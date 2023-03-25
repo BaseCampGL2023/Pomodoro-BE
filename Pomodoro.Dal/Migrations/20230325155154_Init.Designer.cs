@@ -12,7 +12,7 @@ using Pomodoro.Dal.Data;
 namespace Pomodoro.Dal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230323123435_Init")]
+    [Migration("20230325155154_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -231,6 +231,7 @@ namespace Pomodoro.Dal.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("AppUserId")
+                        .IsConcurrencyToken()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CategoryId")
@@ -307,6 +308,7 @@ namespace Pomodoro.Dal.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AppUserId")
+                        .IsConcurrencyToken()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
@@ -366,6 +368,7 @@ namespace Pomodoro.Dal.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("AppUserId")
+                        .IsConcurrencyToken()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CategoryId")
@@ -431,6 +434,7 @@ namespace Pomodoro.Dal.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AppUserId")
+                        .IsConcurrencyToken()
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("AppUserId");
 

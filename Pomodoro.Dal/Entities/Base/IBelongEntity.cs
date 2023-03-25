@@ -10,7 +10,7 @@ namespace Pomodoro.Dal.Entities.Base
     public interface IBelongEntity : IEntity
     {
         /// <summary>
-        /// Gets or sets entity owner id.
+        /// Gets or sets entity owner id, value can used in concurrency check.
         /// </summary>
         public Guid AppUserId { get; set; }
     }

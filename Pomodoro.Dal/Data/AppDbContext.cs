@@ -69,11 +69,11 @@ namespace Pomodoro.Dal.Data
         /// <exception cref="PomoRetryLimitExceededException">Wrapped and logged RetryLimitExceededException.</exception>
         /// <exception cref="PomoDbUpdateException">Wrapped and logged DbUpdateException.</exception>
         /// <exception cref="PomoException">Wrapped and logged system exception.</exception>
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             try
             {
-                return base.SaveChangesAsync(cancellationToken);
+                return await base.SaveChangesAsync(cancellationToken);
             }
             catch (DbUpdateConcurrencyException ex)
             {
@@ -160,7 +160,8 @@ namespace Pomodoro.Dal.Data
                     .HasColumnName(MigrationHelpers.TimerSettingsIsActiveAttribute);
 
                 entity.Property(e => e.AppUserId)
-                    .HasColumnName(MigrationHelpers.TimerSettingsUserIdAttribute);
+                    .HasColumnName(MigrationHelpers.TimerSettingsUserIdAttribute)
+                    .IsConcurrencyToken();
 
                 entity.Property(e => e.Pomodoro)
                     .IsRequired().HasConversion<long>();
@@ -193,6 +194,8 @@ namespace Pomodoro.Dal.Data
 
                 entity.Property(e => e.CreatedDt).IsRequired()
                     .HasDefaultValueSql("GETUTCDATE()");
+
+                entity.Property(e => e.AppUserId).IsConcurrencyToken();
 
                 entity.HasMany(e => e.Pomodoros)
                     .WithOne(d => d.Task)
@@ -238,6 +241,8 @@ namespace Pomodoro.Dal.Data
                 entity.Property(e => e.ScheduleType).IsRequired()
                 .HasColumnName("ScheduleType").HasConversion<byte>();
 
+                entity.Property(e => e.AppUserId).IsConcurrencyToken();
+
                 entity.Property(e => e.CreatedDt).IsRequired()
                     .HasDefaultValueSql("GETUTCDATE()");
 
@@ -259,6 +264,8 @@ namespace Pomodoro.Dal.Data
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(60);
 
                 entity.Property(e => e.Description).HasMaxLength(1000);
+
+                entity.Property(e => e.AppUserId).IsConcurrencyToken();
 
                 entity.HasMany(p => p.Tasks)
                     .WithOne(d => d.Category)

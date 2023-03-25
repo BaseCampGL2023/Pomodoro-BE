@@ -229,6 +229,7 @@ namespace Pomodoro.Dal.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("AppUserId")
+                        .IsConcurrencyToken()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CategoryId")
@@ -305,6 +306,7 @@ namespace Pomodoro.Dal.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AppUserId")
+                        .IsConcurrencyToken()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
@@ -364,6 +366,7 @@ namespace Pomodoro.Dal.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("AppUserId")
+                        .IsConcurrencyToken()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CategoryId")
@@ -429,6 +432,7 @@ namespace Pomodoro.Dal.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AppUserId")
+                        .IsConcurrencyToken()
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("AppUserId");
 

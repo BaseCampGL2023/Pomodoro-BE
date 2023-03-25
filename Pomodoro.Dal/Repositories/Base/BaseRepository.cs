@@ -4,7 +4,6 @@
 
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Pomodoro.Dal.Data;
 using Pomodoro.Dal.Entities.Base;
 
@@ -55,8 +54,6 @@ namespace Pomodoro.Dal.Repositories.Base
             this.Table.Remove(entity);
             return persist ? await this.SaveChangesAsync() : 0;
         }
-
-        // TODO: Handling exception when delete no existing entity.
 
         /// <inheritdoc/>
         public async Task<int> DeleteAsync(Guid id, bool persist = false)
