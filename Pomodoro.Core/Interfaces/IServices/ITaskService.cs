@@ -9,12 +9,10 @@ namespace Pomodoro.Core.Interfaces.IServices
 {
     public interface ITaskService
     {
-        public Task<IEnumerable<TaskModel>> GetAllTasksAsync(Guid userId);
         public Task<TaskModel?> GetTaskByIdAsync(Guid taskId);
-        public Task<TaskModel> PostTask(TaskModel task);
-        public Task<TaskModel> DeleteTask(TaskModel task);
-        public Task<TaskModel> UpdateTask(TaskModel task);
-        public Task<IEnumerable<TaskModel>> GetAllTasksAsyncTest();
-        public Task<IEnumerable<TaskModel>> GetAllTasksByDate(Guid userId, DateTime startDate, DateTime endDate);
+        public Task<IEnumerable<TaskForListModel?>> GetTasksByDateAsync(Guid userId, DateTime date);
+        public Task<TaskModel?> CreateTaskAsync(Guid userId, TaskModel taskModel);
+        public Task DeleteTaskAsync(TaskModel taskModel);
+        public Task<TaskModel?> UpdateTaskAsync(TaskModel taskModel);
     }
 }

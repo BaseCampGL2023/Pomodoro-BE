@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Pomodoro.Core.Enums;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.Core.Models.Frequency;
 using Pomodoro.Core.Models.Tasks;
@@ -10,87 +11,197 @@ namespace Pomodoro.Services.Realizations
     public class TaskService : ITaskService
     {
         private readonly ITaskRepository _tasksRepo;
+        private readonly IFrequencyTypeRepository _freqTypeRepo;
         private readonly IMapper _mapper;
         private readonly IFrequencyService _freqService;
 
         public TaskService(
             ITaskRepository tasksRepo,
+            IFrequencyTypeRepository freqTypeRepo,
             IFrequencyService freqService,
             IMapper mapper)
         {
             _tasksRepo = tasksRepo;
+            _freqTypeRepo = freqTypeRepo;
             _mapper = mapper;
             _freqService = freqService;
         }
 
-        public async Task<IEnumerable<TaskModel>> GetAllTasksAsyncTest()
-        {
-            var data = await _tasksRepo.GetAllTasks();
-            var result = _mapper.Map<IEnumerable<TaskEntity>, IEnumerable<TaskModel>>(data);
-            return result;
-        }
-
-        public async Task<IEnumerable<TaskModel>> GetAllTasksAsync(Guid userId)
-        {
-            var data = await _tasksRepo.FindAllAsync(x => x.UserId == userId);
-            var result = _mapper.Map<IEnumerable<TaskEntity>, IEnumerable<TaskModel>>(data);
-            return result;
-        }
-
         public async Task<TaskModel?> GetTaskByIdAsync(Guid taskId)
         {
-            var data = await _tasksRepo.FindOneTaskAsync(taskId);
-            var result = _mapper.Map<TaskEntity?, TaskModel?>(data);
-            return result;
+            var task = await _tasksRepo.FindOneTaskAsync(taskId);
+            return _mapper.Map<TaskModel>(task);
         }
 
-        public async Task<TaskModel> PostTask(TaskModel task)
+        public async Task<IEnumerable<TaskForListModel?>> GetTasksByDateAsync(Guid userId, DateTime date)
         {
-            var freqData = _mapper.Map<TaskModel, FrequencyModel>(task);
-            Guid freqId = await _freqService.GetFrequencyId(freqData);
+            var userTasks = await _tasksRepo.FindAllAsync(t => t.UserId == userId);
 
-            var data = _mapper.Map<TaskModel, TaskEntity>(task);
-            data.FrequencyId = freqId;
+            var tasksOnDate = userTasks.Where(t => IsTaskOnDate(t, date.Date)).ToList();
 
-            await _tasksRepo.AddAsync(data);
+            return _mapper.Map<IEnumerable<TaskForListModel>>(tasksOnDate);
+        }
+
+        public async Task<TaskModel?> CreateTaskAsync(Guid userId, TaskModel taskModel)
+        {
+            taskModel.Frequency ??= new FrequencyModel
+            {
+                FrequencyValue = FrequencyValue.None,
+                IsCustom = false,
+                Every = 0
+            };
+
+            var freq = await _freqService.CreateFrequencyAsync(taskModel.Frequency);
+
+            if (freq == null)
+            {
+                return null;
+            }
+
+            var task = _mapper.Map<TaskEntity>(taskModel);
+
+            task.UserId = userId;
+            task.FrequencyId = freq.Id;
+
+            await _tasksRepo.AddAsync(task);
             await _tasksRepo.SaveChangesAsync();
-            task.Id = data.Id;
-            return task;
+
+            return _mapper.Map<TaskModel>(task);
         }
 
-        public async Task<TaskModel> UpdateTask(TaskModel task)
+        public async Task DeleteTaskAsync(TaskModel taskModel)
         {
-            var freqData = _mapper.Map<TaskModel, FrequencyModel>(task);
-            Guid freqId = await _freqService.GetFrequencyId(freqData);
+            if (taskModel == null || taskModel.Frequency == null)
+            {
+                return;
+            }
 
-            var data = _mapper.Map<TaskModel, TaskEntity>(task);
-            data.FrequencyId = freqId;
+            await _freqService.DeleteFrequencyAsync(taskModel.Frequency);
 
-            _tasksRepo.Update(data);
+            var task = await _tasksRepo.GetByIdAsync(taskModel.Id);
+
+            if (task == null)
+            {
+                return;
+            }
+
+            _tasksRepo.Remove(task);
+
             await _tasksRepo.SaveChangesAsync();
-            return task;
         }
 
-        public async Task<TaskModel> DeleteTask(TaskModel task)
+        public async Task<TaskModel?> UpdateTaskAsync(TaskModel taskModel)
         {
-            var freqData = _mapper.Map<TaskModel, FrequencyModel>(task);
-            Guid freqId = await _freqService.GetFrequencyId(freqData);
+            if (taskModel == null || taskModel.Frequency == null)
+                return null;
 
-            var data = _mapper.Map<TaskModel, TaskEntity>(task);
-            data.FrequencyId = freqId;
+            var freq = await _freqService.UpdateFrequencyAsync(taskModel.Frequency);
 
-            _tasksRepo.Remove(data);
+            if (freq == null)
+            {
+                return null;
+            }
+
+            var task = await _tasksRepo.GetByIdAsync(taskModel.Id);
+
+            if (task == null)
+            {
+                return null;
+            }
+
+            task.Title = taskModel.Title;
+            task.InitialDate = taskModel.InitialDate;
+            task.AllocatedTime = taskModel.AllocatedTime;
+
+            _tasksRepo.Update(task);
             await _tasksRepo.SaveChangesAsync();
-            return task;
+
+            return _mapper.Map<TaskModel>(task);
         }
 
-        public async Task<IEnumerable<TaskModel>> GetAllTasksByDate(Guid userId, DateTime startDate, DateTime endDate)
+        private bool IsTaskOnDate(TaskEntity task, DateTime date)
         {
-            IEnumerable<TaskEntity> data = endDate == DateTime.MinValue ?
-                await _tasksRepo.FindAllAsync(x => x.UserId == userId && x.InitialDate >= startDate) :
-                await _tasksRepo.FindAllAsync(x => x.UserId == userId && x.InitialDate >= startDate && x.InitialDate <= endDate);
-            var result = _mapper.Map<IEnumerable<TaskEntity>, IEnumerable<TaskModel>>(data);
-            return result;
+            if (task.Frequency == null || task.Frequency.FrequencyType == null)
+            {
+                return false;
+            }
+
+            switch (task.Frequency.FrequencyType.Value)
+            {
+                case FrequencyValue.None:
+                    return task.InitialDate.Date == date;
+
+                case FrequencyValue.Day:
+                    {
+                        var every = 1;
+
+                        if (task.Frequency.IsCustom)
+                            every = task.Frequency.Every;
+
+                        for (var d = task.InitialDate.Date; d <= date; d = d.AddDays(every))
+                        {
+                            if (d == date)
+                                return true;
+                        }
+                        return false;
+                    }
+
+                case FrequencyValue.Week:
+                    {
+                        for (var d = task.InitialDate.Date; d <= date; d = d.AddDays(7))
+                        {
+                            if (d == date)
+                                return true;
+                        }
+                        return false;
+                    }
+
+                case FrequencyValue.Month:
+                    {
+                        var every = 1;
+
+                        if (task.Frequency.IsCustom)
+                            every = task.Frequency.Every;
+
+                        for (var d = task.InitialDate.Date; d <= date; d = d.AddMonths(every))
+                        {
+                            if (d == date)
+                                return true;
+                        }
+                        return false;
+                    }
+
+                case FrequencyValue.Year:
+                    {
+                        var every = 1;
+
+                        if (task.Frequency.IsCustom)
+                            every = task.Frequency.Every;
+
+                        for (var d = task.InitialDate.Date; d <= date; d = d.AddYears(every))
+                        {
+                            if (d == date)
+                                return true;
+                        }
+                        return false;
+                    }
+
+                case FrequencyValue.Workday:
+                    return !IsWeekend(date) && task.InitialDate.Date <= date;
+
+                case FrequencyValue.Weekend:
+                    return IsWeekend(date) && task.InitialDate.Date <= date;
+
+                default:
+                    return false;
+            }
+        }
+
+        private bool IsWeekend(DateTime date)
+        {
+            var dayOfWeek = date.DayOfWeek;
+
+            return dayOfWeek == DayOfWeek.Saturday || dayOfWeek == DayOfWeek.Sunday;
         }
     }
 }

@@ -3,6 +3,7 @@
 // </copyright>
 
 using AutoMapper;
+using Pomodoro.Api.ViewModels.Tasks;
 using Pomodoro.Core.Models.Tasks;
 
 namespace Pomodoro.Api.Mapping.Tasks
@@ -18,8 +19,8 @@ namespace Pomodoro.Api.Mapping.Tasks
         /// </summary>
         public TaskProfile()
         {
-            this.CreateMap<TaskViewModel, TaskModel>();
-            this.CreateMap<TaskModel, TaskViewModel>();
+            this.CreateMap<TaskModel, TaskViewModel>().ReverseMap();
+            this.CreateMap<TaskForListModel, TaskForListViewModel>().ReverseMap();
         }
     }
 }

@@ -9,10 +9,8 @@ namespace Pomodoro.Core.Interfaces.IServices
 {
     public interface IFrequencyService
     {
-        public Task<Guid> FindFrequencyTypeId(FrequencyModel freq);
-        public Task<IEnumerable<FrequencyModel>> FindAllFrequenciesAsync(FrequencyModel freq);
-        public Task<Guid> AddFrequencyAsync(FrequencyModel freq);
-        public Task<Guid> FindFrequencyId(FrequencyModel freq);
-        public Task<Guid> GetFrequencyId(FrequencyModel freqModel);
+        public Task<FrequencyModel?> CreateFrequencyAsync(FrequencyModel freqModel);
+        public Task<FrequencyModel?> UpdateFrequencyAsync(FrequencyModel freqModel);
+        public Task DeleteFrequencyAsync(FrequencyModel freqModel);
     }
 }

@@ -3,9 +3,11 @@
 // </copyright>
 
 using AutoMapper;
+using Pomodoro.Core.Enums;
 using Pomodoro.Core.Models.Frequency;
 using Pomodoro.Core.Models.Tasks;
 using Pomodoro.DataAccess.Entities;
+using System.Collections.Generic;
 
 namespace Pomodoro.Services.Mapping
 {
@@ -20,14 +22,19 @@ namespace Pomodoro.Services.Mapping
         /// </summary>
         public FrequencyProfile()
         {
-            CreateMap<TaskModel, FrequencyModel>()
-                .ForMember(f => f.FrequencyType, o => o.MapFrom(s => s.Frequency.FrequencyType))
-                .ForMember(f => f.IsCustom, o => o.MapFrom(s => s.Frequency.IsCustom))
-                .ForMember(f => f.Every, o => o.MapFrom(s => s.Frequency.Every));
             CreateMap<Frequency, FrequencyModel>()
-                .ForMember(f => f.FrequencyType, o => o.MapFrom(s => s.FrequencyType.Value));
+                .ForMember(dist => dist.FrequencyValue, act => act.MapFrom(src => GetFrequencyValue(src)));
             CreateMap<FrequencyModel, Frequency>()
-                .ForMember(f => f.FrequencyType.Value, o => o.MapFrom(s => s.FrequencyType));
+                .ForMember(dist => dist.Id, act => act.MapFrom(src => Guid.Empty));
+
+        }
+
+        private FrequencyValue GetFrequencyValue(Frequency frequency)
+        {
+            if (frequency == null || frequency.FrequencyType == null)
+                return 0;
+
+            return frequency.FrequencyType.Value;
         }
     }
 }

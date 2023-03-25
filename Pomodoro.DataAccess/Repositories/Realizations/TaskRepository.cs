@@ -29,14 +29,7 @@ namespace Pomodoro.DataAccess.Repositories.Realizations
                 .Where(predicate)
                 .Include(t => t.Frequency)
                     .ThenInclude(f => f.FrequencyType)
-                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<TaskEntity>> GetAllTasks()
-        {
-            return await context.Set<TaskEntity>()
-                .Include(t => t.Frequency)
-                    .ThenInclude(f => f.FrequencyType)
+                .Include(t => t.CompletedTasks)
                 .ToListAsync();
         }
     }

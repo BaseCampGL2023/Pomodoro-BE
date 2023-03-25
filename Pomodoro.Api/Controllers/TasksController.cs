@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pomodoro.Api.Controllers.Base;
+using Pomodoro.Api.ViewModels.Tasks;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.Core.Models.Tasks;
 using Swashbuckle.AspNetCore.Annotations;
@@ -13,7 +14,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace Pomodoro.Api.Controllers
 {
     /// <summary>
-    /// API controller for managing the tasks.
+    /// API controller for managing tasks related to the current user.
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
@@ -26,8 +27,8 @@ namespace Pomodoro.Api.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="TasksController"/> class.
         /// </summary>
-        /// <param name="mapper">It is an Interface for mapping 2 objects.</param>
-        /// <param name="tasksService">The service, which is responsible for manipulating with tasks data.</param>
+        /// <param name="mapper">Interface for mapping 2 objects.</param>
+        /// <param name="tasksService">Service for managing user tasks.</param>
         public TasksController(
             ITaskService tasksService,
             IMapper mapper)
@@ -37,19 +38,20 @@ namespace Pomodoro.Api.Controllers
         }
 
         /// <summary>
-        /// Gets task by specific id.
+        /// Gets task related to the current user.
         /// </summary>
-        /// <param name="id">The id of the task that needs to be returned.</param>
+        /// <param name="id">Id of the task.</param>
         /// <returns>A <see cref="TaskViewModel"/> object.</returns>
-        [HttpGet("{id}")]
+        [HttpGet("getById/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [SwaggerResponse(200, "The task was found.")]
-        [SwaggerResponse(400, "Invalid data.")]
+        [SwaggerResponse(200, "Returns object containing user task.")]
+        [SwaggerResponse(400, "The model state is invalid.")]
         [SwaggerResponse(401, "An unauthorized request cannot be processed.")]
-        [SwaggerResponse(404, "The task with this id wasn`t found.")]
+        [SwaggerResponse(404, "No task found by the provided id.")]
         [SwaggerResponse(500, "An unhandled exception occurred on the server while executing the request.")]
         public async Task<ActionResult<TaskViewModel>> GetTaskById(Guid id)
         {
@@ -68,140 +70,143 @@ namespace Pomodoro.Api.Controllers
         }
 
         /// <summary>
-        /// Gets all tasks by user by specific date or period.
+        /// Gets tasks related to the current user by specific date.
         /// </summary>
-        /// <param name="startDate">The start date for which tasks should be found.</param>
-        /// <param name="endDate">The end date for which tasks should be found.</param>
-        /// <returns>A <see cref="TaskViewModel"/> object.</returns>
-        [HttpGet("ByDate")]
+        /// <param name="date">Date of the tasks.</param>
+        /// <returns>A <see cref="IEnumerable{TaskForListViewModel}"/> object.</returns>
+        [HttpGet("getByDate/{date}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [SwaggerResponse(200, "The tasks were found")]
-        [SwaggerResponse(400, "The date in the url is invalid")]
+        [SwaggerResponse(200, "Returns object containing user tasks.")]
+        [SwaggerResponse(400, "The model state is invalid.")]
         [SwaggerResponse(401, "An unauthorized request cannot be processed.")]
-        [SwaggerResponse(404, "The tasks by with date weren`t found.")]
-        [SwaggerResponse(500, "Something went wrong")]
-        public async Task<ActionResult<IReadOnlyList<TaskViewModel>>> GetTasksByDate(DateTime startDate, DateTime endDate)
+        [SwaggerResponse(404, "No tasks found by the provided date.")]
+        [SwaggerResponse(500, "An unhandled exception occurred on the server while executing the request.")]
+        public async Task<ActionResult<IEnumerable<TaskForListViewModel>>> GetTasksByDate(DateTime date)
         {
-            var tasks = await this.tasksService.GetAllTasksByDate(this.UserId, startDate, endDate);
-            return this.Ok(this.mapper.Map<IReadOnlyList<TaskViewModel>>(tasks));
+            var tasks = await this.tasksService.GetTasksByDateAsync(this.UserId, date);
+
+            if (tasks == null)
+            {
+                return this.NotFound();
+            }
+
+            return this.Ok(this.mapper.Map<IEnumerable<TaskForListViewModel>>(tasks));
         }
 
         /// <summary>
-        /// Gets all tasks by user.
+        /// Creates task related to the current user.
         /// </summary>
-        /// <returns>A <see cref="TaskViewModel"/> object.</returns>
-        [HttpGet("allUserTasks")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [SwaggerResponse(200, "The tasks were found")]
-        [SwaggerResponse(401, "An unauthorized request cannot be processed.")]
-        [SwaggerResponse(500, "Something went wrong")]
-        public async Task<ActionResult<IReadOnlyList<TaskViewModel>>> GetTasksByUser()
-        {
-            var tasks = await this.tasksService.GetAllTasksAsync(this.UserId);
-            return this.Ok(this.mapper.Map<IReadOnlyList<TaskViewModel>>(tasks));
-        }
-
-        /// <summary>
-        /// Gets all tasks. The endpoint for test purposes.
-        /// </summary>
-        /// <returns>A <see cref="TaskViewModel"/> object.</returns>
-        [HttpGet("allTasksTest")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [SwaggerResponse(200, "The task was found")]
-        [SwaggerResponse(500, "Something went wrong")]
-        public async Task<ActionResult<IReadOnlyList<TaskViewModel>>> GetAllTasksTest()
-        {
-            var tasks = await this.tasksService.GetAllTasksAsyncTest();
-            return this.Ok(this.mapper.Map<IReadOnlyList<TaskViewModel>>(tasks));
-        }
-
-        /// <summary>
-        /// Endpoint to create a task.
-        /// </summary>
-        /// <param name="task">Gets as a parameter Task create view model.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        [HttpPost("")]
+        /// <param name="task">Represents object to be created.</param>
+        /// <returns>Id of the created object represented by<see cref="ActionResult{Guid}"/></returns>
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [SwaggerResponse(201, "The task was created")]
+        [SwaggerResponse(201, "Returns created object containing task id.")]
+        [SwaggerResponse(400, "The model state is invalid.")]
         [SwaggerResponse(401, "An unauthorized request cannot be processed.")]
-        [SwaggerResponse(500, "Something went wrong")]
-        public async Task<ActionResult<TaskViewModel>> PostTask([FromBody] TaskViewModel task)
+        [SwaggerResponse(500, "An unhandled exception occurred on the server while executing the request.")]
+        public async Task<ActionResult<TaskViewModel>> CreateTask([FromBody] TaskViewModel task)
         {
-            task.UserId = this.UserId;
-            var result = await this.tasksService.PostTask(this.mapper.Map<TaskModel>(task));
-            return this.CreatedAtAction(nameof(this.GetTaskById), new { id = result.Id }, this.mapper.Map<TaskViewModel>(result));
+            var taskModel = this.mapper.Map<TaskModel>(task);
+
+            var result = await this.tasksService.CreateTaskAsync(this.UserId, taskModel);
+
+            if (result == null)
+            {
+                return this.BadRequest();
+            }
+
+            return this.CreatedAtAction(nameof(this.GetTaskById), new { id = result.Id }, result);
         }
 
         /// <summary>
-        /// Endpoint to delete a task.
+        /// Deletes task related to the current user by task id.
         /// </summary>
-        /// <param name="id">Represents an ID of the task that needs to be deleted.</param>
-        /// <param name="task">View model of a task that needs to be deleted.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        /// <param name="id">Represents an id of the task that needs to be deleted.</param>
+        /// <returns>A <see cref="ActionResult"/> representing the result of task deletion.</returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [SwaggerResponse(200, "The task was created")]
-        [SwaggerResponse(400, "The id in the view model and the id in the request are not the same")]
+        [SwaggerResponse(200, "Returns success result of task deletion.")]
+        [SwaggerResponse(400, "The model state is invalid.")]
         [SwaggerResponse(401, "An unauthorized request cannot be processed.")]
-        [SwaggerResponse(404, "The task you want to delete wan`t found.")]
-        [SwaggerResponse(500, "Something went wrong")]
-        public async Task<ActionResult> DeleteTask(
-            Guid id,
-            [FromBody] TaskViewModel task)
+        [SwaggerResponse(403, "User cannot delete task of another person.")]
+        [SwaggerResponse(404, "No task found by the provided id.")]
+        [SwaggerResponse(500, "An unhandled exception occurred on the server while executing the request.")]
+        public async Task<ActionResult> DeleteTask(Guid id)
         {
-            task.UserId = this.UserId;
+            var task = await this.tasksService.GetTaskByIdAsync(id);
 
-            if (id != task.Id)
+            if (task == null)
             {
-                return this.BadRequest();
+                return this.NotFound();
             }
 
-            await this.tasksService.DeleteTask(this.mapper.Map<TaskModel>(task));
+            if (task.UserId != this.UserId)
+            {
+                return this.Forbid();
+            }
+
+            await this.tasksService.DeleteTaskAsync(task);
+
             return this.Ok();
         }
 
         /// <summary>
-        /// Endpoint to update a task.
+        /// Updates task related to the current user.
         /// </summary>
-        /// <param name="id">Represents an ID of the task that needs to be updated.</param>
+        /// <param name="id">Represents an id of the task that needs to be updated.</param>
         /// <param name="task">View model of a task that needs to be updated.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        /// <returns>A <see cref="ActionResult"/> representing the result of the asynchronous operation.</returns>
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [SwaggerResponse(200, "The task was created")]
-        [SwaggerResponse(400, "The id in the view model and the id in the request are not the same")]
+        [SwaggerResponse(200, "Returns success result of task updation.")]
+        [SwaggerResponse(400, "The model state is invalid.")]
         [SwaggerResponse(401, "An unauthorized request cannot be processed.")]
-        [SwaggerResponse(404, "The task you want to update wan`t found.")]
-        [SwaggerResponse(500, "Something went wrong")]
+        [SwaggerResponse(403, "User cannot update task of another person.")]
+        [SwaggerResponse(404, "No task found by the provided id.")]
+        [SwaggerResponse(500, "An unhandled exception occurred on the server while executing the request.")]
         public async Task<ActionResult> UpdateTask(
             Guid id,
             [FromBody] TaskViewModel task)
         {
-            if (id != task.Id)
+            var taskModel = await this.tasksService.GetTaskByIdAsync(id);
+
+            if (taskModel == null)
+            {
+                return this.NotFound();
+            }
+
+            if (taskModel.UserId != this.UserId)
+            {
+                return this.Forbid();
+            }
+
+            taskModel = this.mapper.Map<TaskModel>(task);
+
+            var result = await this.tasksService.UpdateTaskAsync(taskModel);
+
+            if (result == null)
             {
                 return this.BadRequest();
             }
 
-            task.UserId = this.UserId;
-            await this.tasksService.UpdateTask(this.mapper.Map<TaskModel>(task));
-            return this.Ok();
+            return this.AcceptedAtAction(nameof(this.GetTaskById), new { id = result.Id }, result);
         }
     }
 }
