@@ -5,9 +5,8 @@ using Pomodoro.DataAccess.Repositories.Interfaces;
 
 namespace Pomodoro.Services.Realizations
 {
-    public class StatisticsService:IStatisticsService
+    public class StatisticsService: IStatisticsService
     {
-    
         private readonly IPomodoroRepository pomodoroRepository;
 
         public StatisticsService(IPomodoroRepository pomodoroRepository)
@@ -22,60 +21,51 @@ namespace Pomodoro.Services.Realizations
                 UserId = userId,
                 Day = day
             };
+            var pomodoros = await pomodoroRepository.FindAsync(pomo =>
+                pomo.Task != null &&
+                pomo.Task.UserId == userId &&
+                pomo.ActualDate.Year == day.Year &&
+                pomo.ActualDate.Month == day.Month &&
+                pomo.ActualDate.Day == day.Day);
 
-            var statistics = await pomodoroRepository.FindAsync(
-                u => u.Task != null &&
-                   u.Task.UserId == userId &&
-                   u.ActualDate.Year == day.Year &&
-                   u.ActualDate.Month == day.Month &&
-                   u.ActualDate.Day == day.Day
-            );
-            if (!statistics.Any())
+            if (!pomodoros.Any())
             {
                 return dailyStatistics;
             }
 
-            for (int i = 0; i < 24; i+=2) 
+            for (int hour = 0; hour < 23; hour += 2)
             {
-                AnalyticsPerHour analytics = new AnalyticsPerHour();
-                
-                var hours = statistics.Where(t => t.ActualDate.Hour == i || (t.ActualDate.Hour > i && t.ActualDate.Hour < i+2));
+                var pomodorosPerHour = pomodoros.Where(pomo => 
+                    pomo.ActualDate.Hour >= hour &&
+                    pomo.ActualDate.Hour < hour + 2);
 
-                analytics.Hour = i;
-                
-                //float totalPomodorosCount = hours.Sum(c => c.PomodorosCount);
-
-                //analytics.PomodorosDone = Convert.ToInt32(totalPomodorosCount);
-
-                analytics.TimeSpent = hours.Sum(c=>c.TimeSpent);
-
-                dailyStatistics.AnalyticsPerHours.Add(analytics);
-
+                dailyStatistics.AnalyticsPerHours.Add(new AnalyticsPerHour
+                {
+                    Hour = hour,
+                    PomodorosDone = pomodorosPerHour.Count(),
+                    TimeSpent = pomodorosPerHour.Sum(pomo => pomo.TimeSpent)
+                });
             }
 
             return dailyStatistics;
-
         }
 
         public async Task<MonthlyStatistics> GetMonthlyStatisticsAsync(Guid userId, int year, int month)
         {
-            var statistics = await pomodoroRepository.FindAsync(
-                m => m.Task != null &&
-                    m.Task.UserId == userId &&
-                    m.ActualDate.Year == year &&
-                    m.ActualDate.Month == month
-            );
-
-            //float totalPomodorosCount = statistics.Sum(c => c.PomodorosCount);
+            var pomodoros = await pomodoroRepository.FindAsync(pomo =>
+                pomo.Task != null &&
+                pomo.Task.UserId == userId &&
+                pomo.ActualDate.Year == year &&
+                pomo.ActualDate.Month == month);
 
             return new MonthlyStatistics
             {
                 UserId = userId,
                 Year = year,
                 Month = (Month)month,
-                TasksCompleted = statistics.Count(),
-                //PomodorosDone = Convert.ToInt32(totalPomodorosCount),
-                TimeSpent = statistics.Sum(c => c.TimeSpent)
+                TasksCompleted = pomodoros.Count(pomo => pomo.TaskIsDone),
+                PomodorosDone = pomodoros.Count(),
+                TimeSpent = pomodoros.Sum(pomo => pomo.TimeSpent)
             };
         }
 
@@ -86,35 +76,29 @@ namespace Pomodoro.Services.Realizations
                 UserId = userId,
                 Year = year
             };
+            var pomodoros = await pomodoroRepository.FindAsync(pomo =>
+                pomo.Task != null &&
+                pomo.Task.UserId == userId &&
+                pomo.ActualDate.Year == year);
 
-            var statistics = await pomodoroRepository.FindAsync(
-                a => a.Task != null &&
-                     a.Task.UserId == userId &&
-                     a.ActualDate.Year == year
-            );
-            if (!statistics.Any())
+            if (!pomodoros.Any())
             {
                 return annualStatistics;
             }
 
-            foreach (int m in Enum.GetValues(typeof(Month)))
+            foreach (int month in Enum.GetValues(typeof(Month)))
             {
-                
-                AnalyticsPerMonth temp = new AnalyticsPerMonth();
+                var pomodorosPerMonth = pomodoros
+                    .Where(pomo => pomo.ActualDate.Month == month);
 
-                var months = statistics.Where(c => c.ActualDate.Month == m);
-                
-                temp.Month = (Month)m;
-
-                //float totalPomodorosCount = months.Sum(c=>c.PomodorosCount);
-
-                //temp.PomodorosDone = Convert.ToInt32(totalPomodorosCount);
-
-                annualStatistics.AnalyticsPerMonths.Add(temp);
+                annualStatistics.AnalyticsPerMonths.Add(new AnalyticsPerMonth
+                {
+                    Month = (Month)month,
+                    PomodorosDone = pomodorosPerMonth.Count()
+                });
             }
 
             return annualStatistics;
-
         }
     }
 }
