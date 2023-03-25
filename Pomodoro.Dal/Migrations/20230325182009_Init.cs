@@ -241,7 +241,7 @@ namespace Pomodoro.Dal.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Schedules", x => x.Id);
-                    table.CheckConstraint("ScheduleType", "ScheduleType >= 1 AND ScheduleType < 11");
+                    table.CheckConstraint("ScheduleType", "ScheduleType >= 1 AND ScheduleType < 10");
                     table.ForeignKey(
                         name: "FK_Schedules_AppUser_AppUserId",
                         column: x => x.AppUserId,

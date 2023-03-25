@@ -77,7 +77,6 @@ namespace Pomodoro.Services.Utilities
                     break;
                 case ScheduleType.MonthTemplate:
                     // TODO: Delete month day forward, check new month
-                case ScheduleType.MonthDayForwardTemplate:
                     while (template[date.Day] != '1')
                     {
                         date = date.AddDays(1);

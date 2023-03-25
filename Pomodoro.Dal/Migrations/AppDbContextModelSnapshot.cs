@@ -422,7 +422,7 @@ namespace Pomodoro.Dal.Migrations
 
                     b.ToTable("Schedules");
 
-                    b.HasCheckConstraint("ScheduleType", "ScheduleType >= 1 AND ScheduleType < 11");
+                    b.HasCheckConstraint("ScheduleType", "ScheduleType >= 1 AND ScheduleType < 10");
                 });
 
             modelBuilder.Entity("Pomodoro.Dal.Entities.TimerSettings", b =>

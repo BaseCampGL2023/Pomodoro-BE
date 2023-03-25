@@ -12,7 +12,7 @@ using Pomodoro.Dal.Data;
 namespace Pomodoro.Dal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230325174018_Init")]
+    [Migration("20230325182009_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -424,7 +424,7 @@ namespace Pomodoro.Dal.Migrations
 
                     b.ToTable("Schedules");
 
-                    b.HasCheckConstraint("ScheduleType", "ScheduleType >= 1 AND ScheduleType < 11");
+                    b.HasCheckConstraint("ScheduleType", "ScheduleType >= 1 AND ScheduleType < 10");
                 });
 
             modelBuilder.Entity("Pomodoro.Dal.Entities.TimerSettings", b =>
