@@ -8,11 +8,11 @@ namespace Pomodoro.Services.Realizations
     public class StatisticsService:IStatisticsService
     {
     
-        private readonly ICompletedRepository _completedRepository;
+        private readonly IPomodoroRepository pomodoroRepository;
 
-        public StatisticsService( ICompletedRepository repository)
+        public StatisticsService(IPomodoroRepository pomodoroRepository)
         {
-            this._completedRepository = repository;
+            this.pomodoroRepository = pomodoroRepository;
         }
         
         public async Task<DailyStatistics> GetDailyStatisticsAsync(Guid userId, DateOnly day)
@@ -22,7 +22,7 @@ namespace Pomodoro.Services.Realizations
             dailyStatistics.UserId = userId;
             dailyStatistics.Day = day;
             
-            var statistics = await _completedRepository.FindAsync(
+            var statistics = await pomodoroRepository.FindAsync(
                 u=>u.Task != null &&
                    u.Task.UserId == userId &&
                    u.ActualDate.Year == day.Year &&
@@ -38,9 +38,9 @@ namespace Pomodoro.Services.Realizations
 
                 analytics.Hour = i;
                 
-                float totalPomodorosCount = hours.Sum(c => c.PomodorosCount);
+                //float totalPomodorosCount = hours.Sum(c => c.PomodorosCount);
 
-                analytics.PomodorosDone = Convert.ToInt32(totalPomodorosCount);
+                //analytics.PomodorosDone = Convert.ToInt32(totalPomodorosCount);
 
                 analytics.TimeSpent = hours.Sum(c=>c.TimeSpent);
 
@@ -60,7 +60,7 @@ namespace Pomodoro.Services.Realizations
             monthlyStatistics.Year = year;
             monthlyStatistics.Month = (Month)month;
 
-            var statistics = await _completedRepository.FindAsync(
+            var statistics = await pomodoroRepository.FindAsync(
                 m=> m.Task != null &&
                     m.Task.UserId == userId && 
                     m.ActualDate.Year == year && 
@@ -68,9 +68,9 @@ namespace Pomodoro.Services.Realizations
             
             monthlyStatistics.TasksCompleted = statistics.Count();
 
-            float totalPomodorosCount = statistics.Sum(c=>c.PomodorosCount);
+            //float totalPomodorosCount = statistics.Sum(c=>c.PomodorosCount);
 
-            monthlyStatistics.PomodorosDone = Convert.ToInt32(totalPomodorosCount);
+            //monthlyStatistics.PomodorosDone = Convert.ToInt32(totalPomodorosCount);
 
             monthlyStatistics.TimeSpent = statistics.Sum(c=>c.TimeSpent);
 
@@ -84,7 +84,7 @@ namespace Pomodoro.Services.Realizations
             annualStatistics.UserId = userId;
             annualStatistics.Year = year;
             
-            var statistics = await _completedRepository.FindAsync(
+            var statistics = await pomodoroRepository.FindAsync(
                 a => a.Task != null &&
                      a.Task.UserId == userId && 
                      a.ActualDate.Year == year
@@ -100,9 +100,9 @@ namespace Pomodoro.Services.Realizations
                 
                 temp.Month = (Month)m;
 
-                float totalPomodorosCount = months.Sum(c=>c.PomodorosCount);
+                //float totalPomodorosCount = months.Sum(c=>c.PomodorosCount);
 
-                temp.PomodorosDone = Convert.ToInt32(totalPomodorosCount);
+                //temp.PomodorosDone = Convert.ToInt32(totalPomodorosCount);
 
                 annualStatistics.AnalyticsPerMonths?.Add(temp);
             }

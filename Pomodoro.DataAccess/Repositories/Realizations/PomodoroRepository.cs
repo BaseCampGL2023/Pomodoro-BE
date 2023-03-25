@@ -4,9 +4,9 @@ using Pomodoro.DataAccess.Repositories.Interfaces;
 
 namespace Pomodoro.DataAccess.Repositories.Realizations
 {
-    public class CompletedRepository : BaseRepository<Completed>, ICompletedRepository
+    public class PomodoroRepository : BaseRepository<PomodoroEntity>, IPomodoroRepository
     {
-        public CompletedRepository(AppDbContext context) : base(context)
+        public PomodoroRepository(AppDbContext context) : base(context)
         {
         }
     }
