@@ -23,7 +23,7 @@ namespace Pomodoro.Dal.Data
             var connectionString = @"Server=(localdb)\mssqllocaldb;Database=Pomodoro_Ex;Trusted_Connection=True;";
             optionsBuilder.UseSqlServer(connectionString);
 
-            return new AppDbContext(optionsBuilder.Options);
+            return new AppDbContext(optionsBuilder.Options, null!);
         }
     }
 }

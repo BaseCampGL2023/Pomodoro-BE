@@ -21,15 +21,6 @@ namespace Pomodoro.Dal.Repositories.Base
         {
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BelongRepository{T}"/> class.
-        /// </summary>
-        /// <param name="options">Instance of DbContextOptions to instantiate AppDbContext.</param>
-        protected BelongRepository(DbContextOptions<AppDbContext> options)
-            : base(options)
-        {
-        }
-
         /// <inheritdoc />
         public async Task<int> DeleteOneBelongingAsync(Guid id, Guid ownerId, bool persist = false)
         {

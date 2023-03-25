@@ -22,15 +22,6 @@ namespace Pomodoro.Dal.Repositories
         {
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TimerSettingRepository"/> class without using DI container.
-        /// </summary>
-        /// <param name="options">>Instance of DbContextOptions to instantiate AppDbContext.</param>
-        internal TimerSettingRepository(DbContextOptions<AppDbContext> options)
-            : base(options)
-        {
-        }
-
         /// <inheritdoc/>
         public async Task<int> DeleteOneBelongingAsync(Guid id, Guid ownerId, bool persist = false)
         {

@@ -22,15 +22,6 @@ namespace Pomodoro.Dal.Repositories
         {
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AppUserRepository"/> class  without using DI container.
-        /// </summary>
-        /// <param name="options">Instance of DbContextOptions to instantiate AppDbContext.</param>
-        internal AppUserRepository(DbContextOptions<AppDbContext> options)
-            : base(options)
-        {
-        }
-
         /// <inheritdoc/>
         public async Task<AppUser?> GetByIdWithRelatedAsync(Guid id)
         {

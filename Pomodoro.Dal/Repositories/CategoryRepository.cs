@@ -21,14 +21,5 @@ namespace Pomodoro.Dal.Repositories
             : base(context)
         {
         }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CategoryRepository"/> class  without using DI container.
-        /// </summary>
-        /// <param name="options">Instance of DbContextOptions to instantiate AppDbContext.</param>
-        internal CategoryRepository(DbContextOptions<AppDbContext> options)
-            : base(options)
-        {
-        }
     }
 }
