@@ -2,6 +2,7 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
+using Microsoft.Extensions.Logging;
 using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Repositories.Interfaces;
 using Pomodoro.Services.Base;
@@ -13,7 +14,6 @@ namespace Pomodoro.Services
 {
     // TODO: check to not insert same settings
     // TODO: check IsActive in AddOne
-    // TODO: GetBelongActiveAsync()
 
     /// <summary>
     /// Perform operations with timer settings.
@@ -24,8 +24,9 @@ namespace Pomodoro.Services
         /// Initializes a new instance of the <see cref="TimerSettingsService"/> class.
         /// </summary>
         /// <param name="repo">Implementation of ITimerSettingRepository <see cref="ITimerSettingRepository"/>.</param>
-        public TimerSettingsService(ITimerSettingRepository repo)
-            : base(repo)
+        /// <param name="logger">Logger instance.</param>
+        public TimerSettingsService(ITimerSettingRepository repo, ILogger<TimerSettingsService> logger)
+            : base(repo, logger)
         {
         }
 

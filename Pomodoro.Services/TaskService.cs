@@ -2,6 +2,7 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
+using Microsoft.Extensions.Logging;
 using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Repositories.Interfaces;
 using Pomodoro.Services.Base;
@@ -18,8 +19,9 @@ namespace Pomodoro.Services
         /// Initializes a new instance of the <see cref="TaskService"/> class.
         /// </summary>
         /// <param name="repo">Implementation of IAppTaskRepository <see cref="IAppTaskRepository"/>.</param>
-        public TaskService(IAppTaskRepository repo)
-            : base(repo)
+        /// <param name="logger">Logger instance.</param>
+        public TaskService(IAppTaskRepository repo, ILogger<TaskService> logger)
+            : base(repo, logger)
         {
         }
     }

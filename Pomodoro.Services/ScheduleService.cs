@@ -2,10 +2,12 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
+using Microsoft.Extensions.Logging;
 using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Repositories.Interfaces;
 using Pomodoro.Services.Base;
 using Pomodoro.Services.Models;
+using Pomodoro.Services.Models.Results;
 using Pomodoro.Services.Utilities;
 
 namespace Pomodoro.Services
@@ -19,34 +21,41 @@ namespace Pomodoro.Services
         /// Initializes a new instance of the <see cref="ScheduleService"/> class.
         /// </summary>
         /// <param name="repo">Implementation of IScheduleRepository <see cref="IScheduleRepository"/>.</param>
-        public ScheduleService(IScheduleRepository repo)
-            : base(repo)
+        /// <param name="logger">ILoggerScheduleService instance.</param>
+        public ScheduleService(IScheduleRepository repo, ILogger<ScheduleService> logger)
+            : base(repo, logger)
         {
         }
 
         /// <inheritdoc/>
-        public override async Task<bool> AddOneOwnAsync(ScheduleModel model, Guid ownerId)
+        public override async Task<ServiceResponse<bool>> AddOneOwnAsync(ScheduleModel model, Guid ownerId)
         {
             // We can't save non-active schedule.
             model.IsActive = true;
             if (model.Tasks.Any())
             {
-               // TODO: how validate task?
-               return await base.AddOneOwnAsync(model, ownerId);
+                return new ServiceResponse<bool>
+                {
+                    Result = ResponseType.Error,
+                    Message = "Can't add schedule with already planned tasks.",
+                };
             }
 
             // TODO: check finisdDt, check finishDt in modelValidation
 
             // TODO: check UTC time
             var task = ScheduleUtility.CreateFirstTask(model, ownerId);
-            var schedule = model.ToDalEntity(ownerId);
+            var plannedTask = new TaskModel();
+            plannedTask.Assign(task);
+            model.Tasks.Add(plannedTask);
+
+            return await base.AddOneOwnAsync(model, ownerId);
+            /*var schedule = model.ToDalEntity(ownerId);
             schedule.Tasks.Add(task);
             var result = await this.Repo.AddAsync(schedule, true);
-            model.Assign(schedule);
+            model.Assign(schedule);*/
 
-            return result > 0;
+            //return result > 0;
         }
-
-        // TODO: implement custom exceptions.
     }
 }

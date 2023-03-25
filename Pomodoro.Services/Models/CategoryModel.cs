@@ -69,8 +69,6 @@ namespace Pomodoro.Services.Models
             }
         }
 
-        // TODO: if user id retrived from model.
-
         /// <inheritdoc/>
         public Category ToDalEntity(Guid userId)
         {

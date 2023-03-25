@@ -15,6 +15,11 @@ namespace Pomodoro.Services.Models.Results
         Ok,
 
         /// <summary>
+        /// Execution succesfull, no content for response.
+        /// </summary>
+        NoContent,
+
+        /// <summary>
         /// Entity for execution not found.
         /// </summary>
         NotFound,
