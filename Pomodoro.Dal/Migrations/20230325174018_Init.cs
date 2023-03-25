@@ -10,9 +10,6 @@ namespace Pomodoro.Dal.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.EnsureSchema(
-                name: "dbo");
-
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -199,7 +196,6 @@ namespace Pomodoro.Dal.Migrations
 
             migrationBuilder.CreateTable(
                 name: "TimerSettings",
-                schema: "dbo",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -209,7 +205,6 @@ namespace Pomodoro.Dal.Migrations
                     LongBreak = table.Column<long>(type: "bigint", nullable: false),
                     IsAutoStart = table.Column<bool>(type: "bit", nullable: false),
                     RestSequence = table.Column<byte>(type: "tinyint", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
                     AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
@@ -326,7 +321,6 @@ namespace Pomodoro.Dal.Migrations
                     table.ForeignKey(
                         name: "FK_Pomodoros_TimerSettings_TimerSettingsId",
                         column: x => x.TimerSettingsId,
-                        principalSchema: "dbo",
                         principalTable: "TimerSettings",
                         principalColumn: "Id");
                 });
@@ -425,7 +419,6 @@ namespace Pomodoro.Dal.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_TimerSettings_AppUserId",
-                schema: "dbo",
                 table: "TimerSettings",
                 column: "AppUserId");
         }
@@ -457,8 +450,7 @@ namespace Pomodoro.Dal.Migrations
                 name: "AppTasks");
 
             migrationBuilder.DropTable(
-                name: "TimerSettings",
-                schema: "dbo");
+                name: "TimerSettings");
 
             migrationBuilder.DropTable(
                 name: "Schedules");

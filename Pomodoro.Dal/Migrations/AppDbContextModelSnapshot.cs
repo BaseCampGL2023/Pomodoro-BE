@@ -433,17 +433,12 @@ namespace Pomodoro.Dal.Migrations
 
                     b.Property<Guid>("AppUserId")
                         .IsConcurrencyToken()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("AppUserId");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit")
-                        .HasColumnName("IsActive");
 
                     b.Property<bool>("IsAutoStart")
                         .HasColumnType("bit");
@@ -468,7 +463,7 @@ namespace Pomodoro.Dal.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.ToTable("TimerSettings", "dbo");
+                    b.ToTable("TimerSettings");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
