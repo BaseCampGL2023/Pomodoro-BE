@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Pomodoro.Api.Models;
 using Pomodoro.Dal.Entities;
+using Pomodoro.Services.Exceptions;
 
 namespace Pomodoro.Api.Services
 {
@@ -81,7 +82,7 @@ namespace Pomodoro.Api.Services
         /// </summary>
         /// <param name="loginRequest">Represent data for login request <see cref="LoginRequestModel"/>.</param>
         /// <returns>Result of login attempt <see cref="LoginResponseModel"/>.</returns>
-        /// <exception cref="ArgumentNullException">Throws if login request model is NULL.</exception>
+        /// <exception cref="PomoBrokenModelException">Throws if login request model is NULL.</exception>
         public async Task<LoginResponseModel> LoginAsync(LoginRequestModel loginRequest)
         {
             if (loginRequest is null)
@@ -112,10 +113,7 @@ namespace Pomodoro.Api.Services
             if (user.AppUser is null)
             {
                 this.logger.LogCritical("Identity user doesn't contain AppUser property");
-                throw new ArgumentNullException("AppUser is null");
-
-                // throw new BrokenModelDataException("Identity user doesn't contain AppUser property");
-                // TODO: implement exception
+                throw new PomoBrokenModelException("AppUser is null");
             }
 
             var token = this.GetToken(user);
