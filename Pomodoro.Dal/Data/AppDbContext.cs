@@ -4,8 +4,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging;
 using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Enums;
+using Pomodoro.Dal.Exceptions;
+using System.Threading;
 
 namespace Pomodoro.Dal.Data
 {
@@ -14,13 +18,17 @@ namespace Pomodoro.Dal.Data
     /// </summary>
     public class AppDbContext : IdentityDbContext<AppIdentityUser, IdentityRole<Guid>, Guid>
     {
+        private readonly ILogger<AppDbContext> logger;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AppDbContext"/> class.
         /// </summary>
         /// <param name="options">The options to be used by a DbContext.</param>
-        public AppDbContext(DbContextOptions options)
+        /// <param name="logger">Logger for AppDbContext category.</param>
+        public AppDbContext(DbContextOptions options, ILogger<AppDbContext> logger)
             : base(options)
         {
+            this.logger = logger;
         }
 
         /// <summary>
@@ -52,6 +60,43 @@ namespace Pomodoro.Dal.Data
         /// Gets a DbSet that can be used to query and save Category instances.
         /// </summary>
         public DbSet<Category> Categories => this.Set<Category>();
+
+        /// <summary>
+        /// Saves all changes made in this context to the database. With exception logging.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>The number of state entries written to the database.</returns>
+        /// <exception cref="PomoConcurrencyException">Wrapped and logged DbUpdateConcurrencyException.</exception>
+        /// <exception cref="PomoRetryLimitExceededException">Wrapped and logged RetryLimitExceededException.</exception>
+        /// <exception cref="PomoDbUpdateException">Wrapped and logged DbUpdateException.</exception>
+        /// <exception cref="PomoException">Wrapped and logged system exception.</exception>
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return base.SaveChangesAsync(cancellationToken);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                this.logger.LogError(ex, "A concurrency error happened.");
+                throw new PomoConcurrencyException("A concurrency error happened", ex);
+            }
+            catch (RetryLimitExceededException ex)
+            {
+                this.logger.LogError(ex, "There is a problem with SQl Server.");
+                throw new PomoRetryLimitExceededException("There is a problem with SQl Server.", ex);
+            }
+            catch (DbUpdateException ex)
+            {
+                this.logger.LogError(ex, "An error occurred updating the database");
+                throw new PomoDbUpdateException("An error occurred updating the database", ex);
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError(ex, "An error occurred updating the database");
+                throw new PomoException("An error occurred updating the database", ex);
+            }
+        }
 
         /// <summary>
         /// Configure entities mapping and relations.

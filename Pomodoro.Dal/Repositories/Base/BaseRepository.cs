@@ -4,6 +4,7 @@
 
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Pomodoro.Dal.Data;
 using Pomodoro.Dal.Entities.Base;
 
@@ -33,7 +34,7 @@ namespace Pomodoro.Dal.Repositories.Base
         /// </summary>
         /// <param name="options">Instance of DbContextOptions to instantiate AppDbContext.</param>
         protected BaseRepository(DbContextOptions<AppDbContext> options)
-            : this(new AppDbContext(options))
+            : this(new AppDbContext(options, null!))
         {
             this.disposeContext = true;
         }
