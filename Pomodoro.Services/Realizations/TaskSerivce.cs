@@ -11,18 +11,15 @@ namespace Pomodoro.Services.Realizations
     public class TaskService : ITaskService
     {
         private readonly ITaskRepository _tasksRepo;
-        private readonly IFrequencyTypeRepository _freqTypeRepo;
         private readonly IMapper _mapper;
         private readonly IFrequencyService _freqService;
 
         public TaskService(
             ITaskRepository tasksRepo,
-            IFrequencyTypeRepository freqTypeRepo,
             IFrequencyService freqService,
             IMapper mapper)
         {
             _tasksRepo = tasksRepo;
-            _freqTypeRepo = freqTypeRepo;
             _mapper = mapper;
             _freqService = freqService;
         }
