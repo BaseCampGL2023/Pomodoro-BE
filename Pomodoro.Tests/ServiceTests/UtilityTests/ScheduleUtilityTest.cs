@@ -8,8 +8,21 @@ using Pomodoro.Services.Utilities;
 
 namespace Pomodoro.Tests.ServiceTests.UtilityTests
 {
+    /// <summary>
+    /// Perform tests for schedule utility class.
+    /// </summary>
     public class ScheduleUtilityTest
     {
+        /// <summary>
+        /// Virefy that IsCanCreateTask method works.
+        /// </summary>
+        /// <param name="scheduleType">Schedule type.</param>
+        /// <param name="template">Schedule template.</param>
+        /// <param name="scheduleStart">Schedule start datetime.</param>
+        /// <param name="scheduleFinish">Schedule finish datetime.</param>
+        /// <param name="fromDate">Start period checking for task creation.</param>
+        /// <param name="toDate">End of period checking for task creation.</param>
+        /// <param name="expected">Expected result.</param>
         [Theory]
         [InlineData(ScheduleType.EveryDay, "", "2008-05-15 17:34:42Z", "", "2008-05-16 7:34:42Z", "2008-05-17 7:34:42Z", true)]
         [InlineData(ScheduleType.EveryDay, "", "2008-05-15 17:34:42Z", "", "2008-05-16 7:34:42Z", "2008-05-15 7:34:42Z", false)]
@@ -103,7 +116,7 @@ namespace Pomodoro.Tests.ServiceTests.UtilityTests
             };
 
             // Act
-            var result = ScheduleUtility.CanCreateTask(schedule, DateTime.Parse(fromDate), DateTime.Parse(toDate));
+            var result = ScheduleUtility.IsCanCreateTask(schedule, DateTime.Parse(fromDate), DateTime.Parse(toDate));
 
             // Assert
             Assert.Equal(expected, result);
