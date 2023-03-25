@@ -45,11 +45,6 @@ namespace Pomodoro.Dal.Entities
         public byte RestSequence { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the configuration data is the current user settings.
-        /// </summary>
-        public bool IsActive { get; set; }
-
-        /// <summary>
         /// Gets or sets creation time.
         /// </summary>
         public DateTime CreatedAt { get; set; }

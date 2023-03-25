@@ -27,14 +27,6 @@ namespace Pomodoro.Dal.Entities
         public AppIdentityUser? AppIdentityUser { get; set; }
 
         /// <summary>
-        /// Gets active timer settings.
-        /// </summary>
-        public TimerSettings? ActiveTimerSettings
-        {
-            get => this.TimerSettings.FirstOrDefault(e => e.IsActive);
-        }
-
-        /// <summary>
         /// Gets or sets collection of user timer settings.
         /// </summary>
         public ICollection<TimerSettings> TimerSettings { get; set; } = new List<TimerSettings>();

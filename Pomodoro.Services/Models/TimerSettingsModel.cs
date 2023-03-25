@@ -62,11 +62,6 @@ namespace Pomodoro.Services.Models
         public int RestSequence { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the configuration data is the current user settings in DB.
-        /// </summary>
-        public bool IsActive { get; set; }
-
-        /// <summary>
         /// Map from Dal entity to model object.
         /// </summary>
         /// <param name="entity">Instance of TimerSettings <see cref="TimerSettings"/>.</param>
@@ -80,7 +75,6 @@ namespace Pomodoro.Services.Models
             this.LongBrake = (int)entity.Pomodoro.TotalSeconds;
             this.IsAutoStart = entity.IsAutoStart;
             this.RestSequence = entity.RestSequence;
-            this.IsActive = entity.IsActive;
         }
 
         /// <summary>
@@ -98,7 +92,6 @@ namespace Pomodoro.Services.Models
                 ShortBrake = TimeSpan.FromSeconds(this.ShortBrake),
                 LongBreak = TimeSpan.FromSeconds(this.LongBrake),
                 IsAutoStart = this.IsAutoStart,
-                IsActive = this.IsActive,
                 AppUserId = userId,
             };
         }

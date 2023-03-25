@@ -110,8 +110,6 @@ namespace Pomodoro.Dal.Data
                 entity.Property(e => e.Name).IsRequired()
                     .HasMaxLength(50);
 
-                entity.Ignore(e => e.ActiveTimerSettings);
-
                 entity.HasIndex(e => e.AppIdentityUserId, "IX_Users_AspNetUserId")
                 .IsUnique();
 
@@ -152,15 +150,7 @@ namespace Pomodoro.Dal.Data
 
             builder.Entity<TimerSettings>(entity =>
             {
-                entity.ToTable(MigrationHelpers.TimerSettingsTableName, "dbo");
-
-                entity.HasQueryFilter(e => e.IsActive);
-
-                entity.Property(e => e.IsActive)
-                    .HasColumnName(MigrationHelpers.TimerSettingsIsActiveAttribute);
-
                 entity.Property(e => e.AppUserId)
-                    .HasColumnName(MigrationHelpers.TimerSettingsUserIdAttribute)
                     .IsConcurrencyToken();
 
                 entity.Property(e => e.Pomodoro)

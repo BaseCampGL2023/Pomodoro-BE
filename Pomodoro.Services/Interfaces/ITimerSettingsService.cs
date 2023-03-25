@@ -10,14 +10,11 @@ using Pomodoro.Services.Models.Results;
 
 namespace Pomodoro.Services.Interfaces
 {
+    /// <summary>
+    /// Perform operations with timer settings.
+    /// </summary>
     public interface ITimerSettingsService
         : IBaseService<TimerSettings, TimerSettingsModel, ITimerSettingRepository>
     {
-        /// <summary>
-        /// Retrieve current user settings.
-        /// </summary>
-        /// <param name="userId">Owner Id.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        public Task<ServiceResponse<TimerSettingsModel>> GetOwnActiveAsync(Guid userId);
     }
 }
