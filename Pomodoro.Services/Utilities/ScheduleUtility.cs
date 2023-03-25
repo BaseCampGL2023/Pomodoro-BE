@@ -76,7 +76,7 @@ namespace Pomodoro.Services.Utilities
                     task.StartDt = date;
                     break;
                 case ScheduleType.MonthTemplate:
-                    // TODO: Delete month day forward
+                    // TODO: Delete month day forward, check new month
                 case ScheduleType.MonthDayForwardTemplate:
                     while (template[date.Day] != '1')
                     {
@@ -86,6 +86,7 @@ namespace Pomodoro.Services.Utilities
                     task.StartDt = date;
                     break;
                 case ScheduleType.MonthDayBackwardTemplate:
+                    // TODO: check to don't planning in previous month.
                     int diff = DateTime.DaysInMonth(date.Year, date.Month) - 31;
                     while (template[date.Day] != '1'
                         && date.AddDays(diff) > model.StartDt)

@@ -42,7 +42,7 @@ namespace Pomodoro.Services
             var schedule = model.ToDalEntity(ownerId);
             schedule.Tasks.Add(task);
             var result = await this.Repo.AddAsync(schedule, true);
-            model.Id = task.Id;
+            model.Assign(schedule);
 
             return result > 0;
         }
