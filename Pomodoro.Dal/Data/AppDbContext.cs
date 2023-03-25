@@ -77,22 +77,22 @@ namespace Pomodoro.Dal.Data
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                this.logger?.LogError(ex, "A concurrency error happened.");
+                this.logger.LogError(ex, "A concurrency error happened.");
                 throw new PomoConcurrencyException("A concurrency error happened", ex);
             }
             catch (RetryLimitExceededException ex)
             {
-                this.logger?.LogError(ex, "There is a problem with SQl Server.");
+                this.logger.LogError(ex, "There is a problem with SQl Server.");
                 throw new PomoRetryLimitExceededException("There is a problem with SQl Server.", ex);
             }
             catch (DbUpdateException ex)
             {
-                this.logger?.LogError(ex, "An error occurred updating the database");
+                this.logger.LogError(ex, "An error occurred updating the database");
                 throw new PomoDbUpdateException("An error occurred updating the database", ex);
             }
             catch (Exception ex)
             {
-                this.logger?.LogError(ex, "An error occurred updating the database");
+                this.logger.LogError(ex, "An error occurred updating the database");
                 throw new PomoException("An error occurred updating the database", ex);
             }
         }

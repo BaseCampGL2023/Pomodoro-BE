@@ -11,7 +11,7 @@ namespace Pomodoro.Dal.Repositories.Base
     /// Basic repository implementing СRUD functionality.
     /// </summary>
     /// <typeparam name="T">Instance of type IEntity <see cref="IEntity"/>.</typeparam>
-    public interface IRepository<T> : IDisposable
+    public interface IRepository<T>
         where T : IEntity
     {
         /// <summary>

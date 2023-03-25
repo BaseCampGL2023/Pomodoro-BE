@@ -14,9 +14,6 @@ namespace Pomodoro.Dal.Repositories.Base
     public abstract class BaseRepository<T> : IRepository<T>
         where T : class, IEntity, new()
     {
-        private readonly bool disposeContext;
-        private bool isDisposed;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseRepository{T}"/> class when used
         /// with DI container.
@@ -26,25 +23,6 @@ namespace Pomodoro.Dal.Repositories.Base
         {
             this.Context = context;
             this.Table = this.Context.Set<T>();
-            this.disposeContext = false;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BaseRepository{T}"/> class without using DI container.
-        /// </summary>
-        /// <param name="options">Instance of DbContextOptions to instantiate AppDbContext.</param>
-        protected BaseRepository(DbContextOptions<AppDbContext> options)
-            : this(new AppDbContext(options, null!))
-        {
-            this.disposeContext = true;
-        }
-
-        /// <summary>
-        /// Finalizes an instance of the <see cref="BaseRepository{T}"/> class. It is used to match the Dispose pattern.
-        /// </summary>
-        ~BaseRepository()
-        {
-            this.Dispose(false);
         }
 
         /// <summary>
@@ -56,15 +34,6 @@ namespace Pomodoro.Dal.Repositories.Base
         /// Gets a DbSet property to perform specific query in client code.
         /// </summary>
         public DbSet<T> Table { get; }
-
-        /// <summary>
-        /// Implementing of IDisposable interface <see cref="IDisposable"/>.
-        /// </summary>
-        public void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
 
         /// <inheritdoc/>
         public async Task<int> AddAsync(T entity, bool persist = false)
@@ -127,7 +96,6 @@ namespace Pomodoro.Dal.Repositories.Base
         /// <inheritdoc/>
         public async Task<int> SaveChangesAsync()
         {
-            // TODO: Exception handling. Add Iloggger as dependency.
             return await this.Context.SaveChangesAsync();
         }
 
@@ -143,28 +111,6 @@ namespace Pomodoro.Dal.Repositories.Base
         {
             this.Table.UpdateRange(entities);
             return persist ? await this.SaveChangesAsync() : 0;
-        }
-
-        /// <summary>
-        /// Disposes repository.
-        /// </summary>
-        /// <param name="disposing">Give TRUE if it used out of DI container scope.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (this.isDisposed)
-            {
-                return;
-            }
-
-            if (disposing)
-            {
-                if (this.disposeContext)
-                {
-                    this.Context.Dispose();
-                }
-
-                this.isDisposed = true;
-            }
         }
     }
 }
