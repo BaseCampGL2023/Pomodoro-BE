@@ -14,7 +14,7 @@ namespace Pomodoro.Api.ViewModels.Statistics
         /// <summary>
         /// Gets or sets a day for which statistics is gathered.
         /// </summary>
-        public DateOnly Day { get; set; }
+        public DateTime Day { get; set; }
 
         /// <summary>
         /// Gets or sets a list of analytics data per every hour during the <see cref="Day"/>.
