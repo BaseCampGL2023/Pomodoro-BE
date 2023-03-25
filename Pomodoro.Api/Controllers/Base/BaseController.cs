@@ -127,12 +127,12 @@ namespace Pomodoro.Api.Controllers.Base
         public async Task<ActionResult<TM>> AddOne(TM model)
         {
             var result = await this.service.AddOneOwnAsync(model, this.UserId);
-            if (result)
+            if (result.Result == ResponseType.Ok)
             {
                 return this.CreatedAtAction(nameof(this.GetById), new { model.Id }, model);
             }
 
-            return this.BadRequest(model);
+            return this.MapServiceResponse(result);
         }
 
         /// <summary>
@@ -148,7 +148,7 @@ namespace Pomodoro.Api.Controllers.Base
         public async Task<ActionResult> DeleteOne(Guid id)
         {
             var result = await this.service.DeleteOneOwnAsync(id, this.UserId);
-            return result ? this.NoContent() : this.BadRequest(id);
+            return this.MapServiceResponse(result);
         }
 
         /// <summary>
@@ -170,7 +170,12 @@ namespace Pomodoro.Api.Controllers.Base
             }
 
             var result = await this.service.UpdateOneOwnAsync(model, this.UserId);
-            return result ? this.NoContent() : this.BadRequest(id);
+            if (result.Result == ResponseType.Ok)
+            {
+                return this.Ok(model);
+            }
+
+            return this.MapServiceResponse(result);
         }
 
         /// <summary>
@@ -184,6 +189,7 @@ namespace Pomodoro.Api.Controllers.Base
             return response.Result switch
             {
                 ResponseType.Ok => this.Ok(response.Data),
+                ResponseType.NoContent => this.NoContent(),
                 ResponseType.NotFound => this.NotFound(),
                 ResponseType.Forbid => this.Forbid(),
                 ResponseType.Error => this.BadRequest(response.Message),
