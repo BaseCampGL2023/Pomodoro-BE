@@ -19,7 +19,7 @@ namespace Pomodoro.Api.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class ScheduleController : BaseController<ScheduleService, Schedule, ScheduleModel, IScheduleRepository>
+    public class ScheduleController : BaseCrudController<ScheduleService, Schedule, ScheduleModel, IScheduleRepository>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduleController"/> class.

@@ -18,7 +18,7 @@ namespace Pomodoro.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class TaskController : BaseController<TaskService, AppTask, TaskModel, IAppTaskRepository>
+    public class TaskController : BaseCrudController<TaskService, AppTask, TaskModel, IAppTaskRepository>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TaskController"/> class.

@@ -19,7 +19,7 @@ namespace Pomodoro.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class TimerSettingsController : BaseController<ITimerSettingsService, TimerSettings, TimerSettingsModel, ITimerSettingRepository>
+    public class TimerSettingsController : BaseCrudController<ITimerSettingsService, TimerSettings, TimerSettingsModel, ITimerSettingRepository>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TimerSettingsController"/> class.

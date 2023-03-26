@@ -13,7 +13,7 @@ namespace Pomodoro.Api.Controllers
     /// <summary>
     /// Manage category.
     /// </summary>
-    public class CategoryController : BaseController<CategoryService, Category, CategoryModel, ICategoryRepository>
+    public class CategoryController : BaseCrudController<CategoryService, Category, CategoryModel, ICategoryRepository>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CategoryController"/> class.
