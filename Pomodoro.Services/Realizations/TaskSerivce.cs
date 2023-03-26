@@ -209,7 +209,6 @@ namespace Pomodoro.Services.Realizations
             return _mapper.Map<TaskModel>(task);
         }
 
-
         public async Task CompleteTaskAsync(Guid taskId, Guid pomId)
         {
             var tasks = await _tasksRepo.FindAllAsync(t => t.Id == taskId);

@@ -9,7 +9,6 @@ using Pomodoro.Api.Controllers.Base;
 using Pomodoro.Api.ViewModels;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.Core.Models;
-using Pomodoro.Core.Models.Base;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Pomodoro.Api.Controllers
@@ -58,13 +57,13 @@ namespace Pomodoro.Api.Controllers
         {
             if (id == Guid.Empty)
             {
-                return this.BadRequest();
+                return this.BadRequest("Task id is empty.");
             }
 
             var task = await this.tasksService.GetTaskByIdAsync(id);
             if (task == null)
             {
-                return this.NotFound();
+                return this.NotFound("Task wasn`t found.");
             }
 
             return this.Ok(this.mapper.Map<TaskViewModel>(task));
@@ -90,9 +89,37 @@ namespace Pomodoro.Api.Controllers
         {
             var tasks = await this.tasksService.GetTasksByDateAsync(this.UserId, date);
 
-            if (tasks == null)
+            if (!tasks.Any())
             {
-                return this.NotFound();
+                return this.NotFound("Tasks weren`t found.");
+            }
+
+            return this.Ok(this.mapper.Map<IEnumerable<TaskViewModel>>(tasks));
+        }
+
+        /// <summary>
+        /// Gets completed tasks related to the current user by specific date.
+        /// </summary>
+        /// <param name="date">Date of the tasks.</param>
+        /// <returns>A <see cref="IEnumerable{TaskForListViewModel}"/> object.</returns>
+        [HttpGet("getCompletedByDate/{date}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerResponse(200, "Returns object containing user tasks.")]
+        [SwaggerResponse(400, "The model state is invalid.")]
+        [SwaggerResponse(401, "An unauthorized request cannot be processed.")]
+        [SwaggerResponse(404, "No completed tasks found by the provided date.")]
+        [SwaggerResponse(500, "An unhandled exception occurred on the server while executing the request.")]
+        public async Task<ActionResult<IEnumerable<TaskViewModel>>> GetCompletedTasksByDate(DateTime date)
+        {
+            var tasks = await this.tasksService.GetCompletedTasksByDateAsync(this.UserId, date);
+
+            if (!tasks.Any())
+            {
+                return this.NotFound("Tasks weren`t found.");
             }
 
             return this.Ok(this.mapper.Map<IEnumerable<TaskViewModel>>(tasks));
@@ -115,16 +142,19 @@ namespace Pomodoro.Api.Controllers
         public async Task<ActionResult<TaskViewModel>> CreateTask([FromBody] TaskViewModel task)
         {
             var taskModel = this.mapper.Map<TaskModel>(task);
+
             taskModel.UserId = this.UserId;
 
-            var result = await this.tasksService.CreateTaskAsync(taskModel);
-
-            if (result == null)
+            try
+            {
+                taskModel = await this.tasksService.CreateTaskAsync(taskModel);
+            }
+            catch (Exception)
             {
                 return this.BadRequest();
             }
 
-            return this.CreatedAtAction(nameof(this.GetTaskById), new { id = result.Id }, result);
+            return this.CreatedAtAction(nameof(this.GetTaskById), new { id = taskModel.Id }, taskModel);
         }
 
         /// <summary>
@@ -151,17 +181,23 @@ namespace Pomodoro.Api.Controllers
 
             if (task == null)
             {
-                return this.NotFound();
+                return this.NotFound("Task wasn`t found.");
             }
 
             if (task.UserId != this.UserId)
             {
-                return this.Forbid();
+                return this.Forbid("Can`t delete the task that doesn`t related to current user.");
+            }
+            try
+            {
+                await this.tasksService.DeleteTaskAsync(task);
+            }
+            catch (Exception)
+            {
+                return this.BadRequest();
             }
 
-            await this.tasksService.DeleteTaskAsync(task);
-
-            return this.Ok();
+            return this.Ok("Task was deleted.");
         }
 
         /// <summary>
@@ -191,24 +227,26 @@ namespace Pomodoro.Api.Controllers
 
             if (taskModel == null)
             {
-                return this.NotFound();
+                return this.NotFound("Task wasn`t found.");
             }
 
             if (taskModel.UserId != this.UserId)
             {
-                return this.Forbid();
+                return this.Forbid("Can`t update the task that doesn`t related to current user.");
             }
 
             taskModel = this.mapper.Map<TaskModel>(task);
 
-            var result = await this.tasksService.UpdateTaskAsync(taskModel);
-
-            if (result == null)
+            try
+            {
+                taskModel = await this.tasksService.UpdateTaskAsync(taskModel);
+            }
+            catch (Exception)
             {
                 return this.BadRequest();
             }
 
-            return this.AcceptedAtAction(nameof(this.GetTaskById), new { id = result.Id }, result);
+            return this.AcceptedAtAction(nameof(this.GetTaskById), new { id = taskModel.Id }, taskModel);
         }
 
         /// <summary>
@@ -236,28 +274,24 @@ namespace Pomodoro.Api.Controllers
 
             if (task == null)
             {
-                return this.NotFound();
+                return this.NotFound("Task wasn`t found.");
             }
 
             if (task.UserId != this.UserId)
             {
-                return this.Forbid();
+                return this.Forbid("Can`t complete the task that doesn`t related to current user.");
             }
 
             try
             {
                 await this.tasksService.CompleteTaskAsync(id, pomodoroId);
             }
-            catch (InvalidOperationException)
-            {
-                return this.NotFound();
-            }
             catch (Exception)
             {
                 return this.BadRequest();
             }
 
-            return this.Ok();
+            return this.Ok("Task was completed.");
         }
 
         /// <summary>
@@ -285,12 +319,12 @@ namespace Pomodoro.Api.Controllers
 
             if (task.UserId != this.UserId)
             {
-                return this.Forbid("You can`t add pomodoro to task that doesn`t related to current user.");
+                return this.Forbid("Can`t add pomodoro to task that doesn`t related to current user.");
             }
 
             if (pomodoro.TaskId != id)
             {
-                return this.Forbid("You can`t add pomodoro to not related to it task.");
+                return this.Forbid("Can`t add pomodoro to not related to it task.");
             }
 
             var pomoModel = this.mapper.Map<CompletedModel>(pomodoro);
