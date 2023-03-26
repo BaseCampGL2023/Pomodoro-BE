@@ -41,7 +41,6 @@ namespace Pomodoro.Api.ViewModels
         /// <summary>
         /// Gets or sets task progress.
         /// </summary>
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public byte Progress { get; set; }
     }
 }

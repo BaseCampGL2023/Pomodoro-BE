@@ -12,8 +12,6 @@ using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.DataAccess.Extensions;
 using Pomodoro.Services.Realizations;
 using Serilog;
-using Serilog.Events;
-using Serilog.Sinks.MSSqlServer;
 
 var pomodoroSpecificOrigins = "_pomodoroSpecificOrigins";
 
@@ -48,20 +46,30 @@ builder.Services.AddCors(options =>
 });
 
 // setup Serilog
-// builder.Host.UseSerilog((ctx, lc) => lc //
-//   .ReadFrom.Configuration(ctx.Configuration) //
-//   .WriteTo.MSSqlServer( //
-//       connectionString: //
-//       ctx.Configuration.GetConnectionString("PomodoroBE"), //
-//       restrictedToMinimumLevel: LogEventLevel.Information, //
-//       sinkOptions: new MSSqlServerSinkOptions //
-//       { //
-//           TableName = "LogEvents", //
-//           AutoCreateSqlTable = true, //
-//       } //
-//       ) //
-//   .WriteTo.Console() //
-// ); //
+//builder.Host.UseSerilog((ctx, lc) => lc
+//  .ReadFrom.Configuration(ctx.Configuration)
+//  .WriteTo.MSSqlServer(
+//      connectionString:
+//      ctx.Configuration.GetConnectionString("PomodoroBE"),
+//      restrictedToMinimumLevel: LogEventLevel.Information,
+//      sinkOptions: new MSSqlServerSinkOptions
+//      {
+//          TableName = "LogEvents",
+//          AutoCreateSqlTable = true,
+//      }
+//      )
+//  .WriteTo.Console());
+
+var logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .CreateLogger();
+
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.AddSerilog(logger);
+});
+
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ValidateModelAttribute>();
@@ -117,8 +125,8 @@ app.UseExceptionMiddleware();
 // Configure the HTTP request pipeline.
 
 // uncomment, if want logging HTTP requests
-// app.UseSerilogRequestLogging(); //
-//
+//app.UseSerilogRequestLogging();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

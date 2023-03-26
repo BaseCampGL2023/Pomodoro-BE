@@ -19,7 +19,7 @@ namespace Pomodoro.Services.Realizations
             IFrequencyTypeRepository freqTypeRepo,
             IFrequencyRepository freqRepo,
             IMapper mapper,
-            ILogger logger)
+            ILogger<FrequencyService> logger)
         {
             _mapper = mapper;
             _freqTypeRepo = freqTypeRepo;

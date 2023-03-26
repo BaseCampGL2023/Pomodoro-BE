@@ -22,7 +22,7 @@ namespace Pomodoro.Services.Realizations
             ICompletedRepository pomodorosRepo,
             IFrequencyService freqService,
             IMapper mapper,
-            ILogger logger)
+            ILogger<TaskService> logger)
         {
             _tasksRepo = tasksRepo;
             _pomodorosRepo = pomodorosRepo;

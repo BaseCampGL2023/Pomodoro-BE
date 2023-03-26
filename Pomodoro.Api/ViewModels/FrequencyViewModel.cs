@@ -19,7 +19,7 @@ namespace Pomodoro.Api.ViewModels
         /// <summary>
         /// Gets or sets a type of frequency that is used by user in this task.
         /// </summary>
-        public FrequencyValue FrequencyValue { get; set; } = FrequencyValue.None;
+        public string FrequencyValue { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether it is a custom frequency or not.

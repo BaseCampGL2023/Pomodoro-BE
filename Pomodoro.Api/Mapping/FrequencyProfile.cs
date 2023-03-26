@@ -20,7 +20,8 @@ namespace Pomodoro.Api.Mapping
         public FrequencyProfile()
         {
             this.CreateMap<FrequencyViewModel, FrequencyModel>();
-            this.CreateMap<FrequencyModel, FrequencyViewModel>();
+            this.CreateMap<FrequencyModel, FrequencyViewModel>()
+                .ForMember(dest => dest.FrequencyValue, act => act.MapFrom(src => src.FrequencyValue.ToString()));
         }
     }
 }
