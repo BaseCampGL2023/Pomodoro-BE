@@ -247,7 +247,6 @@ namespace Pomodoro.Services.Models
                     break;
 
                 case ScheduleType.MonthTemplate:
-                case ScheduleType.MonthDayBackwardTemplate:
                     if (string.IsNullOrWhiteSpace(this.Template)
                         || this.Template.Length != 31
                         || !this.Template.Any(ch => ch == '1'))
