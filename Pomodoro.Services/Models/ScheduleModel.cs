@@ -68,7 +68,6 @@ namespace Pomodoro.Services.Models
         /// <summary>
         /// Gets or sets planned duration of the routine round.
         /// </summary>
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int AllocatedDuration { get; set; }
 
         /// <summary>
@@ -116,8 +115,7 @@ namespace Pomodoro.Services.Models
             this.FinishAt = entity.FinishDt;
             this.StartDt = entity.StartDt;
             this.IsActive = entity.IsActive;
-            this.AllocatedDuration = entity.AllocatedDuration.HasValue ?
-                (int)entity.AllocatedDuration.Value.TotalSeconds : 0;
+            this.AllocatedDuration = (int)entity.AllocatedDuration.TotalSeconds;
             this.Category = entity.Category?.Name;
             this.CategoryId = entity.Category?.Id;
             this.OwnerId = isMapOwner ? entity.AppUserId : Guid.Empty;
@@ -149,8 +147,7 @@ namespace Pomodoro.Services.Models
                     ? DateTime.UtcNow : this.CreatedDt,
                 StartDt = this.StartDt,
                 FinishDt = this.FinishAt,
-                AllocatedDuration = this.AllocatedDuration > 0 ?
-                    TimeSpan.FromSeconds(this.AllocatedDuration) : null,
+                AllocatedDuration = TimeSpan.FromSeconds(this.AllocatedDuration),
                 CategoryId = this.CategoryId,
                 AppUserId = userId,
                 IsActive = this.IsActive,

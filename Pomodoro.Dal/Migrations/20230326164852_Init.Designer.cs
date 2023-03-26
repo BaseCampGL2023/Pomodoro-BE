@@ -12,7 +12,7 @@ using Pomodoro.Dal.Data;
 namespace Pomodoro.Dal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230326073213_Init")]
+    [Migration("20230326164852_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -227,7 +227,7 @@ namespace Pomodoro.Dal.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<long?>("AllocatedDuration")
+                    b.Property<long>("AllocatedDuration")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("AppUserId")
@@ -260,7 +260,7 @@ namespace Pomodoro.Dal.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(1);
 
-                    b.Property<DateTime?>("StartDt")
+                    b.Property<DateTime>("StartDt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
@@ -364,7 +364,7 @@ namespace Pomodoro.Dal.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<long?>("AllocatedDuration")
+                    b.Property<long>("AllocatedDuration")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("AppUserId")

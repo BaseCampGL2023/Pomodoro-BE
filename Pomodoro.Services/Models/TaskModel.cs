@@ -49,8 +49,7 @@ namespace Pomodoro.Services.Models
         /// <summary>
         /// Gets or sets planned start time.
         /// </summary>
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public DateTime? StartDt { get; set; }
+        public DateTime StartDt { get; set; }
 
         /// <summary>
         /// Gets or sets DateTime when task performing completed.
@@ -61,7 +60,6 @@ namespace Pomodoro.Services.Models
         /// <summary>
         /// Gets or sets planned duration of the task.
         /// </summary>
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int AllocatedDuration { get; set; }
 
         /// <summary>
@@ -113,8 +111,7 @@ namespace Pomodoro.Services.Models
             this.CreatedDt = entity.CreatedDt;
             this.StartDt = entity.StartDt;
             this.FinishDt = entity.FinishDt;
-            this.AllocatedDuration = entity.AllocatedDuration.HasValue ?
-                (int)entity.AllocatedDuration.Value.TotalSeconds : 0;
+            this.AllocatedDuration = (int)entity.AllocatedDuration.TotalSeconds;
             this.Category = entity.Category?.Name;
             this.OwnerId = isMapOwner ? entity.AppUserId : Guid.Empty;
             this.ScheduleId = entity.ScheduleId;
@@ -141,8 +138,7 @@ namespace Pomodoro.Services.Models
                     ? DateTime.UtcNow : this.CreatedDt,
                 StartDt = this.StartDt,
                 FinishDt = this.FinishDt,
-                AllocatedDuration = this.AllocatedDuration > 0 ?
-                    TimeSpan.FromSeconds(this.AllocatedDuration) : null,
+                AllocatedDuration = TimeSpan.FromSeconds(this.AllocatedDuration),
                 AppUserId = userId,
                 ScheduleId = this.ScheduleId,
                 CategoryId = this.CategoryId,

@@ -225,7 +225,7 @@ namespace Pomodoro.Dal.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<long?>("AllocatedDuration")
+                    b.Property<long>("AllocatedDuration")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("AppUserId")
@@ -258,7 +258,7 @@ namespace Pomodoro.Dal.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(1);
 
-                    b.Property<DateTime?>("StartDt")
+                    b.Property<DateTime>("StartDt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
@@ -362,7 +362,7 @@ namespace Pomodoro.Dal.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<long?>("AllocatedDuration")
+                    b.Property<long>("AllocatedDuration")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("AppUserId")

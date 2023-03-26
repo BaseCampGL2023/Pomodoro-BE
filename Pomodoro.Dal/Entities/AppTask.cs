@@ -40,7 +40,7 @@ namespace Pomodoro.Dal.Entities
         /// <summary>
         /// Gets or sets planned start time.
         /// </summary>
-        public DateTime? StartDt { get; set; }
+        public DateTime StartDt { get; set; }
 
         /// <summary>
         /// Gets or sets DateTime when task performing completed.
@@ -50,7 +50,7 @@ namespace Pomodoro.Dal.Entities
         /// <summary>
         /// Gets or sets planned duration of the task.
         /// </summary>
-        public TimeSpan? AllocatedDuration { get; set; }
+        public TimeSpan AllocatedDuration { get; set; }
 
         /// <summary>
         /// Gets or sets foreign key to AppUser entity.
