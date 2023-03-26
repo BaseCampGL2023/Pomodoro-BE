@@ -11,17 +11,20 @@ namespace Pomodoro.Services.Realizations
     public class TaskService : ITaskService
     {
         private readonly ITaskRepository _tasksRepo;
+        private readonly ICompletedRepository _pomodorosRepo;
         private readonly IMapper _mapper;
         private readonly IFrequencyService _freqService;
         private readonly ILogger _log;
 
         public TaskService(
             ITaskRepository tasksRepo,
+            ICompletedRepository pomodorosRepo,
             IFrequencyService freqService,
             IMapper mapper,
             ILogger logger)
         {
             _tasksRepo = tasksRepo;
+            _pomodorosRepo = pomodorosRepo;
             _mapper = mapper;
             _freqService = freqService;
             _log = logger;
@@ -203,6 +206,46 @@ namespace Pomodoro.Services.Realizations
             }
 
             return _mapper.Map<TaskModel>(task);
+        }
+
+
+        public async Task CompleteTaskAsync(Guid taskId, Guid pomId)
+        {
+            var tasks = await _tasksRepo.FindAllAsync(t => t.Id == taskId);
+
+            var task = tasks.FirstOrDefault();
+
+            if (task == null)
+            {
+                throw new InvalidOperationException("Can`t find task in db.");
+            }
+
+            if (task.CompletedTasks == null)
+            {
+                throw new InvalidOperationException("Can`t find any task pomodoros in db.");
+            }
+
+            var pomodoro = task.CompletedTasks.FirstOrDefault(p => p.Id == pomId);
+
+            if (pomodoro == null)
+            {
+                throw new InvalidOperationException("Can`t find task pomodoro in db.");
+            }
+
+            pomodoro.IsDone = true;
+
+
+            try
+            {
+                _pomodorosRepo.Update(pomodoro);
+                await _tasksRepo.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _log.LogError(e.Message + " - occureed while updating pomodoro in db.");
+                throw;
+            }
+
         }
 
         private bool IsTaskCompletedOnDate(TaskEntity task, DateTime date)

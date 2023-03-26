@@ -10,5 +10,6 @@ namespace Pomodoro.Core.Interfaces.IServices
         public Task<TaskModel> CreateTaskAsync(TaskModel taskModel);
         public Task DeleteTaskAsync(TaskModel taskModel);
         public Task<TaskModel> UpdateTaskAsync(TaskModel taskModel);
+        public Task CompleteTaskAsync(Guid taskId, Guid pomoId);
     }
 }

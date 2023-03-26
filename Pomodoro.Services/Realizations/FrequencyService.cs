@@ -5,7 +5,6 @@ using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.Core.Models;
 using Pomodoro.DataAccess.Entities;
 using Pomodoro.DataAccess.Repositories.Interfaces;
-using System.Threading.Tasks;
 
 namespace Pomodoro.Services.Realizations
 {

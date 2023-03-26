@@ -209,5 +209,54 @@ namespace Pomodoro.Api.Controllers
 
             return this.AcceptedAtAction(nameof(this.GetTaskById), new { id = result.Id }, result);
         }
+
+        /// <summary>
+        /// Completes task related to the current user by task and pomodoro ids.
+        /// </summary>
+        /// <param name="id">Represents an id of the task that needs to be completed.</param>
+        /// <param name="pomodoroId">Represents an id of the pomodoro that save task completed state.</param>
+        /// <returns>A <see cref="ActionResult"/> representing the result of task completion.</returns>
+        [HttpDelete("{id}/pomodoros/{pomodoroId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerResponse(200, "Returns success result of task completion.")]
+        [SwaggerResponse(400, "The model state is invalid.")]
+        [SwaggerResponse(401, "An unauthorized request cannot be processed.")]
+        [SwaggerResponse(403, "User cannot complete task of another person.")]
+        [SwaggerResponse(404, "No task or pomodoro found by the provided ids.")]
+        [SwaggerResponse(500, "An unhandled exception occurred on the server while executing the request.")]
+        public async Task<ActionResult> CompleteTask(Guid id, Guid pomodoroId)
+        {
+            var task = await this.tasksService.GetTaskByIdAsync(id);
+
+            if (task == null)
+            {
+                return this.NotFound();
+            }
+
+            if (task.UserId != this.UserId)
+            {
+                return this.Forbid();
+            }
+
+            try
+            {
+                await this.tasksService.CompleteTaskAsync(id, pomodoroId);
+            }
+            catch (InvalidOperationException)
+            {
+                return this.NotFound();
+            }
+            catch (Exception)
+            {
+                return this.BadRequest();
+            }
+
+            return this.Ok();
+        }
     }
 }
