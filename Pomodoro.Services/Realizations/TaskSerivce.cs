@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using Pomodoro.Core.Enums;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.Core.Models;
@@ -12,18 +13,21 @@ namespace Pomodoro.Services.Realizations
         private readonly ITaskRepository _tasksRepo;
         private readonly IMapper _mapper;
         private readonly IFrequencyService _freqService;
+        private readonly ILogger _log;
 
         public TaskService(
             ITaskRepository tasksRepo,
             IFrequencyService freqService,
-            IMapper mapper)
+            IMapper mapper,
+            ILogger logger)
         {
             _tasksRepo = tasksRepo;
             _mapper = mapper;
             _freqService = freqService;
+            _log = logger;
         }
 
-        public async Task<TaskModel?> CreateTaskAsync(TaskModel taskModel)
+        public async Task<TaskModel> CreateTaskAsync(TaskModel taskModel)
         {
             taskModel.Frequency ??= new FrequencyModel
             {
@@ -31,30 +35,54 @@ namespace Pomodoro.Services.Realizations
                 Every = 0
             };
 
-            var freq = await _freqService.CreateFrequencyAsync(taskModel.Frequency);
+            Guid freqId;
 
-            if (freq == null)
+            try
             {
-                return null;
+                freqId = await _freqService.GetFrequencyIdAsync(taskModel.Frequency);
+            }
+            catch (InvalidOperationException e)
+            {
+                _log.LogError(e.Message + " - occureed while getting frequency id.");
+                throw;
+            }
+            catch (Exception e)
+            {
+                _log.LogError(e.Message + " - occureed while getting frequency id.");
+                throw;
             }
 
             var task = _mapper.Map<TaskEntity>(taskModel);
 
-            task.FrequencyId = freq.Id;
+            task.FrequencyId = freqId;
 
-            await _tasksRepo.AddAsync(task);
-            await _tasksRepo.SaveChangesAsync();
+            try
+            {
+                await _tasksRepo.AddAsync(task);
+                await _tasksRepo.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _log.LogError(e.Message + " - occureed while adding task to db.");
+                throw;
+            }
 
             return _mapper.Map<TaskModel>(task);
         }
 
-        public async Task<TaskModel?> GetTaskByIdAsync(Guid taskId)
+        public async Task<TaskModel> GetTaskByIdAsync(Guid taskId)
         {
             var task = await _tasksRepo.FindOneTaskAsync(taskId);
+
+            if (task == null)
+            {
+                throw new InvalidOperationException("Can`t find task in db.");
+            }
+
             return _mapper.Map<TaskModel>(task);
         }
 
-        public async Task<IEnumerable<TaskModel?>> GetTasksByDateAsync(Guid userId, DateTime date)
+        public async Task<IEnumerable<TaskModel>> GetTasksByDateAsync(Guid userId, DateTime date)
         {
             var userTasks = await _tasksRepo.FindAllAsync(t => t.UserId == userId);
 
@@ -67,33 +95,65 @@ namespace Pomodoro.Services.Realizations
         {
             if (taskModel == null || taskModel.Frequency == null)
             {
-                return;
+                throw new ArgumentNullException(nameof(taskModel), "Can`t be Null also it`s Frequency can`t be Null.");
             }
 
-            await _freqService.DeleteFrequencyAsync(taskModel.Frequency);
+            try
+            {
+                await _freqService.DeleteFrequencyAsync(taskModel.Frequency);
+            }
+            catch (InvalidOperationException e)
+            {
+                _log.LogError(e.Message + " - occureed while deleting frequency from db.");
+                throw;
+            }
+            catch (Exception e)
+            {
+                _log.LogError(e.Message + " - occureed while deleting frequency from db.");
+                throw;
+            }
 
             var task = await _tasksRepo.GetByIdAsync(taskModel.Id);
 
             if (task == null)
             {
-                return;
+                throw new InvalidOperationException("Can`t find task in db.");
             }
 
-            _tasksRepo.Remove(task);
-
-            await _tasksRepo.SaveChangesAsync();
+            try
+            {
+                _tasksRepo.Remove(task);
+                await _tasksRepo.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _log.LogError(e.Message + " - occureed while deleting frequency from db.");
+                throw;
+            }
         }
 
-        public async Task<TaskModel?> UpdateTaskAsync(TaskModel taskModel)
+        public async Task<TaskModel> UpdateTaskAsync(TaskModel taskModel)
         {
             if (taskModel == null || taskModel.Frequency == null)
-                return null;
-
-            var freq = await _freqService.UpdateFrequencyAsync(taskModel.Frequency);
-
-            if (freq == null)
             {
-                return null;
+                throw new ArgumentNullException(nameof(taskModel), "Can`t be Null also it`s Frequency can`t be Null.");
+            }
+
+            FrequencyModel freq;
+
+            try
+            {
+                freq = await _freqService.UpdateFrequencyAsync(taskModel.Frequency);
+            }
+            catch (InvalidOperationException e)
+            {
+                _log.LogError(e.Message + " - occureed while updating frequency in db.");
+                throw;
+            }
+            catch (Exception e)
+            {
+                _log.LogError(e.Message + " - occureed while updating frequency in db.");
+                throw;
             }
 
             var task = await _tasksRepo.GetByIdAsync(taskModel.Id);
@@ -107,8 +167,16 @@ namespace Pomodoro.Services.Realizations
             task.InitialDate = taskModel.InitialDate;
             task.AllocatedTime = taskModel.AllocatedTime;
 
-            _tasksRepo.Update(task);
-            await _tasksRepo.SaveChangesAsync();
+            try
+            {
+                _tasksRepo.Update(task);
+                await _tasksRepo.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _log.LogError(e.Message + " - occureed while updating frequency in db.");
+                throw;
+            }
 
             return _mapper.Map<TaskModel>(task);
         }

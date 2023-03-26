@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using Pomodoro.Core.Enums;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.Core.Models;
 using Pomodoro.DataAccess.Entities;
 using Pomodoro.DataAccess.Repositories.Interfaces;
+using System.Threading.Tasks;
 
 namespace Pomodoro.Services.Realizations
 {
@@ -12,14 +14,18 @@ namespace Pomodoro.Services.Realizations
         private readonly IFrequencyTypeRepository _freqTypeRepo;
         private readonly IFrequencyRepository _freqRepo;
         private readonly IMapper _mapper;
+        private readonly ILogger _log;
+
         public FrequencyService(
             IFrequencyTypeRepository freqTypeRepo,
             IFrequencyRepository freqRepo,
-            IMapper mapper)
+            IMapper mapper,
+            ILogger logger)
         {
             _mapper = mapper;
             _freqTypeRepo = freqTypeRepo;
             _freqRepo = freqRepo;
+            _log = logger;
         }
 
         public async Task<FrequencyModel> CreateFrequencyAsync(FrequencyModel freqModel)
@@ -40,7 +46,15 @@ namespace Pomodoro.Services.Realizations
 
             freq.FrequencyTypeId = freqTypeId;
 
-            await _freqRepo.AddAsync(freq);
+            try
+            {
+                await _freqRepo.AddAsync(freq);
+            }
+            catch (Exception e)
+            {
+                _log.LogError(e.Message + " - occureed while adding frequency to db.");
+                throw;
+            }
 
             return _mapper.Map<FrequencyModel>(freq);
         }
@@ -99,7 +113,15 @@ namespace Pomodoro.Services.Realizations
             freq.IsCustom = freqModel.IsCustom;
             freq.Every = freqModel.Every;
 
-            _freqRepo.Update(freq);
+            try
+            {
+                _freqRepo.Update(freq);
+            }
+            catch (Exception e)
+            {
+                _log.LogError(e.Message + " - occureed while updating frequency in db.");
+                throw;
+            }
 
             return _mapper.Map<FrequencyModel>(freq);
         }
@@ -113,7 +135,15 @@ namespace Pomodoro.Services.Realizations
                 throw new InvalidOperationException("Can`t find frequency in db.");
             }
 
-            _freqRepo.Remove(freq);
+            try
+            {
+                _freqRepo.Remove(freq);
+            }
+            catch (Exception e)
+            {
+                _log.LogError(e.Message + " - occureed while deleting frequency from db.");
+                throw;
+            }
         }
 
         private async Task<Guid> GetFrequencyTypeIdAsync(FrequencyValue freqValue)
