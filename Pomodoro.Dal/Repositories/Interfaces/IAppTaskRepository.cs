@@ -10,15 +10,8 @@ namespace Pomodoro.Dal.Repositories.Interfaces
     /// <summary>
     /// Providing operations with AppTask objects.
     /// </summary>
-    public interface IAppTaskRepository : IBelongRepository<AppTask>
+    public interface IAppTaskRepository : IBelongRepository<AppTask>, IWithRelated<AppTask>
     {
-        /// <summary>
-        /// Get AppTask object by id with TaskAttempts collection.
-        /// </summary>
-        /// <param name="id">AppTask id.</param>
-        /// <returns>Queried object or null, if object with this id belonging to user doesn't exist in database.</returns>
-        public Task<AppTask?> GetByIdWithRelatedAsync(Guid id);
-
         /// <summary>
         /// Retrieve all belonging to the user finished tasks from database.
         /// </summary>

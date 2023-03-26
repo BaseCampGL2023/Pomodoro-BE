@@ -40,7 +40,11 @@ namespace Pomodoro.Dal.Repositories
             return await this.Table.Include(e => e.Pomodoros).Where(e => e.Pomodoros.Any()).ToListAsync();
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Get AppTask object by id with TaskAttempts collection.
+        /// </summary>
+        /// <param name="id">AppTask id.</param>
+        /// <returns>Queried object or null, if object with this id belonging to user doesn't exist in database.</returns>
         public async Task<AppTask?> GetByIdWithRelatedAsync(Guid id)
         {
             return await this.Table.Include(e => e.Pomodoros)

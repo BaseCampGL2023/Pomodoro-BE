@@ -162,7 +162,7 @@ namespace Pomodoro.Api.Controllers.Base
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(204, "Update successfully")]
         [SwaggerResponse(400, "No schedule with such id for this user")]
-        public async Task<ActionResult> UpdateOne(Guid id, TM model)
+        public virtual async Task<ActionResult> UpdateOne(Guid id, TM model)
         {
             if (id != model.Id)
             {

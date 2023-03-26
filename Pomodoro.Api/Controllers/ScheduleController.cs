@@ -9,6 +9,7 @@ using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Repositories.Interfaces;
 using Pomodoro.Services;
 using Pomodoro.Services.Models;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Pomodoro.Api.Controllers
 {
@@ -27,6 +28,23 @@ namespace Pomodoro.Api.Controllers
         public ScheduleController(ScheduleService service)
             : base(service)
         {
+        }
+
+        /// <summary>
+        /// Update schedule only if ScheduleType, template, start and finish date don't change,
+        /// otherwise create new Schedule, or delete all related tasks.
+        /// </summary>
+        /// <param name="id">Object id.</param>
+        /// <param name="model">Exisitng object.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        [HttpPut("own/{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [SwaggerResponse(204, "Update successfully")]
+        [SwaggerResponse(400, "No schedule with such id for this user")]
+        public override async Task<ActionResult> UpdateOne(Guid id, ScheduleModel model)
+        {
+            return await base.UpdateOne(id, model);
         }
     }
 }

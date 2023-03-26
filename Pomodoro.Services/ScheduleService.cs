@@ -69,5 +69,57 @@ namespace Pomodoro.Services
 
             return await base.AddOneOwnAsync(model, ownerId);
         }
+
+        /// <summary>
+        /// Update schedule only if ScheduleType, template, start and finish date don't change,
+        /// otherwise create new Schedule, or delete all related tasks.
+        /// </summary>
+        /// <param name="model">Exisitng schedule.</param>
+        /// <param name="ownerId">Owner id.</param>
+        /// <returns>Updated schedule.</returns>
+        public override async Task<ServiceResponse<bool>> UpdateOneOwnAsync(ScheduleModel model, Guid ownerId)
+        {
+            var previous = await this.Repo.GetByIdWithRelatedAsync(model.Id);
+            if (previous == null)
+            {
+                return new ServiceResponse<bool> { Result = ResponseType.Error, Message = "Unexistable schedule." };
+            }
+
+            if (previous.AppUserId != model.OwnerId)
+            {
+                return new ServiceResponse<bool> { Result = ResponseType.Forbid };
+            }
+
+            if (model.ScheduleType == previous.ScheduleType
+                && model.Template == previous.Template
+                && model.StartDt == previous.StartDt
+                && model.FinishAt == previous.FinishDt
+                && model.CategoryId == previous.CategoryId)
+            {
+                return await base.UpdateOneOwnAsync(model, ownerId);
+            }
+
+            if (previous.Tasks.Any())
+            {
+                if (model.ScheduleType == previous.ScheduleType
+                    && model.Template == previous.Template
+                    && model.StartDt == previous.StartDt
+                    && model.FinishAt == previous.FinishDt)
+                {
+                    foreach (var task in previous.Tasks)
+                    {
+                        task.CategoryId = model.CategoryId;
+                    }
+
+                    return await base.UpdateOneOwnAsync(model, ownerId);
+                }
+                else
+                {
+                    return new ServiceResponse<bool> { Result = ResponseType.Error, Message = "Schedule has planned tasks, create new schedule instead" };
+                }
+            }
+
+            return await base.UpdateOneOwnAsync(model, ownerId);
+        }
     }
 }

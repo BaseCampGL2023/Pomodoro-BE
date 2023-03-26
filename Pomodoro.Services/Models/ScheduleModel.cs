@@ -57,7 +57,7 @@ namespace Pomodoro.Services.Models
         /// Gets or sets DateTime when routine finished.
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public DateTime? FinishDt { get; set; }
+        public DateTime? FinishAt { get; set; }
 
         /// <summary>
         /// Gets or sets planned start time.
@@ -113,7 +113,7 @@ namespace Pomodoro.Services.Models
             this.ScheduleType = entity.ScheduleType;
             this.Template = entity.Template;
             this.CreatedDt = entity.CreatedDt;
-            this.FinishDt = entity.FinishDt;
+            this.FinishAt = entity.FinishDt;
             this.StartDt = entity.StartDt;
             this.IsActive = entity.IsActive;
             this.AllocatedDuration = entity.AllocatedDuration.HasValue ?
@@ -148,7 +148,7 @@ namespace Pomodoro.Services.Models
                 CreatedDt = this.CreatedDt == DateTime.MinValue
                     ? DateTime.UtcNow : this.CreatedDt,
                 StartDt = this.StartDt,
-                FinishDt = this.FinishDt,
+                FinishDt = this.FinishAt,
                 AllocatedDuration = this.AllocatedDuration > 0 ?
                     TimeSpan.FromSeconds(this.AllocatedDuration) : null,
                 CategoryId = this.CategoryId,
@@ -182,12 +182,12 @@ namespace Pomodoro.Services.Models
                     new List<string> { nameof(this.StartDt) }));
             }
 
-            if (this.FinishDt != DateTime.MinValue
-                && this.FinishDt < this.StartDt)
+            if (this.FinishAt != DateTime.MinValue
+                && this.FinishAt < this.StartDt)
             {
                 results.Add(new ValidationResult(
                     "Finish date and time should be planned after strat date and time",
-                    new List<string> { nameof(this.FinishDt) }));
+                    new List<string> { nameof(this.FinishAt) }));
             }
 
             if (this.ScheduleType != ScheduleType.AnnualOnDate
@@ -345,7 +345,7 @@ namespace Pomodoro.Services.Models
             {
                 results.Add(new ValidationResult(
                     "If you provide allocated duration it should be less than one day",
-                    new List<string> { nameof(this.FinishDt) }));
+                    new List<string> { nameof(this.FinishAt) }));
             }
 
             return results;

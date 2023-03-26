@@ -118,7 +118,7 @@ namespace Pomodoro.Services.Utilities
                     break;
             }
 
-            if (model.FinishDt != null && task.StartDt > model.FinishDt)
+            if (model.FinishAt != null && task.StartDt > model.FinishAt)
             {
                 return null;
             }

@@ -150,5 +150,7 @@ namespace Pomodoro.Services.Models
                     this.Pomodoros.Select(p => p.ToDalEntity()).ToList() : new List<PomoUnit>(),
             };
         }
+
+        // TODO: add validation
     }
 }

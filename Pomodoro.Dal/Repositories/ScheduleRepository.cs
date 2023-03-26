@@ -21,5 +21,12 @@ namespace Pomodoro.Dal.Repositories
             : base(context)
         {
         }
+
+        /// <inheritdoc/>
+        public async Task<Schedule?> GetByIdWithRelatedAsync(Guid id)
+        {
+            return await this.Table.Include(s => s.Tasks)
+                .FirstOrDefaultAsync(s => s.Id == id);
+        }
     }
 }

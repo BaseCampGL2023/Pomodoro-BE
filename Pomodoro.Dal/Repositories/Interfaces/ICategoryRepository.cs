@@ -10,7 +10,7 @@ namespace Pomodoro.Dal.Repositories.Interfaces
     /// <summary>
     /// Perform operations with categories.
     /// </summary>
-    public interface ICategoryRepository : IBelongRepository<Category>
+    public interface ICategoryRepository : IBelongRepository<Category>, IWithRelated<Category>
     {
     }
 }

@@ -10,7 +10,7 @@ namespace Pomodoro.Dal.Repositories.Interfaces
     /// <summary>
     /// Providing operations with Schedule objects.
     /// </summary>
-    public interface IScheduleRepository : IBelongRepository<Schedule>
+    public interface IScheduleRepository : IBelongRepository<Schedule>, IWithRelated<Schedule>
     {
     }
 }
