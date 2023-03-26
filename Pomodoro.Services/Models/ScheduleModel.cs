@@ -274,15 +274,6 @@ namespace Pomodoro.Services.Models
                             " at least one non-zero value, something like 0100100",
                             new List<string> { nameof(this.Template) }));
                     }
-                    else
-                    {
-                        if (template[(int)this.StartDt.DayOfWeek] != '1')
-                        {
-                            results.Add(new ValidationResult(
-                                "Start datetime should should correspond for first task date in your template",
-                                new List<string> { nameof(this.ScheduleType), nameof(this.StartDt) }));
-                        }
-                    }
 
                     break;
 
@@ -296,15 +287,6 @@ namespace Pomodoro.Services.Models
                             " for month template length - 31 symbols," +
                             " at least one non-zero value",
                             new List<string> { nameof(this.Template) }));
-                    }
-                    else
-                    {
-                        if (template[this.StartDt.Day] != '1')
-                        {
-                            results.Add(new ValidationResult(
-                                "Start datetime should should correspond for first task date in your template",
-                                new List<string> { nameof(this.ScheduleType), nameof(this.StartDt) }));
-                        }
                     }
 
                     break;
