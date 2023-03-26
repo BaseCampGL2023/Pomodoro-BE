@@ -23,22 +23,7 @@ namespace Pomodoro.Services.Realizations
             _freqService = freqService;
         }
 
-        public async Task<TaskModel?> GetTaskByIdAsync(Guid taskId)
-        {
-            var task = await _tasksRepo.FindOneTaskAsync(taskId);
-            return _mapper.Map<TaskModel>(task);
-        }
-
-        public async Task<IEnumerable<TaskModel?>> GetTasksByDateAsync(Guid userId, DateTime date)
-        {
-            var userTasks = await _tasksRepo.FindAllAsync(t => t.UserId == userId);
-
-            var tasksOnDate = userTasks.Where(t => IsTaskOnDate(t, date.Date)).ToList();
-
-            return _mapper.Map<IEnumerable<TaskModel>>(tasksOnDate);
-        }
-
-        public async Task<TaskModel?> CreateTaskAsync(Guid userId, TaskModel taskModel)
+        public async Task<TaskModel?> CreateTaskAsync(TaskModel taskModel)
         {
             taskModel.Frequency ??= new FrequencyModel
             {
@@ -55,13 +40,27 @@ namespace Pomodoro.Services.Realizations
 
             var task = _mapper.Map<TaskEntity>(taskModel);
 
-            task.UserId = userId;
             task.FrequencyId = freq.Id;
 
             await _tasksRepo.AddAsync(task);
             await _tasksRepo.SaveChangesAsync();
 
             return _mapper.Map<TaskModel>(task);
+        }
+
+        public async Task<TaskModel?> GetTaskByIdAsync(Guid taskId)
+        {
+            var task = await _tasksRepo.FindOneTaskAsync(taskId);
+            return _mapper.Map<TaskModel>(task);
+        }
+
+        public async Task<IEnumerable<TaskModel?>> GetTasksByDateAsync(Guid userId, DateTime date)
+        {
+            var userTasks = await _tasksRepo.FindAllAsync(t => t.UserId == userId);
+
+            var tasksOnDate = userTasks.Where(t => IsTaskOnDate(t, date.Date)).ToList();
+
+            return _mapper.Map<IEnumerable<TaskModel>>(tasksOnDate);
         }
 
         public async Task DeleteTaskAsync(TaskModel taskModel)

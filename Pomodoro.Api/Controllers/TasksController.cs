@@ -114,8 +114,9 @@ namespace Pomodoro.Api.Controllers
         public async Task<ActionResult<TaskViewModel>> CreateTask([FromBody] TaskViewModel task)
         {
             var taskModel = this.mapper.Map<TaskModel>(task);
+            taskModel.UserId = this.UserId;
 
-            var result = await this.tasksService.CreateTaskAsync(this.UserId, taskModel);
+            var result = await this.tasksService.CreateTaskAsync(taskModel);
 
             if (result == null)
             {
