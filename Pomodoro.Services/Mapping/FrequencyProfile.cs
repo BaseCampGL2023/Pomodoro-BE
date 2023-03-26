@@ -5,9 +5,7 @@
 using AutoMapper;
 using Pomodoro.Core.Enums;
 using Pomodoro.Core.Models.Frequency;
-using Pomodoro.Core.Models.Tasks;
 using Pomodoro.DataAccess.Entities;
-using System.Collections.Generic;
 
 namespace Pomodoro.Services.Mapping
 {

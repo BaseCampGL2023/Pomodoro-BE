@@ -1,10 +1,9 @@
 ﻿// <copyright file="FrequencyViewModel.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
-using Pomodoro.Api.ViewModels;
 using Pomodoro.Core.Enums;
 
-namespace Pomodoro.Core.Models.Frequency
+namespace Pomodoro.Api.ViewModels
 {
     /// <summary>
     /// Represents a view model for Frequency information.

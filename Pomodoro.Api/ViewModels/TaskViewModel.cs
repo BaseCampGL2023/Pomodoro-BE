@@ -2,7 +2,6 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
-using Pomodoro.Core.Models.Frequency;
 using System.Text.Json.Serialization;
 
 namespace Pomodoro.Api.ViewModels

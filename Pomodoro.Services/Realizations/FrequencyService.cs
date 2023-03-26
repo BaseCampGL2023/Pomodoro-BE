@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Pomodoro.Core.Enums;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.Core.Models.Frequency;
 using Pomodoro.DataAccess.Entities;
@@ -22,28 +21,68 @@ namespace Pomodoro.Services.Realizations
             _freqRepo = freqRepo;
         }
 
-        public async Task<FrequencyModel?> CreateFrequencyAsync(FrequencyModel freqModel)
+        public async Task<FrequencyModel> CreateFrequencyAsync(FrequencyModel freqModel)
         {
             if (freqModel == null)
             {
-                return null;
+                throw new ArgumentNullException(nameof(freqModel), "Can`t be Null.");
             }
 
-            var freqType = await _freqTypeRepo.FindAsync(ft => ft.Value == freqModel.FrequencyValue);
+            var freqTypes = await _freqTypeRepo.FindAsync(ft => ft.Value == freqModel.FrequencyValue);
 
-            if (freqType == null)
+            if (freqTypes == null)
             {
-                return null;
+                throw new InvalidOperationException("Can`t find frequency type in db.");
             }
 
-            var freqTypeId = freqType.Select(ft => ft.Id).FirstOrDefault();
+            var freqTypeId = freqTypes.Select(ft => ft.Id).FirstOrDefault();
 
             var freq = _mapper.Map<Frequency>(freqModel);
 
             freq.FrequencyTypeId = freqTypeId;
 
             await _freqRepo.AddAsync(freq);
-            await _freqRepo.SaveChangesAsync();
+
+            return _mapper.Map<FrequencyModel>(freq);
+        }
+
+        public async Task<FrequencyModel> GetFrequencyByIdAsync(Guid freqId) 
+        {
+            var freq = await _freqRepo.GetByIdAsync(freqId);
+
+            if (freq == null)
+            {
+                throw new InvalidOperationException("Can`t find frequency in db.");
+            }
+
+            return _mapper.Map<FrequencyModel>(freq);
+        }
+
+        public async Task<FrequencyModel> UpdateFrequencyAsync(FrequencyModel freqModel)
+        {
+            var freq = await _freqRepo.GetByIdAsync(freqModel.Id);
+
+            if (freq == null || freq.FrequencyType == null)
+            {
+                throw new InvalidOperationException("Can`t find frequency with frequency type in db.");
+            }
+
+            if (freq.FrequencyType.Value != freqModel.FrequencyValue)
+            {
+                var freqType = await _freqTypeRepo.FindAsync(ft => ft.Value == freqModel.FrequencyValue);
+
+                if (freqType == null)
+                {
+                    throw new InvalidOperationException("Can`t find frequency type in db.");
+                }
+
+                freq.FrequencyTypeId = freqType.Select(ft => ft.Id).FirstOrDefault();
+            }
+
+            freq.IsCustom = freqModel.IsCustom;
+            freq.Every = freqModel.Every;
+
+            _freqRepo.Update(freq);
 
             return _mapper.Map<FrequencyModel>(freq);
         }
@@ -54,41 +93,10 @@ namespace Pomodoro.Services.Realizations
 
             if (freq == null)
             {
-                return;
+                throw new InvalidOperationException("Can`t find frequency in db.");
             }
 
             _freqRepo.Remove(freq);
-            await _freqRepo.SaveChangesAsync();
-        }
-
-        public async Task<FrequencyModel?> UpdateFrequencyAsync(FrequencyModel freqModel)
-        {
-            var freq = await _freqRepo.GetByIdAsync(freqModel.Id);
-
-            if (freq == null || freq.FrequencyType == null)
-            {
-                return null;
-            }
-
-            if(freq.FrequencyType.Value != freqModel.FrequencyValue)
-            {
-                var freqType = await _freqTypeRepo.FindAsync(ft => ft.Value == freqModel.FrequencyValue);
-
-                if (freqType == null)
-                {
-                    return null;
-                }
-
-                freq.FrequencyTypeId = freqType.Select(ft => ft.Id).FirstOrDefault();
-            }
-
-            freq.IsCustom = freqModel.IsCustom;
-            freq.Every = freqModel.Every;
-
-            _freqRepo.Update(freq);
-            await _freqRepo.SaveChangesAsync();
-
-            return _mapper.Map<FrequencyModel>(freq);
         }
     }
 }
