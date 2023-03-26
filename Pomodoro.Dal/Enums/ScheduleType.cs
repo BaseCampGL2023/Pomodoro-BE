@@ -40,18 +40,13 @@ namespace Pomodoro.Dal.Enums
         MonthTemplate = 6,
 
         /// <summary>
-        /// Template to select specific days counting from the last day of the month.
-        /// </summary>
-        MonthDayBackwardTemplate = 7,
-
-        /// <summary>
         /// Every N days.
         /// </summary>
-        EveryNDay = 8,
+        EveryNDay = 7,
 
         /// <summary>
         /// Defines a certain sequence of days in an interval of a specified duration.
         /// </summary>
-        Sequence = 9,
+        Sequence = 8,
     }
 }
