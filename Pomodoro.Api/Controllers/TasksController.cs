@@ -6,7 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pomodoro.Api.Controllers.Base;
-using Pomodoro.Api.ViewModels.Tasks;
+using Pomodoro.Api.ViewModels;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.Core.Models.Tasks;
 using Swashbuckle.AspNetCore.Annotations;
@@ -85,7 +85,7 @@ namespace Pomodoro.Api.Controllers
         [SwaggerResponse(401, "An unauthorized request cannot be processed.")]
         [SwaggerResponse(404, "No tasks found by the provided date.")]
         [SwaggerResponse(500, "An unhandled exception occurred on the server while executing the request.")]
-        public async Task<ActionResult<IEnumerable<TaskForListViewModel>>> GetTasksByDate(DateTime date)
+        public async Task<ActionResult<IEnumerable<TaskViewModel>>> GetTasksByDate(DateTime date)
         {
             var tasks = await this.tasksService.GetTasksByDateAsync(this.UserId, date);
 
@@ -94,7 +94,7 @@ namespace Pomodoro.Api.Controllers
                 return this.NotFound();
             }
 
-            return this.Ok(this.mapper.Map<IEnumerable<TaskForListViewModel>>(tasks));
+            return this.Ok(this.mapper.Map<IEnumerable<TaskViewModel>>(tasks));
         }
 
         /// <summary>

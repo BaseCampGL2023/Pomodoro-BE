@@ -20,11 +20,10 @@ namespace Pomodoro.Services.Mapping
         /// </summary>
         public TaskProfile()
         {
-            CreateMap<TaskEntity, TaskModel>();
             CreateMap<TaskModel, TaskEntity>()
                 .ForMember(dest => dest.Id, act => act.MapFrom(src => Guid.Empty))
                 .AfterMap((src, dist) => dist.Frequency = null);
-            CreateMap<TaskEntity, TaskForListModel>()
+            CreateMap<TaskEntity, TaskModel>()
                 .ForMember(dest => dest.Frequency, act => act.MapFrom(src => GetFrequencyValue(src)))
                 .ForMember(dest => dest.Progress, act => act.MapFrom(src => GetProgress(src)));
         }

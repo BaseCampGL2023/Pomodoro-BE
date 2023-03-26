@@ -3,6 +3,7 @@
 // </copyright>
 using Pomodoro.Core.Models.Base;
 using Pomodoro.Core.Models.Frequency;
+using System.Text.Json.Serialization;
 
 namespace Pomodoro.Core.Models.Tasks
 {
@@ -35,5 +36,10 @@ namespace Pomodoro.Core.Models.Tasks
         /// Gets or sets an information about the frequency used in the task.
         /// </summary>
         public FrequencyModel? Frequency { get; set; }
+
+        /// <summary>
+        /// Gets or sets task progress.
+        /// </summary>
+        public byte Progress { get; set; }
     }
 }

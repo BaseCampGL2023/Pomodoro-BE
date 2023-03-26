@@ -30,13 +30,13 @@ namespace Pomodoro.Services.Realizations
             return _mapper.Map<TaskModel>(task);
         }
 
-        public async Task<IEnumerable<TaskForListModel?>> GetTasksByDateAsync(Guid userId, DateTime date)
+        public async Task<IEnumerable<TaskModel?>> GetTasksByDateAsync(Guid userId, DateTime date)
         {
             var userTasks = await _tasksRepo.FindAllAsync(t => t.UserId == userId);
 
             var tasksOnDate = userTasks.Where(t => IsTaskOnDate(t, date.Date)).ToList();
 
-            return _mapper.Map<IEnumerable<TaskForListModel>>(tasksOnDate);
+            return _mapper.Map<IEnumerable<TaskModel>>(tasksOnDate);
         }
 
         public async Task<TaskModel?> CreateTaskAsync(Guid userId, TaskModel taskModel)
