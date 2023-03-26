@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Pomodoro.Core.Enums;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.Core.Models;
+using Pomodoro.Core.Models.Base;
 using Pomodoro.DataAccess.Entities;
 using Pomodoro.DataAccess.Repositories.Interfaces;
 
@@ -234,7 +235,6 @@ namespace Pomodoro.Services.Realizations
 
             pomodoro.IsDone = true;
 
-
             try
             {
                 _pomodorosRepo.Update(pomodoro);
@@ -246,6 +246,36 @@ namespace Pomodoro.Services.Realizations
                 throw;
             }
 
+        }
+
+        public async Task<CompletedModel> AddPomodoroToTaskAsync(CompletedModel pomodoroModel)
+        {
+            if (pomodoroModel == null)
+            {
+                throw new ArgumentNullException(nameof(pomodoroModel), "Can`t be Null.");
+            }
+
+            var taskExists = await _tasksRepo.HasByIdAsync(pomodoroModel.TaskId);
+
+            if (!taskExists)
+            {
+                throw new InvalidOperationException("Can`t find task in db.");
+            }
+
+            var pomodoro = _mapper.Map<Completed>(pomodoroModel);
+
+            try
+            {
+                await _pomodorosRepo.AddAsync(pomodoro);
+                await _tasksRepo.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _log.LogError(e.Message + " - occureed while adding pomodoro in db.");
+                throw;
+            }
+
+            return _mapper.Map<CompletedModel>(pomodoro);
         }
 
         private bool IsTaskCompletedOnDate(TaskEntity task, DateTime date)

@@ -9,6 +9,7 @@ using Pomodoro.Api.Controllers.Base;
 using Pomodoro.Api.ViewModels;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.Core.Models;
+using Pomodoro.Core.Models.Base;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Pomodoro.Api.Controllers
@@ -101,7 +102,7 @@ namespace Pomodoro.Api.Controllers
         /// Creates task related to the current user.
         /// </summary>
         /// <param name="task">Represents object to be created.</param>
-        /// <returns>Id of the created object represented by<see cref="ActionResult{Guid}"/></returns>
+        /// <returns>Id of the created object represented by<see cref="ActionResult{Guid}"/>.</returns>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -257,6 +258,53 @@ namespace Pomodoro.Api.Controllers
             }
 
             return this.Ok();
+        }
+
+        /// <summary>
+        /// Adds pomodoro to task that related to the current user.
+        /// </summary>
+        /// <param name="id">Represents an id of the task that needs to add pomodoro to it.</param>
+        /// <returns>Id of the created object represented by<see cref="ActionResult{CompletedViewModel}"/>.</returns>
+        [HttpPost("{id}/pomodoros")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerResponse(201, "Returns created object containing pomodoro id.")]
+        [SwaggerResponse(400, "The model state is invalid.")]
+        [SwaggerResponse(401, "An unauthorized request cannot be processed.")]
+        [SwaggerResponse(500, "An unhandled exception occurred on the server while executing the request.")]
+        public async Task<ActionResult<CompletedViewModel>> AddPomodoro(Guid id, [FromBody] CompletedViewModel pomodoro)
+        {
+            var task = await this.tasksService.GetTaskByIdAsync(id);
+
+            if (task == null)
+            {
+                return this.NotFound("Task wasn`t found.");
+            }
+
+            if (task.UserId != this.UserId)
+            {
+                return this.Forbid("You can`t add pomodoro to task that doesn`t related to current user.");
+            }
+
+            if (pomodoro.TaskId != id)
+            {
+                return this.Forbid("You can`t add pomodoro to not related to it task.");
+            }
+
+            var pomoModel = this.mapper.Map<CompletedModel>(pomodoro);
+
+            try
+            {
+                pomoModel = await this.tasksService.AddPomodoroToTaskAsync(pomoModel);
+            }
+            catch (Exception)
+            {
+                return this.BadRequest();
+            }
+
+            return this.Ok(this.mapper.Map<CompletedViewModel>(pomoModel));
         }
     }
 }
