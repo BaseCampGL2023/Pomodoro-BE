@@ -32,5 +32,14 @@ namespace Pomodoro.Dal.Repositories.Interfaces
         /// <param name="ownerId">Owner id.</param>
         /// <returns>ICollection collection of objects.</returns>
         public Task<ICollection<AppTask>> GetBelonginStartedAllAsync(Guid ownerId);
+
+        /// <summary>
+        /// Return all tasks related to schedules from start to end DateTime.
+        /// </summary>
+        /// <param name="ownerId">Owner id.</param>
+        /// <param name="start">Start DateTime.</param>
+        /// <param name="end">End DateTime.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public Task<ICollection<AppTask>> GetScheduledAllAsync(Guid ownerId, DateTime start, DateTime end);
     }
 }

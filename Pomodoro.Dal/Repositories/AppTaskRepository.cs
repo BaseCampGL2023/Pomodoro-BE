@@ -50,5 +50,15 @@ namespace Pomodoro.Dal.Repositories
             return await this.Table.Include(e => e.Pomodoros)
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
+
+        /// <inheritdoc/>
+        public async Task<ICollection<AppTask>> GetScheduledAllAsync(Guid ownerId, DateTime start, DateTime end)
+        {
+            return await this.Table.Where(
+                e => e.AppUserId == ownerId
+                && e.ScheduleId != null
+                && e.StartDt >= start
+                && e.StartDt < end).ToListAsync();
+        }
     }
 }

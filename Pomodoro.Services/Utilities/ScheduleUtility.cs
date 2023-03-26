@@ -14,124 +14,114 @@ namespace Pomodoro.Services.Utilities
     public static class ScheduleUtility
     {
         /// <summary>
-        /// Create first task for corresponding schedule.
+        /// Check if existing tasks intersect with new scheduled.
+        /// If intersect - return Guid of intersected task, otherwise empty Guid.
         /// </summary>
-        /// <param name="model">Schedule.</param>
-        /// <param name="ownerId">Owner Id.</param>
-        /// <returns>Task.</returns>
-        public static AppTask? CreateFirstTask(ScheduleModel model, Guid ownerId)
+        /// <param name="tasks">New tasks.</param>
+        /// <param name="existing">Existing Tasks.</param>
+        /// <returns>Guid of intersected task.</returns>
+        public static Guid GetIntersectedGuid(List<AppTask> tasks, List<AppTask> existing)
         {
-            AppTask task = new ()
+            if (!existing.Any())
             {
-                Title = model.Title,
-                Description = model.Description,
-                SequenceNumber = 1,
-                AllocatedDuration = TimeSpan.FromSeconds(model.AllocatedDuration),
-                CategoryId = model.CategoryId,
-                AppUserId = model.OwnerId != Guid.Empty ? model.OwnerId : ownerId,
-            };
+                return Guid.Empty;
+            }
 
-            var date = model.StartDt > DateTime.UtcNow ? model.StartDt
-                : new DateTime(
-                    DateTime.UtcNow.Year,
-                    DateTime.UtcNow.Month,
-                    DateTime.UtcNow.Day,
-                    model.StartDt.Hour,
-                    model.StartDt.Minute,
-                    model.StartDt.Second);
-            var template = model.Template.ToCharArray();
+            tasks.Sort((t1, t2) => t1.StartDt.CompareTo(t2.StartDt));
+            existing.Sort((t1, t2) => t1.StartDt.CompareTo(t2.StartDt));
 
-            switch (model.ScheduleType)
+            int total = tasks.Count + existing.Count;
+            int pt = 0;
+            int pe = 0;
+            while (total-- > 0)
             {
-                case ScheduleType.EveryDay:
-                    task.StartDt = model.StartDt.AddDays(1);
-                    break;
-                case ScheduleType.WorkDay:
-                    while (date.DayOfWeek == DayOfWeek.Sunday
-                            || date.DayOfWeek == DayOfWeek.Saturday)
+                if (tasks[pt].StartDt < existing[pe].StartDt)
+                {
+                    DateTime finish = tasks[pt].StartDt.AddSeconds(
+                        tasks[pt].AllocatedDuration.TotalSeconds);
+                    if (finish <= existing[pe].StartDt)
                     {
-                        date = date.AddDays(1);
-                    }
-
-                    task.StartDt = date;
-                    break;
-                case ScheduleType.WeekEnd:
-                    while (date.DayOfWeek != DayOfWeek.Sunday
-                        && date.DayOfWeek != DayOfWeek.Saturday)
-                    {
-                        date = date.AddDays(1);
-                    }
-
-                    task.StartDt = date;
-                    break;
-                case ScheduleType.AnnualOnDate:
-                    task.StartDt = model.StartDt;
-                    break;
-                case ScheduleType.WeekTemplate:
-                    while (template[(int)date.DayOfWeek] != '1')
-                    {
-                        date = date.AddDays(1);
-                    }
-
-                    task.StartDt = date;
-                    break;
-                case ScheduleType.MonthTemplate:
-                    while (template[date.Day - 1] != '1')
-                    {
-                        date = date.AddDays(1);
-                    }
-
-                    task.StartDt = date;
-                    break;
-
-                case ScheduleType.EveryNDay:
-                    date = model.StartDt;
-
-                    // check this diff between now and startDate, in Sequance template to.
-                    while (date < DateTime.UtcNow)
-                    {
-                        date = date.AddDays(template.Length);
-                    }
-
-                    task.StartDt = date;
-                    break;
-                case ScheduleType.Sequence:
-                    date = model.StartDt;
-
-                    // check why using UTC now.
-                    while (date < DateTime.UtcNow)
-                    {
-                        for (int i = 0; i < template.Length; i++)
+                        if (pt < tasks.Count - 1)
                         {
-                            if (template[i] == '1')
-                            {
-                                date = date.AddDays(i + 1);
-                                if (date > DateTime.UtcNow)
-                                {
-                                    break;
-                                }
-                            }
+                            pt++;
+                            continue;
                         }
+
+                        return Guid.Empty;
                     }
+                    else
+                    {
+                        return existing[pe].Id;
+                    }
+                }
+                else
+                {
+                    DateTime finish = existing[pe].StartDt.AddSeconds(
+                        existing[pe].AllocatedDuration.TotalSeconds);
+                    if (finish <= tasks[pt].StartDt)
+                    {
+                        if (pe < existing.Count - 1)
+                        {
+                            pe++;
+                            continue;
+                        }
 
-                    task.StartDt = date;
-                    break;
+                        return Guid.Empty;
+                    }
+                    else
+                    {
+                        return existing[pe].Id;
+                    }
+                }
             }
 
-            if (model.FinishAt != null && task.StartDt > model.FinishAt)
-            {
-                return null;
-            }
-
-            return task;
+            return Guid.Empty;
         }
 
+        /// <summary>
+        /// Create tasks for given schedule.
+        /// </summary>
+        /// <param name="model">Schedule model.</param>
+        /// <exception cref="NotImplementedException">Throws if ScheduleType unknown.</exception>
+        /// <returns>Tasks for given schedule.</returns>
+        public static List<AppTask> CreateTasks(ScheduleModel model)
+        {
+            return model.ScheduleType switch
+            {
+                ScheduleType.EveryDay => CreateEveryday(model),
+                ScheduleType.WorkDay => CreateWorkday(model),
+                ScheduleType.WeekEnd => CreateWeekEnd(model),
+                ScheduleType.AnnualOnDate => CreateAnnual(model),
+                ScheduleType.WeekTemplate => CreateWeek(model),
+                ScheduleType.MonthTemplate => CreateMonth(model),
+                ScheduleType.EveryNDay => CreateEveryNDay(model),
+                ScheduleType.Sequence => CreateSequence(model),
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        /// <summary>
+        /// Check is it possible to create new task.
+        /// </summary>
+        /// <param name="model">Schedule.</param>
+        /// <param name="fromDate">Start Date.</param>
+        /// <param name="toDate">End Date.</param>
+        /// <returns>Bool.</returns>
+        /// <exception cref="ArgumentException">Throws if start date less than schedule startdate.</exception>
         public static bool IsCanCreateTask(ScheduleModel model, DateTime fromDate, DateTime toDate)
         {
             Schedule schedule = model.ToDalEntity(model.OwnerId);
             return IsCanCreateTask(schedule, fromDate, toDate);
         }
 
+        /// <summary>
+        /// Check is it possible to create new task.
+        /// </summary>
+        /// <param name="schedule">Schedule.</param>
+        /// <param name="fromDate">Start Date.</param>
+        /// <param name="toDate">End Date.</param>
+        /// <returns>Bool.</returns>
+        /// <exception cref="ArgumentException">Throws if start date less than schedule startdate.</exception>
         public static bool IsCanCreateTask(Schedule schedule, DateTime fromDate, DateTime toDate)
         {
             if (fromDate > toDate)
@@ -240,6 +230,252 @@ namespace Pomodoro.Services.Utilities
             }
 
             return result;
+        }
+
+        private static List<AppTask> CreateSequence(ScheduleModel model)
+        {
+            List<AppTask> tasks = new ();
+            DateTime current = model.StartDt;
+            DateTime finish = model.FinishAt != null ? model.FinishAt.Value : model.StartDt.AddYears(1);
+            int idx = 1;
+            int pos = 0;
+            var template = model.Template.ToCharArray();
+
+            while (current <= finish)
+            {
+                if (template[pos] == '1')
+                {
+                    AppTask task = new ()
+                    {
+                        Title = model.Title,
+                        Description = model.Description,
+                        SequenceNumber = idx,
+                        AllocatedDuration = TimeSpan.FromSeconds(model.AllocatedDuration),
+                        CategoryId = model.CategoryId,
+                        AppUserId = model.OwnerId,
+                        StartDt = current,
+                    };
+
+                    tasks.Add(task);
+                    idx++;
+                    pos = pos < template.Length - 1 ? pos + 1 : 0;
+                }
+
+                current = current.AddDays(template.Length);
+            }
+
+            return tasks;
+        }
+
+        private static List<AppTask> CreateEveryNDay(ScheduleModel model)
+        {
+            List<AppTask> tasks = new ();
+            DateTime current = model.StartDt;
+            DateTime finish = model.FinishAt != null ? model.FinishAt.Value : model.StartDt.AddYears(1);
+            int idx = 1;
+            var template = model.Template.ToCharArray();
+
+            while (current <= finish)
+            {
+                AppTask task = new ()
+                {
+                    Title = model.Title,
+                    Description = model.Description,
+                    SequenceNumber = idx,
+                    AllocatedDuration = TimeSpan.FromSeconds(model.AllocatedDuration),
+                    CategoryId = model.CategoryId,
+                    AppUserId = model.OwnerId,
+                    StartDt = current,
+                };
+
+                tasks.Add(task);
+                idx++;
+                current = current.AddDays(template.Length);
+            }
+
+            return tasks;
+        }
+
+        private static List<AppTask> CreateMonth(ScheduleModel model)
+        {
+            List<AppTask> tasks = new ();
+            DateTime current = model.StartDt;
+            DateTime finish = model.FinishAt != null ? model.FinishAt.Value : model.StartDt.AddYears(1);
+            int idx = 1;
+            var template = model.Template.ToCharArray();
+
+            while (current <= finish)
+            {
+                if (template[current.Day - 1] == '1')
+                {
+                    AppTask task = new ()
+                    {
+                        Title = model.Title,
+                        Description = model.Description,
+                        SequenceNumber = idx,
+                        AllocatedDuration = TimeSpan.FromSeconds(model.AllocatedDuration),
+                        CategoryId = model.CategoryId,
+                        AppUserId = model.OwnerId,
+                        StartDt = current,
+                    };
+                    tasks.Add(task);
+                    idx++;
+                }
+
+                current = current.AddDays(1);
+            }
+
+            return tasks;
+        }
+
+        private static List<AppTask> CreateWeek(ScheduleModel model)
+        {
+            List<AppTask> tasks = new ();
+            DateTime current = model.StartDt;
+            DateTime finish = model.FinishAt != null ? model.FinishAt.Value : model.StartDt.AddYears(1);
+            int idx = 1;
+            var template = model.Template.ToCharArray();
+
+            while (current <= finish)
+            {
+                if (template[(int)current.DayOfWeek] == '1')
+                {
+                    AppTask task = new ()
+                    {
+                        Title = model.Title,
+                        Description = model.Description,
+                        SequenceNumber = idx,
+                        AllocatedDuration = TimeSpan.FromSeconds(model.AllocatedDuration),
+                        CategoryId = model.CategoryId,
+                        AppUserId = model.OwnerId,
+                        StartDt = current,
+                    };
+                    tasks.Add(task);
+                    idx++;
+                }
+
+                current = current.AddDays(1);
+            }
+
+            return tasks;
+        }
+
+        private static List<AppTask> CreateAnnual(ScheduleModel model)
+        {
+            List<AppTask> tasks = new ();
+            DateTime current = model.StartDt;
+            DateTime finish = model.FinishAt != null ? model.FinishAt.Value : model.StartDt.AddYears(50);
+            int idx = 1;
+
+            while (current <= finish)
+            {
+                AppTask task = new ()
+                {
+                    Title = model.Title,
+                    Description = model.Description,
+                    SequenceNumber = idx,
+                    AllocatedDuration = TimeSpan.FromSeconds(model.AllocatedDuration),
+                    CategoryId = model.CategoryId,
+                    AppUserId = model.OwnerId,
+                    StartDt = current,
+                };
+                tasks.Add(task);
+                current = current.AddYears(1);
+                idx++;
+            }
+
+            return tasks;
+        }
+
+        private static List<AppTask> CreateWeekEnd(ScheduleModel model)
+        {
+            List<AppTask> tasks = new ();
+            DateTime current = model.StartDt;
+            DateTime finish = model.FinishAt != null ? model.FinishAt.Value : model.StartDt.AddYears(1);
+            int idx = 1;
+
+            while (current <= finish)
+            {
+                if (current.DayOfWeek == DayOfWeek.Sunday
+                    || current.DayOfWeek == DayOfWeek.Saturday)
+                {
+                    AppTask task = new ()
+                    {
+                        Title = model.Title,
+                        Description = model.Description,
+                        SequenceNumber = idx,
+                        AllocatedDuration = TimeSpan.FromSeconds(model.AllocatedDuration),
+                        CategoryId = model.CategoryId,
+                        AppUserId = model.OwnerId,
+                        StartDt = current,
+                    };
+                    tasks.Add(task);
+                    idx++;
+                }
+
+                current = current.AddDays(1);
+            }
+
+            return tasks;
+        }
+
+        private static List<AppTask> CreateWorkday(ScheduleModel model)
+        {
+            List<AppTask> tasks = new ();
+            DateTime current = model.StartDt;
+            DateTime finish = model.FinishAt != null ? model.FinishAt.Value : model.StartDt.AddYears(1);
+            int idx = 1;
+
+            while (current <= finish)
+            {
+                if (current.DayOfWeek != DayOfWeek.Sunday
+                    && current.DayOfWeek != DayOfWeek.Saturday)
+                {
+                    AppTask task = new ()
+                    {
+                        Title = model.Title,
+                        Description = model.Description,
+                        SequenceNumber = idx,
+                        AllocatedDuration = TimeSpan.FromSeconds(model.AllocatedDuration),
+                        CategoryId = model.CategoryId,
+                        AppUserId = model.OwnerId,
+                        StartDt = current,
+                    };
+                    tasks.Add(task);
+                    idx++;
+                }
+
+                current = current.AddDays(1);
+            }
+
+            return tasks;
+        }
+
+        private static List<AppTask> CreateEveryday(ScheduleModel model)
+        {
+            List<AppTask> tasks = new ();
+            DateTime current = model.StartDt;
+            DateTime finish = model.FinishAt != null ? model.FinishAt.Value : model.StartDt.AddYears(1);
+            int idx = 1;
+
+            while (current <= finish)
+            {
+                AppTask task = new ()
+                {
+                    Title = model.Title,
+                    Description = model.Description,
+                    SequenceNumber = idx,
+                    AllocatedDuration = TimeSpan.FromSeconds(model.AllocatedDuration),
+                    CategoryId = model.CategoryId,
+                    AppUserId = model.OwnerId,
+                    StartDt = current,
+                };
+                tasks.Add(task);
+                current = current.AddDays(1);
+                idx++;
+            }
+
+            return tasks;
         }
 
         private static DateTime GetDateWithTaskTime(Schedule schedule, DateTime date)
