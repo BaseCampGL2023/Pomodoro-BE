@@ -22,6 +22,11 @@ namespace Pomodoro.Dal.Entities
         public Guid AppIdentityUserId { get; set; }
 
         /// <summary>
+        /// Gets or sets DateTime when AppUser created.
+        /// </summary>
+        public DateTime CreatedDt { get; set; }
+
+        /// <summary>
         /// Gets or sets navigation property represents user in authentication system.
         /// </summary>
         public AppIdentityUser? AppIdentityUser { get; set; }

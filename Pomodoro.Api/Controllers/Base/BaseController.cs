@@ -53,7 +53,7 @@ namespace Pomodoro.Api.Controllers.Base
         protected TS Service => this.service;
 
         /// <summary>
-        /// Gets authenticated user id Guid.Empty
+        /// Gets authenticated user id or Guid.Empty
         /// if user not authenticated.
         /// </summary>
         protected Guid UserId
@@ -67,6 +67,24 @@ namespace Pomodoro.Api.Controllers.Base
                 }
 
                 return new Guid(id.Value);
+            }
+        }
+
+        /// <summary>
+        /// Gets authenticated user signup date or
+        /// DateTime.UtcNow if user not authenticated.
+        /// </summary>
+        protected DateTime UserCreatedAt
+        {
+            get
+            {
+                var date = this.User.FindFirst("signUpAt");
+                if (date is null)
+                {
+                    return DateTime.UtcNow;
+                }
+
+                return DateTime.Parse(date.Value);
             }
         }
 

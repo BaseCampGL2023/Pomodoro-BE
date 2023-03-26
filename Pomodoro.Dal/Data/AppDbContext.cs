@@ -110,6 +110,9 @@ namespace Pomodoro.Dal.Data
                 entity.Property(e => e.Name).IsRequired()
                     .HasMaxLength(50);
 
+                entity.Property(e => e.CreatedDt).IsRequired()
+                    .HasDefaultValueSql("GETUTCDATE()");
+
                 entity.HasIndex(e => e.AppIdentityUserId, "IX_Users_AspNetUserId")
                 .IsUnique();
 

@@ -286,6 +286,11 @@ namespace Pomodoro.Dal.Migrations
                     b.Property<Guid>("AppIdentityUserId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("CreatedDt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)

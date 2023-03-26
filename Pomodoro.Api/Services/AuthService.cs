@@ -59,6 +59,7 @@ namespace Pomodoro.Api.Services
                 AppUser = new AppUser()
                 {
                     Name = registrationRequest.UserName,
+                    CreatedDt = DateTime.UtcNow,
                 },
             };
 
@@ -161,6 +162,7 @@ namespace Pomodoro.Api.Services
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Name, user.AppUser!.Name),
                 new Claim("userId", user.AppUser!.Id.ToString()),
+                new Claim("signUpAt", user.AppUser!.CreatedDt.ToString()),
             };
             return claims;
         }

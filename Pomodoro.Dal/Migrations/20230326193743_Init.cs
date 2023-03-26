@@ -76,7 +76,8 @@ namespace Pomodoro.Dal.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    AppIdentityUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    AppIdentityUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
                 },
                 constraints: table =>
                 {
