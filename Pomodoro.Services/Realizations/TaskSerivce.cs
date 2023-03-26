@@ -40,6 +40,13 @@ namespace Pomodoro.Services.Realizations
             try
             {
                 freqId = await _freqService.GetFrequencyIdAsync(taskModel.Frequency);
+
+                if (freqId == Guid.Empty)
+                {
+                    var newFreq = await _freqService.CreateFrequencyAsync(taskModel.Frequency);
+
+                    freqId = newFreq.Id;
+                }
             }
             catch (InvalidOperationException e)
             {
@@ -148,11 +155,18 @@ namespace Pomodoro.Services.Realizations
                 throw new ArgumentNullException(nameof(taskModel), "Can`t be Null also it`s Frequency can`t be Null.");
             }
 
-            FrequencyModel freq;
+            Guid freqId;
 
             try
             {
-                freq = await _freqService.UpdateFrequencyAsync(taskModel.Frequency);
+                freqId = await _freqService.GetFrequencyIdAsync(taskModel.Frequency);
+
+                if (freqId == Guid.Empty)
+                {
+                    var newFreq = await _freqService.CreateFrequencyAsync(taskModel.Frequency);
+
+                    freqId = newFreq.Id;
+                }
             }
             catch (InvalidOperationException e)
             {
@@ -175,6 +189,7 @@ namespace Pomodoro.Services.Realizations
             task.Title = taskModel.Title;
             task.InitialDate = taskModel.InitialDate;
             task.AllocatedTime = taskModel.AllocatedTime;
+            task.FrequencyId = freqId;
 
             try
             {
