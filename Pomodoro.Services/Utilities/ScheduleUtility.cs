@@ -11,7 +11,7 @@ namespace Pomodoro.Services.Utilities
     /// <summary>
     /// Working with schedules.
     /// </summary>
-    internal static class ScheduleUtility
+    public static class ScheduleUtility
     {
         /// <summary>
         /// Create first task for corresponding schedule.
@@ -19,7 +19,7 @@ namespace Pomodoro.Services.Utilities
         /// <param name="model">Schedule.</param>
         /// <param name="ownerId">Owner Id.</param>
         /// <returns>Task.</returns>
-        public static AppTask CreateFirstTask(ScheduleModel model, Guid ownerId)
+        public static AppTask? CreateFirstTask(ScheduleModel model, Guid ownerId)
         {
             AppTask task = new ()
             {
@@ -65,7 +65,7 @@ namespace Pomodoro.Services.Utilities
                     task.StartDt = date;
                     break;
                 case ScheduleType.AnnualOnDate:
-                    task.StartDt = model.StartDt.AddYears(1);
+                    task.StartDt = model.StartDt;
                     break;
                 case ScheduleType.WeekTemplate:
                     while (template[(int)date.DayOfWeek] != '1')
@@ -76,30 +76,18 @@ namespace Pomodoro.Services.Utilities
                     task.StartDt = date;
                     break;
                 case ScheduleType.MonthTemplate:
-                    // TODO: Delete month day forward, check new month
-                    while (template[date.Day] != '1')
+                    while (template[date.Day - 1] != '1')
                     {
                         date = date.AddDays(1);
                     }
 
-                    task.StartDt = date;
-                    break;
-                case ScheduleType.MonthDayBackwardTemplate:
-                    // TODO: check to don't planning in previous month.
-                    int diff = DateTime.DaysInMonth(date.Year, date.Month) - 31;
-                    while (template[date.Day] != '1'
-                        && date.AddDays(diff) > model.StartDt)
-                    {
-                        date = date.AddDays(1);
-                    }
-
-                    date = date.AddDays(diff);
                     task.StartDt = date;
                     break;
 
                 case ScheduleType.EveryNDay:
                     date = model.StartDt;
-                    // TODO: check diff between now and startDate, in Sequance template to.
+
+                    // check this diff between now and startDate, in Sequance template to.
                     while (date < DateTime.UtcNow)
                     {
                         date = date.AddDays(template.Length);
@@ -109,6 +97,8 @@ namespace Pomodoro.Services.Utilities
                     break;
                 case ScheduleType.Sequence:
                     date = model.StartDt;
+
+                    // check why using UTC now.
                     while (date < DateTime.UtcNow)
                     {
                         for (int i = 0; i < template.Length; i++)
@@ -128,7 +118,140 @@ namespace Pomodoro.Services.Utilities
                     break;
             }
 
+            if (model.FinishDt != null && task.StartDt > model.FinishDt)
+            {
+                return null;
+            }
+
             return task;
+        }
+
+        public static bool IsCanCreateTask(ScheduleModel model, DateTime fromDate, DateTime toDate)
+        {
+            Schedule schedule = model.ToDalEntity(model.OwnerId);
+            return IsCanCreateTask(schedule, fromDate, toDate);
+        }
+
+        public static bool IsCanCreateTask(Schedule schedule, DateTime fromDate, DateTime toDate)
+        {
+            if (fromDate > toDate)
+            {
+                return false;
+            }
+
+            if (schedule.FinishDt != null && fromDate > schedule.FinishDt)
+            {
+                return false;
+            }
+
+            if (fromDate < schedule.StartDt)
+            {
+                throw new ArgumentException("From datetime less than schedule start datetime");
+            }
+
+            fromDate = fromDate > GetDateWithTaskTime(schedule, fromDate)
+                ? GetDateWithTaskTime(schedule, fromDate).AddDays(1)
+                : GetDateWithTaskTime(schedule, fromDate);
+            bool result = false;
+            var template = schedule.Template.ToCharArray();
+
+            switch (schedule.ScheduleType)
+            {
+                case ScheduleType.EveryDay:
+                    result = fromDate < toDate;
+                    break;
+                case ScheduleType.WorkDay:
+                    while (fromDate.DayOfWeek == DayOfWeek.Sunday
+                            || fromDate.DayOfWeek == DayOfWeek.Saturday)
+                    {
+                        fromDate = fromDate.AddDays(1);
+                    }
+
+                    result = fromDate < toDate;
+                    break;
+                case ScheduleType.WeekEnd:
+                    while (fromDate.DayOfWeek != DayOfWeek.Sunday
+                        && fromDate.DayOfWeek != DayOfWeek.Saturday)
+                    {
+                        fromDate = fromDate.AddDays(1);
+                    }
+
+                    result = fromDate < toDate;
+                    break;
+                case ScheduleType.AnnualOnDate:
+                    DateTime next = schedule.StartDt;
+                    while (next < toDate.AddYears(-1))
+                    {
+                        next = next.AddYears(1);
+                    }
+
+                    result = next > fromDate && next < toDate;
+                    break;
+                case ScheduleType.WeekTemplate:
+                    while (template[(int)fromDate.DayOfWeek] != '1')
+                    {
+                        fromDate = fromDate.AddDays(1);
+                    }
+
+                    result = fromDate < toDate;
+                    break;
+                case ScheduleType.MonthTemplate:
+                    while (template[fromDate.Day - 1] != '1')
+                    {
+                        fromDate = fromDate.AddDays(1);
+                    }
+
+                    result = fromDate < toDate;
+                    break;
+
+                case ScheduleType.EveryNDay:
+                    DateTime current = schedule.StartDt;
+                    while (current < fromDate)
+                    {
+                        current = current.AddDays(template.Length);
+                    }
+
+                    result = current < toDate && current > fromDate;
+                    break;
+                case ScheduleType.Sequence:
+                    current = schedule.StartDt;
+                    while (current < toDate)
+                    {
+                        for (int i = 0; i < template.Length; i++)
+                        {
+                            if (template[i] == '1')
+                            {
+                                current = current.AddDays(i + 1);
+                                if (current > fromDate)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (current > fromDate)
+                        {
+                            break;
+                        }
+                    }
+
+                    result = current > fromDate && current < toDate;
+                    break;
+            }
+
+            return result;
+        }
+
+        private static DateTime GetDateWithTaskTime(Schedule schedule, DateTime date)
+        {
+            return new DateTime(
+                    date.Year,
+                    date.Month,
+                    date.Day,
+                    schedule.StartDt.Hour,
+                    schedule.StartDt.Minute,
+                    schedule.StartDt.Second,
+                    schedule.StartDt.Millisecond);
         }
     }
 }

@@ -34,28 +34,40 @@ namespace Pomodoro.Services
             model.IsActive = true;
             if (model.Tasks.Any())
             {
-                return new ServiceResponse<bool>
+                // TODO: check sequence number
+                if (model.Tasks.All(t => t.StartDt.HasValue)
+                    && model.Tasks.All(
+                        t => ScheduleUtility.IsCanCreateTask(
+                            model,
+                            t.StartDt!.Value,
+                            t.StartDt!.Value.AddMinutes(1))))
                 {
-                    Result = ResponseType.Error,
-                    Message = "Can't add schedule with already planned tasks.",
-                };
+                    return await base.AddOneOwnAsync(model, ownerId);
+                }
+                else
+                {
+                    return new ServiceResponse<bool>
+                    {
+                        Result = ResponseType.Error,
+                        Message = "Tasks don't correspond to schedule.",
+                    };
+                }
             }
 
-            // TODO: check finisdDt, check finishDt in modelValidation
+            TaskModel firstTask = new ()
+            {
+                Title = model.Title,
+                Description = model.Description,
+                SequenceNumber = 1,
+                AllocatedDuration = model.AllocatedDuration,
+                CategoryId = model.CategoryId,
+                OwnerId = ownerId,
+                StartDt = model.StartDt,
+            };
 
-            // TODO: check UTC time
-            var task = ScheduleUtility.CreateFirstTask(model, ownerId);
-            var plannedTask = new TaskModel();
-            plannedTask.Assign(task);
-            model.Tasks.Add(plannedTask);
+            model.Tasks.Add(firstTask);
 
             return await base.AddOneOwnAsync(model, ownerId);
-            /*var schedule = model.ToDalEntity(ownerId);
-            schedule.Tasks.Add(task);
-            var result = await this.Repo.AddAsync(schedule, true);
-            model.Assign(schedule);*/
-
-            //return result > 0;
         }
     }
 }
