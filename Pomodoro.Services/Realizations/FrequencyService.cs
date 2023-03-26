@@ -81,7 +81,7 @@ namespace Pomodoro.Services.Realizations
 
             if (freq == null)
             {
-                throw new InvalidOperationException("Can`t find frequency in db.");
+                return Guid.Empty;
             }
 
             return freq.Id;

@@ -154,7 +154,9 @@ namespace Pomodoro.Api.Controllers
                 return this.BadRequest();
             }
 
-            return this.CreatedAtAction(nameof(this.GetTaskById), new { id = taskModel.Id }, taskModel);
+            var result = this.mapper.Map<TaskViewModel>(task);
+
+            return this.CreatedAtAction(nameof(this.GetTaskById), new { id = result.Id }, result);
         }
 
         /// <summary>
@@ -188,6 +190,7 @@ namespace Pomodoro.Api.Controllers
             {
                 return this.Forbid("Can`t delete the task that doesn`t related to current user.");
             }
+
             try
             {
                 await this.tasksService.DeleteTaskAsync(task);
@@ -246,7 +249,9 @@ namespace Pomodoro.Api.Controllers
                 return this.BadRequest();
             }
 
-            return this.AcceptedAtAction(nameof(this.GetTaskById), new { id = taskModel.Id }, taskModel);
+            var result = this.mapper.Map<TaskViewModel>(task);
+
+            return this.AcceptedAtAction(nameof(this.GetTaskById), new { id = result.Id }, result);
         }
 
         /// <summary>
@@ -329,16 +334,18 @@ namespace Pomodoro.Api.Controllers
 
             var pomoModel = this.mapper.Map<CompletedModel>(pomodoro);
 
+            TaskModel result;
+
             try
             {
-                pomoModel = await this.tasksService.AddPomodoroToTaskAsync(pomoModel);
+                result = await this.tasksService.AddPomodoroToTaskAsync(pomoModel);
             }
             catch (Exception)
             {
                 return this.BadRequest();
             }
 
-            return this.Ok(this.mapper.Map<CompletedViewModel>(pomoModel));
+            return this.Ok(this.mapper.Map<TaskViewModel>(result));
         }
     }
 }

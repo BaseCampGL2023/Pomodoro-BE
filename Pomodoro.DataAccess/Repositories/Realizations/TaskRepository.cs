@@ -19,6 +19,7 @@ namespace Pomodoro.DataAccess.Repositories.Realizations
                 .Where(t => t.Id == id)
                 .Include(t => t.Frequency)
                     .ThenInclude(f => f.FrequencyType)
+                .Include(t => t.CompletedTasks)
                 .FirstOrDefaultAsync();
         }
 

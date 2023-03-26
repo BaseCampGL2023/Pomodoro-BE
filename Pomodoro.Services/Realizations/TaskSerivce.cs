@@ -247,7 +247,7 @@ namespace Pomodoro.Services.Realizations
 
         }
 
-        public async Task<CompletedModel> AddPomodoroToTaskAsync(CompletedModel pomodoroModel)
+        public async Task<TaskModel> AddPomodoroToTaskAsync(CompletedModel pomodoroModel)
         {
             if (pomodoroModel == null)
             {
@@ -274,7 +274,9 @@ namespace Pomodoro.Services.Realizations
                 throw;
             }
 
-            return _mapper.Map<CompletedModel>(pomodoro);
+            var updatedTask = await _tasksRepo.FindOneTaskAsync(pomodoro.TaskId);
+
+            return _mapper.Map<TaskModel>(updatedTask);
         }
 
         private bool IsTaskCompletedOnDate(TaskEntity task, DateTime date)

@@ -4,6 +4,7 @@
 
 using AutoMapper;
 using Pomodoro.Api.ViewModels;
+using Pomodoro.Core.Enums;
 using Pomodoro.Core.Models;
 
 namespace Pomodoro.Api.Mapping
@@ -21,7 +22,7 @@ namespace Pomodoro.Api.Mapping
         {
             this.CreateMap<FrequencyViewModel, FrequencyModel>();
             this.CreateMap<FrequencyModel, FrequencyViewModel>()
-                .ForMember(dest => dest.FrequencyValue, act => act.MapFrom(src => src.FrequencyValue.ToString()));
+                .ForMember(dest => dest.FrequencyValue, act => act.MapFrom(src => Enum.GetName(typeof(FrequencyValue), src.FrequencyValue)));
         }
     }
 }
