@@ -122,6 +122,7 @@ namespace Pomodoro.Services.Models
             this.CategoryId = entity.Category?.Id;
             this.OwnerId = isMapOwner ? entity.AppUserId : Guid.Empty;
             this.PreviousId = entity.PreviousId;
+            this.Tasks = this.Tasks.Any() ? new List<TaskModel>() : this.Tasks;
             foreach (var task in entity.Tasks)
             {
                 var model = new TaskModel();
@@ -174,6 +175,21 @@ namespace Pomodoro.Services.Models
                     new List<string> { nameof(this.ScheduleType) }));
             }
 
+            if (this.StartDt < DateTime.UtcNow)
+            {
+                results.Add(new ValidationResult(
+                    "Start date and time should be planned in future",
+                    new List<string> { nameof(this.StartDt) }));
+            }
+
+            if (this.FinishDt != DateTime.MinValue
+                && this.FinishDt < this.StartDt)
+            {
+                results.Add(new ValidationResult(
+                    "Finish date and time should be planned after strat date and time",
+                    new List<string> { nameof(this.FinishDt) }));
+            }
+
             if (this.ScheduleType != ScheduleType.AnnualOnDate
                 && !string.IsNullOrWhiteSpace(this.Template)
                 && this.Template.Any(ch => ch != '0' && ch != '1'))
@@ -182,6 +198,8 @@ namespace Pomodoro.Services.Models
                             "Only '0' and '1' symbols expected in template",
                             new List<string> { nameof(this.Template) }));
             }
+
+            var template = this.Template.ToCharArray();
 
             switch (this.ScheduleType)
             {
@@ -207,6 +225,14 @@ namespace Pomodoro.Services.Models
                             new List<string> { nameof(this.Template) }));
                     }
 
+                    if (this.StartDt.DayOfWeek == DayOfWeek.Sunday
+                        || this.StartDt.DayOfWeek == DayOfWeek.Saturday)
+                    {
+                        results.Add(new ValidationResult(
+                            "Start datetime should be work day (from Monday to Friday)",
+                            new List<string> { nameof(this.ScheduleType), nameof(this.StartDt) }));
+                    }
+
                     break;
                 case ScheduleType.WeekEnd:
                     if (!string.IsNullOrWhiteSpace(this.Template)
@@ -217,6 +243,14 @@ namespace Pomodoro.Services.Models
                            "Template should correspond to schedule type," +
                            " for weekend: '1000001', or don't add any template",
                            new List<string> { nameof(this.Template) }));
+                    }
+
+                    if (this.StartDt.DayOfWeek != DayOfWeek.Sunday
+                        && this.StartDt.DayOfWeek != DayOfWeek.Saturday)
+                    {
+                        results.Add(new ValidationResult(
+                            "Start datetime should be weekend (Saturday or Sunday)",
+                            new List<string> { nameof(this.ScheduleType), nameof(this.StartDt) }));
                     }
 
                     break;
@@ -243,6 +277,15 @@ namespace Pomodoro.Services.Models
                             " at least one non-zero value, something like 0100100",
                             new List<string> { nameof(this.Template) }));
                     }
+                    else
+                    {
+                        if (template[(int)this.StartDt.DayOfWeek] != '1')
+                        {
+                            results.Add(new ValidationResult(
+                                "Start datetime should should correspond for first task date in your template",
+                                new List<string> { nameof(this.ScheduleType), nameof(this.StartDt) }));
+                        }
+                    }
 
                     break;
 
@@ -256,6 +299,15 @@ namespace Pomodoro.Services.Models
                             " for month template length - 31 symbols," +
                             " at least one non-zero value",
                             new List<string> { nameof(this.Template) }));
+                    }
+                    else
+                    {
+                        if (template[this.StartDt.Day] != '1')
+                        {
+                            results.Add(new ValidationResult(
+                                "Start datetime should should correspond for first task date in your template",
+                                new List<string> { nameof(this.ScheduleType), nameof(this.StartDt) }));
+                        }
                     }
 
                     break;
@@ -275,33 +327,17 @@ namespace Pomodoro.Services.Models
                 case ScheduleType.Sequence:
                     if (string.IsNullOrWhiteSpace(this.Template)
                         || this.Template.Length < 2
-                        || this.Template.Count(ch => ch == '1') < 2
-                        || this.Template.EndsWith('1'))
+                        || this.Template.Count(ch => ch == '1') < 2)
                     {
                         results.Add(new ValidationResult(
                             "Template should correspond to schedule type," +
                             " for sequance template expected more than one '1' character," +
-                            "template should begins with '1' ends with '0' character," +
+                            "template should begins with '1'," +
                             " for example '1001000100'",
                             new List<string> { nameof(this.Template) }));
                     }
 
                     break;
-            }
-
-            if (this.StartDt < DateTime.Now)
-            {
-                results.Add(new ValidationResult(
-                    "Start date and time should be planned in future",
-                    new List<string> { nameof(this.StartDt) }));
-            }
-
-            if (this.FinishDt != DateTime.MinValue
-                && this.FinishDt < this.StartDt)
-            {
-                results.Add(new ValidationResult(
-                    "Finish date and time should be planned after strat date and time",
-                    new List<string> { nameof(this.FinishDt) }));
             }
 
             if (this.AllocatedDuration < 0

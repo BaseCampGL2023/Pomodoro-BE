@@ -54,6 +54,7 @@ namespace Pomodoro.Services.Models
             this.Description = entity.Description;
             this.AppUserId = isMapOwner ? entity.AppUserId : Guid.Empty;
 
+            this.Tasks = this.Tasks.Any() ? new List<TaskModel>() : this.Tasks;
             foreach (var task in entity.Tasks)
             {
                 var model = new TaskModel();
@@ -61,6 +62,7 @@ namespace Pomodoro.Services.Models
                 this.Tasks.Add(model);
             }
 
+            this.Schedules = this.Schedules.Any() ? new List<ScheduleModel>() : this.Schedules;
             foreach (var schedule in entity.Schedules)
             {
                 var model = new ScheduleModel();

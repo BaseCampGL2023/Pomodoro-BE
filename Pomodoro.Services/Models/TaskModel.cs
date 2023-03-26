@@ -117,6 +117,7 @@ namespace Pomodoro.Services.Models
                 (int)entity.AllocatedDuration.Value.TotalSeconds : 0;
             this.Category = entity.Category?.Name;
             this.OwnerId = isMapOwner ? entity.AppUserId : Guid.Empty;
+            this.ScheduleId = entity.ScheduleId;
             this.Schedule = entity.Schedule?.Title;
             this.Pomodoros = entity.Pomodoros.Any() ?
                 entity.Pomodoros.Select(e => PomoModel.Create(e)).ToList() : new List<PomoModel>();
