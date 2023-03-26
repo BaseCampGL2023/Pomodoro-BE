@@ -86,9 +86,18 @@ namespace Pomodoro.Services.Realizations
         {
             var userTasks = await _tasksRepo.FindAllAsync(t => t.UserId == userId);
 
-            var tasksOnDate = userTasks.Where(t => IsTaskOnDate(t, date.Date)).ToList();
+            var tasksOnDate = userTasks.Where(t => IsTaskOnDate(t, date)).ToList();
 
             return _mapper.Map<IEnumerable<TaskModel>>(tasksOnDate);
+        }
+
+        public async Task<IEnumerable<TaskModel>> GetCompletedTasksByDateAsync(Guid userId, DateTime date)
+        {
+            var userTasks = await _tasksRepo.FindAllAsync(t => t.UserId == userId);
+
+            var completedTasksOnDate = userTasks.Where(t => IsTaskCompletedOnDate(t, date)).ToList();
+
+            return _mapper.Map<IEnumerable<TaskModel>>(completedTasksOnDate);
         }
 
         public async Task DeleteTaskAsync(TaskModel taskModel)
@@ -160,7 +169,7 @@ namespace Pomodoro.Services.Realizations
 
             if (task == null)
             {
-                return null;
+                throw new InvalidOperationException("Can`t find task in db.");
             }
 
             task.Title = taskModel.Title;
@@ -181,6 +190,16 @@ namespace Pomodoro.Services.Realizations
             return _mapper.Map<TaskModel>(task);
         }
 
+        private bool IsTaskCompletedOnDate(TaskEntity task, DateTime date)
+        {
+            if (task.CompletedTasks == null)
+            {
+                return false;
+            }
+
+           return task.CompletedTasks.Any(c => c.ActualDate.Date == date.Date && c.IsDone);
+        }
+
         private bool IsTaskOnDate(TaskEntity task, DateTime date)
         {
             if (task.Frequency == null || task.Frequency.FrequencyType == null)
@@ -188,10 +207,13 @@ namespace Pomodoro.Services.Realizations
                 return false;
             }
 
+            var dateOnly = date.Date;
+            var initialDateOnly = task.InitialDate.Date;
+
             switch (task.Frequency.FrequencyType.Value)
             {
                 case FrequencyValue.None:
-                    return task.InitialDate.Date == date;
+                    return initialDateOnly == dateOnly;
 
                 case FrequencyValue.Day:
                     {
@@ -200,9 +222,9 @@ namespace Pomodoro.Services.Realizations
                         if (task.Frequency.IsCustom)
                             every = task.Frequency.Every;
 
-                        for (var d = task.InitialDate.Date; d <= date; d = d.AddDays(every))
+                        for (var d = initialDateOnly; d <= dateOnly; d = d.AddDays(every))
                         {
-                            if (d == date)
+                            if (d == dateOnly)
                                 return true;
                         }
                         return false;
@@ -210,9 +232,9 @@ namespace Pomodoro.Services.Realizations
 
                 case FrequencyValue.Week:
                     {
-                        for (var d = task.InitialDate.Date; d <= date; d = d.AddDays(7))
+                        for (var d = initialDateOnly; d <= dateOnly; d = d.AddDays(7))
                         {
-                            if (d == date)
+                            if (d == dateOnly)
                                 return true;
                         }
                         return false;
@@ -225,9 +247,9 @@ namespace Pomodoro.Services.Realizations
                         if (task.Frequency.IsCustom)
                             every = task.Frequency.Every;
 
-                        for (var d = task.InitialDate.Date; d <= date; d = d.AddMonths(every))
+                        for (var d = initialDateOnly; d <= dateOnly; d = d.AddMonths(every))
                         {
-                            if (d == date)
+                            if (d == dateOnly)
                                 return true;
                         }
                         return false;
@@ -240,19 +262,19 @@ namespace Pomodoro.Services.Realizations
                         if (task.Frequency.IsCustom)
                             every = task.Frequency.Every;
 
-                        for (var d = task.InitialDate.Date; d <= date; d = d.AddYears(every))
+                        for (var d = initialDateOnly; d <= dateOnly; d = d.AddYears(every))
                         {
-                            if (d == date)
+                            if (d == dateOnly)
                                 return true;
                         }
                         return false;
                     }
 
                 case FrequencyValue.Workday:
-                    return !IsWeekend(date) && task.InitialDate.Date <= date;
+                    return !IsWeekend(dateOnly) && initialDateOnly <= dateOnly;
 
                 case FrequencyValue.Weekend:
-                    return IsWeekend(date) && task.InitialDate.Date <= date;
+                    return IsWeekend(dateOnly) && initialDateOnly <= dateOnly;
 
                 default:
                     return false;
