@@ -386,7 +386,7 @@ namespace Pomodoro.Dal.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<DateTime?>("FinishDt")
+                    b.Property<DateTime>("FinishAtDt")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
@@ -394,9 +394,6 @@ namespace Pomodoro.Dal.Migrations
 
                     b.Property<DateTime?>("ModifiedDt")
                         .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("PreviousId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<byte>("ScheduleType")
                         .HasColumnType("tinyint")
@@ -420,10 +417,6 @@ namespace Pomodoro.Dal.Migrations
                     b.HasIndex("AppUserId");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("PreviousId")
-                        .IsUnique()
-                        .HasFilter("[PreviousId] IS NOT NULL");
 
                     b.ToTable("Schedules");
 
@@ -608,15 +601,9 @@ namespace Pomodoro.Dal.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .HasConstraintName("FK_Schedules_Categories_CategoryId");
 
-                    b.HasOne("Pomodoro.Dal.Entities.Schedule", "Previous")
-                        .WithOne()
-                        .HasForeignKey("Pomodoro.Dal.Entities.Schedule", "PreviousId");
-
                     b.Navigation("AppUser");
 
                     b.Navigation("Category");
-
-                    b.Navigation("Previous");
                 });
 
             modelBuilder.Entity("Pomodoro.Dal.Entities.TimerSettings", b =>

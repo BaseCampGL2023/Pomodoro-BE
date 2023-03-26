@@ -112,7 +112,7 @@ namespace Pomodoro.Tests.ServiceTests.UtilityTests
                 Title = "schedule",
                 Template = template,
                 StartDt = DateTime.Parse(scheduleStart),
-                FinishDt = string.IsNullOrWhiteSpace(scheduleFinish) ? null : DateTime.Parse(scheduleFinish),
+                FinishAtDt = string.IsNullOrWhiteSpace(scheduleFinish) ? DateTime.Parse(scheduleStart).AddYears(1) : DateTime.Parse(scheduleFinish),
             };
 
             // Act

@@ -233,10 +233,9 @@ namespace Pomodoro.Dal.Migrations
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
                     ModifiedDt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    FinishDt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    FinishAtDt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AllocatedDuration = table.Column<long>(type: "bigint", nullable: false),
                     StartDt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PreviousId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -253,11 +252,6 @@ namespace Pomodoro.Dal.Migrations
                         name: "FK_Schedules_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Schedules_Schedules_PreviousId",
-                        column: x => x.PreviousId,
-                        principalTable: "Schedules",
                         principalColumn: "Id");
                 });
 
@@ -410,13 +404,6 @@ namespace Pomodoro.Dal.Migrations
                 name: "IX_Schedules_CategoryId",
                 table: "Schedules",
                 column: "CategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Schedules_PreviousId",
-                table: "Schedules",
-                column: "PreviousId",
-                unique: true,
-                filter: "[PreviousId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TimerSettings_AppUserId",

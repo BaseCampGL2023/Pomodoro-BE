@@ -247,9 +247,6 @@ namespace Pomodoro.Dal.Data
                 entity.HasCheckConstraint(
                     "ScheduleType",
                     $"ScheduleType >= 1 AND ScheduleType < {scheduleTypeLimit}");
-
-                entity.HasOne(e => e.Previous)
-                    .WithOne();
             });
 
             builder.Entity<Category>(entity =>

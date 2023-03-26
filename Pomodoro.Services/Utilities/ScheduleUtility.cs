@@ -129,7 +129,7 @@ namespace Pomodoro.Services.Utilities
                 return false;
             }
 
-            if (schedule.FinishDt != null && fromDate > schedule.FinishDt)
+            if (fromDate > schedule.FinishAtDt)
             {
                 return false;
             }
@@ -236,7 +236,7 @@ namespace Pomodoro.Services.Utilities
         {
             List<AppTask> tasks = new ();
             DateTime current = model.StartDt;
-            DateTime finish = model.FinishAt != null ? model.FinishAt.Value : model.StartDt.AddYears(1);
+            DateTime finish = model.FinishAt;
             int idx = 1;
             int pos = 0;
             var template = model.Template.ToCharArray();
@@ -271,7 +271,7 @@ namespace Pomodoro.Services.Utilities
         {
             List<AppTask> tasks = new ();
             DateTime current = model.StartDt;
-            DateTime finish = model.FinishAt != null ? model.FinishAt.Value : model.StartDt.AddYears(1);
+            DateTime finish = model.FinishAt;
             int idx = 1;
             var template = model.Template.ToCharArray();
 
@@ -300,7 +300,7 @@ namespace Pomodoro.Services.Utilities
         {
             List<AppTask> tasks = new ();
             DateTime current = model.StartDt;
-            DateTime finish = model.FinishAt != null ? model.FinishAt.Value : model.StartDt.AddYears(1);
+            DateTime finish = model.FinishAt;
             int idx = 1;
             var template = model.Template.ToCharArray();
 
@@ -332,7 +332,7 @@ namespace Pomodoro.Services.Utilities
         {
             List<AppTask> tasks = new ();
             DateTime current = model.StartDt;
-            DateTime finish = model.FinishAt != null ? model.FinishAt.Value : model.StartDt.AddYears(1);
+            DateTime finish = model.FinishAt;
             int idx = 1;
             var template = model.Template.ToCharArray();
 
@@ -364,7 +364,7 @@ namespace Pomodoro.Services.Utilities
         {
             List<AppTask> tasks = new ();
             DateTime current = model.StartDt;
-            DateTime finish = model.FinishAt != null ? model.FinishAt.Value : model.StartDt.AddYears(50);
+            DateTime finish = model.FinishAt;
             int idx = 1;
 
             while (current <= finish)
@@ -391,7 +391,7 @@ namespace Pomodoro.Services.Utilities
         {
             List<AppTask> tasks = new ();
             DateTime current = model.StartDt;
-            DateTime finish = model.FinishAt != null ? model.FinishAt.Value : model.StartDt.AddYears(1);
+            DateTime finish = model.FinishAt;
             int idx = 1;
 
             while (current <= finish)
@@ -423,7 +423,7 @@ namespace Pomodoro.Services.Utilities
         {
             List<AppTask> tasks = new ();
             DateTime current = model.StartDt;
-            DateTime finish = model.FinishAt != null ? model.FinishAt.Value : model.StartDt.AddYears(1);
+            DateTime finish = model.FinishAt;
             int idx = 1;
 
             while (current <= finish)
@@ -455,7 +455,7 @@ namespace Pomodoro.Services.Utilities
         {
             List<AppTask> tasks = new ();
             DateTime current = model.StartDt;
-            DateTime finish = model.FinishAt != null ? model.FinishAt.Value : model.StartDt.AddYears(1);
+            DateTime finish = model.FinishAt;
             int idx = 1;
 
             while (current <= finish)

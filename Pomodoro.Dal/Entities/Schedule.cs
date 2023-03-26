@@ -58,9 +58,9 @@ namespace Pomodoro.Dal.Entities
         public DateTime? ModifiedDt { get; set; }
 
         /// <summary>
-        /// Gets or sets DateTime when routine finished.
+        /// Gets or sets DateTime when schedule finished.
         /// </summary>
-        public DateTime? FinishDt { get; set; }
+        public DateTime FinishAtDt { get; set; }
 
         /// <summary>
         /// Gets or sets planned duration of the routine round.
@@ -71,18 +71,6 @@ namespace Pomodoro.Dal.Entities
         /// Gets or sets planned start time.
         /// </summary>
         public DateTime StartDt { get; set; }
-
-        /// <summary>
-        /// Gets or sets foreign key to Schedule entity.
-        /// </summary>
-        public Guid? PreviousId { get; set; }
-
-        /// <summary>
-        /// Gets or sets navigation property represents shedule, optional.
-        /// Created if schedule type or schedule template for existing scheduled task
-        /// changed.
-        /// </summary>
-        public Schedule? Previous { get; set; }
 
         /// <summary>
         /// Gets or sets foreign key to AppUser entity.

@@ -56,8 +56,8 @@ namespace Pomodoro.Services.Models
         /// <summary>
         /// Gets or sets DateTime when routine finished.
         /// </summary>
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public DateTime? FinishAt { get; set; }
+        [Required(ErrorMessage = "Finish datetime is required")]
+        public DateTime FinishAt { get; set; }
 
         /// <summary>
         /// Gets or sets planned start time.
@@ -68,6 +68,8 @@ namespace Pomodoro.Services.Models
         /// <summary>
         /// Gets or sets planned duration of the routine round.
         /// </summary>
+        [Required(ErrorMessage = "Allocated duration is required")]
+        [Range(60, 86400, ErrorMessage = "Allocated duration should be between one minute and 1 day.")]
         public int AllocatedDuration { get; set; }
 
         /// <summary>
@@ -89,12 +91,6 @@ namespace Pomodoro.Services.Models
         public Guid OwnerId { get; set; }
 
         /// <summary>
-        /// Gets or sets foreign key to Schedule entity.
-        /// </summary>
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public Guid? PreviousId { get; set; }
-
-        /// <summary>
         /// Gets or sets collection of TaskModel related to this schedule.
         /// </summary>
         public ICollection<TaskModel> Tasks { get; set; } = new List<TaskModel>();
@@ -112,14 +108,13 @@ namespace Pomodoro.Services.Models
             this.ScheduleType = entity.ScheduleType;
             this.Template = entity.Template;
             this.CreatedDt = entity.CreatedDt;
-            this.FinishAt = entity.FinishDt;
+            this.FinishAt = entity.FinishAtDt;
             this.StartDt = entity.StartDt;
             this.IsActive = entity.IsActive;
             this.AllocatedDuration = (int)entity.AllocatedDuration.TotalSeconds;
             this.Category = entity.Category?.Name;
             this.CategoryId = entity.Category?.Id;
             this.OwnerId = isMapOwner ? entity.AppUserId : Guid.Empty;
-            this.PreviousId = entity.PreviousId;
             this.Tasks = this.Tasks.Any() ? new List<TaskModel>() : this.Tasks;
             foreach (var task in entity.Tasks)
             {
@@ -146,12 +141,11 @@ namespace Pomodoro.Services.Models
                 CreatedDt = this.CreatedDt == DateTime.MinValue
                     ? DateTime.UtcNow : this.CreatedDt,
                 StartDt = this.StartDt,
-                FinishDt = this.FinishAt,
+                FinishAtDt = this.FinishAt,
                 AllocatedDuration = TimeSpan.FromSeconds(this.AllocatedDuration),
                 CategoryId = this.CategoryId,
                 AppUserId = userId,
                 IsActive = this.IsActive,
-                PreviousId = this.PreviousId,
                 Tasks = this.Tasks.Any() ?
                     this.Tasks.Select(e => e.ToDalEntity(userId)).ToList() : new List<AppTask>(),
             };
@@ -179,11 +173,18 @@ namespace Pomodoro.Services.Models
                     new List<string> { nameof(this.StartDt) }));
             }
 
-            if (this.FinishAt != DateTime.MinValue
-                && this.FinishAt < this.StartDt)
+            if (this.FinishAt < this.StartDt)
             {
                 results.Add(new ValidationResult(
                     "Finish date and time should be planned after strat date and time",
+                    new List<string> { nameof(this.FinishAt) }));
+            }
+
+            if (this.ScheduleType != ScheduleType.AnnualOnDate
+                && this.FinishAt > this.StartDt.AddYears(1))
+            {
+                results.Add(new ValidationResult(
+                    "You can create planned tasks only for one year",
                     new List<string> { nameof(this.FinishAt) }));
             }
 
@@ -195,8 +196,6 @@ namespace Pomodoro.Services.Models
                             "Only '0' and '1' symbols expected in template",
                             new List<string> { nameof(this.Template) }));
             }
-
-            var template = this.Template.ToCharArray();
 
             switch (this.ScheduleType)
             {
@@ -317,14 +316,6 @@ namespace Pomodoro.Services.Models
                     }
 
                     break;
-            }
-
-            if (this.AllocatedDuration < 0
-                || this.AllocatedDuration > 86400)
-            {
-                results.Add(new ValidationResult(
-                    "If you provide allocated duration it should be less than one day",
-                    new List<string> { nameof(this.FinishAt) }));
             }
 
             return results;
