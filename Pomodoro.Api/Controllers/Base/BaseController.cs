@@ -158,9 +158,9 @@ namespace Pomodoro.Api.Controllers.Base
         /// <param name="model">Exisitng object.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         [HttpPut("own/{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [SwaggerResponse(204, "Update successfully")]
+        [SwaggerResponse(200, "Update successfully")]
         [SwaggerResponse(400, "No schedule with such id for this user")]
         public virtual async Task<ActionResult> UpdateOne(Guid id, TM model)
         {

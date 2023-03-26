@@ -46,6 +46,7 @@ namespace Pomodoro.Services
                 };
             }
 
+            model.OwnerId = ownerId;
             List<AppTask> tasks = ScheduleUtility.CreateTasks(model);
 
             List<AppTask> existingScheduled = (await this.taskRepository.GetScheduledAllAsync(
