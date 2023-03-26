@@ -49,6 +49,15 @@ namespace Pomodoro.Services
             model.OwnerId = ownerId;
             List<AppTask> tasks = ScheduleUtility.CreateTasks(model);
 
+            if (tasks.Count == 0)
+            {
+                return new ServiceResponse<bool>
+                {
+                    Result = ResponseType.Error,
+                    Message = $"No tasks could be planned with this schedule.",
+                };
+            }
+
             List<AppTask> existingScheduled = (await this.taskRepository.GetScheduledAllAsync(
                 ownerId,
                 model.StartDt,
@@ -110,7 +119,7 @@ namespace Pomodoro.Services
             if (model.ScheduleType == previous.ScheduleType
                 && model.Template == previous.Template
                 && model.StartDt == previous.StartDt
-                && model.FinishAt == previous.FinishDt
+                && model.FinishAt == previous.FinishAtDt
                 && model.CategoryId == previous.CategoryId)
             {
                 return await base.UpdateOneOwnAsync(model, ownerId);
@@ -121,7 +130,7 @@ namespace Pomodoro.Services
                 if (model.ScheduleType == previous.ScheduleType
                     && model.Template == previous.Template
                     && model.StartDt == previous.StartDt
-                    && model.FinishAt == previous.FinishDt)
+                    && model.FinishAt == previous.FinishAtDt)
                 {
                     foreach (var task in previous.Tasks)
                     {
@@ -130,13 +139,70 @@ namespace Pomodoro.Services
 
                     return await base.UpdateOneOwnAsync(model, ownerId);
                 }
+                else if (model.ScheduleType == previous.ScheduleType
+                    && model.Template == previous.Template
+                    && model.StartDt == previous.StartDt)
+                {
+                    if (previous.FinishAtDt < model.FinishAt)
+                    {
+                        var deleted = previous.Tasks.Where(t => t.StartDt > model.FinishAt).ToList();
+                        await this.taskRepository.DeleteRangeAsync(deleted);
+                        return await base.UpdateOneOwnAsync(model, ownerId);
+                    }
+                    else
+                    {
+                        // TODO: add new tasks.
+                        return await base.UpdateOneOwnAsync(model, ownerId);
+                    }
+                }
+                else if (model.StartDt == previous.StartDt)
+                {
+                    // TODO: rebuild tasks.
+                    return await base.UpdateOneOwnAsync(model, ownerId);
+                }
                 else
                 {
-                    return new ServiceResponse<bool> { Result = ResponseType.Error, Message = "Schedule has planned tasks, create new schedule instead" };
+                    return new ServiceResponse<bool>
+                    {
+                        Result = ResponseType.Error,
+                        Message = "Schedule has planned tasks - delete them or create new schedule instead",
+                    };
                 }
             }
+            else
+            {
+                return await base.UpdateOneOwnAsync(model, ownerId);
+            }
+        }
 
-            return await base.UpdateOneOwnAsync(model, ownerId);
+        /// <inheritdoc/>
+        public override async Task<ServiceResponse<bool>> DeleteOneOwnAsync(Guid id, Guid ownerId)
+        {
+            try
+            {
+                var schedule = await this.Repo.GetByIdWithRelatedAsync(id);
+                if (schedule == null)
+                {
+                    return new ServiceResponse<bool> { Result = ResponseType.Error, Message = "Wrong data" };
+                }
+
+                var deleted = schedule.Tasks.Where(t => t.StartDt > DateTime.UtcNow).ToList();
+                await this.taskRepository.DeleteRangeAsync(deleted);
+                int result = await this.Repo.DeleteAsync(schedule, true);
+                if (result > 0)
+                {
+                    return new ServiceResponse<bool> { Result = ResponseType.NoContent, Data = true };
+                }
+                else
+                {
+                    this.Logger.LogCritical("Unpredictable path of execution, entity shouldn't delete, exception not thrown.");
+                    return new ServiceResponse<bool> { Result = ResponseType.Error, Message = "Something went wrong" };
+                }
+            }
+            catch (PomoConcurrencyException)
+            {
+                return new ServiceResponse<bool> { Result = ResponseType.Error, Message = "Wrong data" };
+            }
         }
     }
 }
