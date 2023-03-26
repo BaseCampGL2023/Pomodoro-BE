@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Pomodoro.Core.Interfaces.IServices;
-using Pomodoro.Core.Models.Frequency;
+using Pomodoro.Core.Models;
 using Pomodoro.DataAccess.Entities;
 using Pomodoro.DataAccess.Repositories.Interfaces;
 

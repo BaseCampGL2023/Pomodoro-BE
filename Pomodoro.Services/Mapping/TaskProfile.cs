@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Pomodoro.Core.Enums;
-using Pomodoro.Core.Models.Tasks;
+using Pomodoro.Core.Models;
 using Pomodoro.DataAccess.Entities;
 
 namespace Pomodoro.Services.Mapping

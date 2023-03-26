@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Pomodoro.Api.Controllers.Base;
 using Pomodoro.Api.ViewModels;
 using Pomodoro.Core.Interfaces.IServices;
-using Pomodoro.Core.Models.Tasks;
+using Pomodoro.Core.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Pomodoro.Api.Controllers

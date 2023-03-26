@@ -1,4 +1,4 @@
-﻿using Pomodoro.Core.Models.Tasks;
+﻿using Pomodoro.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

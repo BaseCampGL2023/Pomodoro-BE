@@ -4,7 +4,7 @@
 
 using AutoMapper;
 using Pomodoro.Api.ViewModels;
-using Pomodoro.Core.Models.Frequency;
+using Pomodoro.Core.Models;
 
 namespace Pomodoro.Api.Mapping
 {

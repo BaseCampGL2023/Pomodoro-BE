@@ -2,7 +2,6 @@
 using Pomodoro.DataAccess.EF;
 using Pomodoro.DataAccess.Entities;
 using Pomodoro.DataAccess.Repositories.Interfaces;
-using System;
 using System.Linq.Expressions;
 
 namespace Pomodoro.DataAccess.Repositories.Realizations

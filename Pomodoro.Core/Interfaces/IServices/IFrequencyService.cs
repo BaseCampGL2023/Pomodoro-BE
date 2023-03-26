@@ -1,4 +1,4 @@
-﻿using Pomodoro.Core.Models.Frequency;
+﻿using Pomodoro.Core.Models;
 
 namespace Pomodoro.Core.Interfaces.IServices
 {

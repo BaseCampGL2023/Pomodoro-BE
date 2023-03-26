@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using Pomodoro.Core.Enums;
 using Pomodoro.Core.Interfaces.IServices;
-using Pomodoro.Core.Models.Frequency;
-using Pomodoro.Core.Models.Tasks;
+using Pomodoro.Core.Models;
 using Pomodoro.DataAccess.Entities;
 using Pomodoro.DataAccess.Repositories.Interfaces;
 
@@ -43,7 +42,6 @@ namespace Pomodoro.Services.Realizations
         {
             taskModel.Frequency ??= new FrequencyModel
             {
-                FrequencyValue = FrequencyValue.None,
                 IsCustom = false,
                 Every = 0
             };
