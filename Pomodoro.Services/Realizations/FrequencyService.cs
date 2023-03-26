@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Pomodoro.Core.Enums;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.Core.Models;
 using Pomodoro.DataAccess.Entities;
@@ -28,14 +29,12 @@ namespace Pomodoro.Services.Realizations
                 throw new ArgumentNullException(nameof(freqModel), "Can`t be Null.");
             }
 
-            var freqTypes = await _freqTypeRepo.FindAsync(ft => ft.Value == freqModel.FrequencyValue);
+            var freqTypeId = await GetFrequencyTypeIdAsync(freqModel.FrequencyValue);
 
-            if (freqTypes == null)
+            if (freqTypeId == Guid.Empty)
             {
                 throw new InvalidOperationException("Can`t find frequency type in db.");
             }
-
-            var freqTypeId = freqTypes.Select(ft => ft.Id).FirstOrDefault();
 
             var freq = _mapper.Map<Frequency>(freqModel);
 
@@ -46,16 +45,33 @@ namespace Pomodoro.Services.Realizations
             return _mapper.Map<FrequencyModel>(freq);
         }
 
-        public async Task<FrequencyModel> GetFrequencyByIdAsync(Guid freqId) 
+        public async Task<Guid> GetFrequencyIdAsync(FrequencyModel freqModel)
         {
-            var freq = await _freqRepo.GetByIdAsync(freqId);
+            if (freqModel == null)
+            {
+                throw new ArgumentNullException(nameof(freqModel), "Can`t be Null.");
+            }
+
+            var freqTypeId = await GetFrequencyTypeIdAsync(freqModel.FrequencyValue);
+
+            if (freqTypeId == Guid.Empty)
+            {
+                throw new InvalidOperationException("Can`t find frequency with frequency type in db.");
+            }
+
+            var freqs = await _freqRepo.FindAsync(f => 
+            f.FrequencyTypeId == freqTypeId && 
+            f.IsCustom == freqModel.IsCustom && 
+            f.Every == freqModel.Every);
+
+            var freq = freqs.FirstOrDefault();
 
             if (freq == null)
             {
                 throw new InvalidOperationException("Can`t find frequency in db.");
             }
 
-            return _mapper.Map<FrequencyModel>(freq);
+            return freq.Id;
         }
 
         public async Task<FrequencyModel> UpdateFrequencyAsync(FrequencyModel freqModel)
@@ -69,14 +85,15 @@ namespace Pomodoro.Services.Realizations
 
             if (freq.FrequencyType.Value != freqModel.FrequencyValue)
             {
-                var freqType = await _freqTypeRepo.FindAsync(ft => ft.Value == freqModel.FrequencyValue);
 
-                if (freqType == null)
+                var freqTypeId = await GetFrequencyTypeIdAsync(freqModel.FrequencyValue);
+
+                if (freqTypeId == Guid.Empty)
                 {
                     throw new InvalidOperationException("Can`t find frequency type in db.");
                 }
 
-                freq.FrequencyTypeId = freqType.Select(ft => ft.Id).FirstOrDefault();
+                freq.FrequencyTypeId = freqTypeId;
             }
 
             freq.IsCustom = freqModel.IsCustom;
@@ -97,6 +114,13 @@ namespace Pomodoro.Services.Realizations
             }
 
             _freqRepo.Remove(freq);
+        }
+
+        private async Task<Guid> GetFrequencyTypeIdAsync(FrequencyValue freqValue)
+        {
+            var freqTypes = await _freqTypeRepo.FindAsync(ft => ft.Value == freqValue);
+
+            return freqTypes.Select(ft => ft.Id).FirstOrDefault();
         }
     }
 }
