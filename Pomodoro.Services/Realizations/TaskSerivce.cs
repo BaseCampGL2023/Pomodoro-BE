@@ -253,11 +253,21 @@ namespace Pomodoro.Services.Realizations
                 throw new ArgumentNullException(nameof(pomodoroModel), "Can`t be Null.");
             }
 
-            var taskExists = await _tasksRepo.HasByIdAsync(pomodoroModel.TaskId);
+            var task = await _tasksRepo.FindOneTaskAsync(pomodoroModel.TaskId);
 
-            if (!taskExists)
+            if (task == null)
             {
                 throw new InvalidOperationException("Can`t find task in db.");
+            }
+
+            if(task.CompletedTasks != null && task.CompletedTasks.Any())
+            {
+                var lastPomodoro = task.CompletedTasks.Where(p => p.ActualDate.Date == DateTime.Now.Date).Last();
+
+                if(lastPomodoro != null && lastPomodoro.IsDone) 
+                {
+                    throw new InvalidOperationException("Task is already finished for today.");
+                }
             }
 
             var pomodoro = _mapper.Map<Completed>(pomodoroModel);
