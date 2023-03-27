@@ -9,7 +9,6 @@ using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Repositories.Interfaces;
 using Pomodoro.Services;
 using Pomodoro.Services.Models;
-using Pomodoro.Services.Models.Results;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Pomodoro.Api.Controllers
@@ -51,6 +50,11 @@ namespace Pomodoro.Api.Controllers
         [SwaggerResponse(409, "Schedule has planned or performed tasks - delete them or create new schedule instead")]
         public override async Task<ActionResult> UpdateOne(Guid id, ScheduleModel model)
         {
+            if (model.StartDt < this.UserCreatedAt)
+            {
+                return this.BadRequest("Schedule start datetime cannot set before user registration date.");
+            }
+
             return await base.UpdateOne(id, model);
         }
 
@@ -69,6 +73,11 @@ namespace Pomodoro.Api.Controllers
         [SwaggerResponse(409, "This schedule intersect with tasks from other schedule")]
         public override async Task<ActionResult<ScheduleModel>> AddOne([FromBody] ScheduleModel model)
         {
+            if (model.StartDt < this.UserCreatedAt)
+            {
+                return this.BadRequest("Schedule start datetime cannot set before user registration date.");
+            }
+
             return await base.AddOne(model);
         }
     }

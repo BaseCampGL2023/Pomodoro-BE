@@ -13,9 +13,6 @@ namespace Pomodoro.Services.Models
     /// <summary>
     /// Represent task for client.
     /// </summary>
-     
-    // TODO: start DT validation. 
-
     public class TaskModel : IBaseModel<AppTask>
     {
         /// <summary>

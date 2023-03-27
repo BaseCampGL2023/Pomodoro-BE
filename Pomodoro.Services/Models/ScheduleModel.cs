@@ -173,13 +173,6 @@ namespace Pomodoro.Services.Models
             List<ValidationResult> results = new ();
 
             // TODO: how validate related tasks;
-            // TODO: DELETE
-            if (this.StartDt < DateTime.UtcNow)
-            {
-                results.Add(new ValidationResult(
-                    "Start date and time should be planned in future",
-                    new List<string> { nameof(this.StartDt) }));
-            }
 
             if (this.FinishAt < this.StartDt)
             {
