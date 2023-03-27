@@ -115,9 +115,18 @@ namespace Pomodoro.Services
                         };
                     }
                 }
+
+                if (previous.StartDt != model.StartDt
+                    || previous.AllocatedDuration.TotalSeconds != model.AllocatedDuration)
+                {
+                    return new ServiceResponse<bool>
+                    {
+                        Result = ResponseType.Error,
+                        Message = "Instead changing start datetime, delete task from schedule.",
+                    };
+                }
             }
 
-            // TODO: check task intersection
             return await base.UpdateOneOwnAsync(model, ownerId);
         }
 
