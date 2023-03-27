@@ -5,7 +5,7 @@ using Pomodoro.Core.Models.Tasks;
 using Pomodoro.DataAccess.Entities;
 using Pomodoro.DataAccess.Repositories.Interfaces;
 
-namespace Pomodoro.Services.Services.Realizations
+namespace Pomodoro.Services.Realizations
 {
     public class TaskService : ITaskService
     {

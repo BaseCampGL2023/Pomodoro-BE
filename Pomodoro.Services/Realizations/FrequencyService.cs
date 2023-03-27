@@ -4,7 +4,7 @@ using Pomodoro.Core.Models.Frequency;
 using Pomodoro.DataAccess.Entities;
 using Pomodoro.DataAccess.Repositories.Interfaces;
 
-namespace Pomodoro.Services.Services.Realizations
+namespace Pomodoro.Services.Realizations
 {
     public class FrequencyService : IFrequencyService
     {
