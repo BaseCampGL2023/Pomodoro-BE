@@ -28,6 +28,8 @@ builder.Services.AddRepositories();
 builder.Services.AddIdentityEF();
 
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<IFrequencyService, FrequencyService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
 
 builder.Services.AddScoped<ISettingsService, SettingsService>();
 

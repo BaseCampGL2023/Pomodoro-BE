@@ -4,7 +4,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using Pomodoro.DataAccess.Entities;
-using Pomodoro.DataAccess.Enums;
+using Pomodoro.Core.Enums;
 
 namespace Pomodoro.DataAccess.Extensions
 {

@@ -3,7 +3,7 @@
 // </copyright>
 
 using Microsoft.EntityFrameworkCore;
-using Pomodoro.DataAccess.Enums;
+using Pomodoro.Core.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Pomodoro.DataAccess.Entities
