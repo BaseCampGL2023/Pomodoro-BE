@@ -186,9 +186,6 @@ namespace Pomodoro.Dal.Data
                 entity.Property(e => e.AllocatedDuration)
                     .HasConversion<long>();
 
-                entity.Property(e => e.CreatedDt).IsRequired()
-                    .HasDefaultValueSql("GETUTCDATE()");
-
                 entity.Property(e => e.AppUserId).IsConcurrencyToken();
 
                 entity.HasMany(e => e.Pomodoros)
@@ -207,11 +204,6 @@ namespace Pomodoro.Dal.Data
             builder.Entity<PomoUnit>(entity =>
             {
                 entity.ToTable("Pomodoros");
-
-
-                // TODO: DELETE
-                entity.Property(e => e.Comment)
-                    .HasMaxLength(1000);
 
                 entity.Property(e => e.Duration)
                     .IsRequired().HasConversion<long>();
@@ -238,9 +230,6 @@ namespace Pomodoro.Dal.Data
                 .HasColumnName("ScheduleType").HasConversion<byte>();
 
                 entity.Property(e => e.AppUserId).IsConcurrencyToken();
-
-                entity.Property(e => e.CreatedDt).IsRequired()
-                    .HasDefaultValueSql("GETUTCDATE()");
 
                 entity.Property(e => e.Description).HasMaxLength(PomoConstants.ScheduleDescriptionMaxLength);
 

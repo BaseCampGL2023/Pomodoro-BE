@@ -5,7 +5,6 @@
 using Pomodoro.Dal.Entities.Base;
 
 // TODO: delete it's usefull
-
 namespace Pomodoro.Dal.Repositories.Interfaces
 {
     /// <summary>

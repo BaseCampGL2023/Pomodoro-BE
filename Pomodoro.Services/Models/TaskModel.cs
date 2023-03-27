@@ -47,11 +47,6 @@ namespace Pomodoro.Services.Models
         public int SequenceNumber { get; set; }
 
         /// <summary>
-        /// Gets or sets DateTime when task created.
-        /// </summary>
-        public DateTime CreatedDt { get; set; }
-
-        /// <summary>
         /// Gets or sets planned start time.
         /// </summary>
         public DateTime StartDt { get; set; }
@@ -115,7 +110,6 @@ namespace Pomodoro.Services.Models
             this.Title = entity.Title;
             this.Description = entity.Description;
             this.SequenceNumber = entity.ScheduleId != null ? entity.SequenceNumber : 0;
-            this.CreatedDt = entity.CreatedDt;
             this.StartDt = entity.StartDt;
             this.FinishDt = entity.FinishDt;
             this.AllocatedDuration = (int)entity.AllocatedDuration.TotalSeconds;
@@ -141,8 +135,6 @@ namespace Pomodoro.Services.Models
                 Description = this.Description,
                 SequenceNumber = this.SequenceNumber > 0 ?
                     this.SequenceNumber : 0,
-                CreatedDt = this.CreatedDt == DateTime.MinValue
-                    ? DateTime.UtcNow : this.CreatedDt,
                 StartDt = this.StartDt,
                 FinishDt = this.FinishDt,
                 AllocatedDuration = TimeSpan.FromSeconds(this.AllocatedDuration),

@@ -8,7 +8,7 @@ using Pomodoro.Dal.Repositories.Interfaces;
 using Pomodoro.Services.Base;
 using Pomodoro.Services.Models;
 
-// TODO: GetWithTasks, GetWithSchedules
+// TODO: GetWithTasks, GetWithSchedules, GetEmpty
 namespace Pomodoro.Services
 {
     /// <summary>

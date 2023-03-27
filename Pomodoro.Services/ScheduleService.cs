@@ -11,7 +11,7 @@ using Pomodoro.Services.Models;
 using Pomodoro.Services.Models.Results;
 using Pomodoro.Services.Utilities;
 
-// TODO: GetActive, GetCompleted
+// TODO: GetActive, GetCompleted, GetEmpty
 namespace Pomodoro.Services
 {
     /// <summary>
@@ -36,8 +36,6 @@ namespace Pomodoro.Services
         /// <inheritdoc/>
         public override async Task<ServiceResponse<bool>> AddOneOwnAsync(ScheduleModel model, Guid ownerId)
         {
-            // We can't save non-active schedule.
-            model.IsActive = true;
             if (model.Tasks.Any())
             {
                 return new ServiceResponse<bool>

@@ -118,7 +118,6 @@ namespace Pomodoro.Services
             }
 
             // TODO: check task intersection
-
             return await base.UpdateOneOwnAsync(model, ownerId);
         }
 

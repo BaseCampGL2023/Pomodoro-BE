@@ -16,7 +16,6 @@ namespace Pomodoro.Dal.Entities
         /// </summary>
         public string Title { get; set; } = string.Empty;
 
-        // TODO: change length to maximum
         /// <summary>
         /// Gets or sets task description, optional.
         /// </summary>
@@ -27,20 +26,6 @@ namespace Pomodoro.Dal.Entities
         /// Sets 1 for non-periodic tasks.
         /// </summary>
         public int SequenceNumber { get; set; }
-
-        // TODO: should I use it, maybe delete.
-
-        /// <summary>
-        /// Gets or sets DateTime when task created.
-        /// </summary>
-        public DateTime CreatedDt { get; set; }
-
-        // TODO: should I use it, maybe delete.
-
-        /// <summary>
-        /// Gets or sets DateTime when task modified.
-        /// </summary>
-        public DateTime? ModifiedDt { get; set; }
 
         /// <summary>
         /// Gets or sets planned start time.

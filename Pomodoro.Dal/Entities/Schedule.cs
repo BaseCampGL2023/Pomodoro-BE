@@ -27,13 +27,6 @@ namespace Pomodoro.Dal.Entities
         /// </summary>
         public string Title { get; set; } = string.Empty;
 
-        // TODO: should I use it, maybe delete.
-
-        /// <summary>
-        /// Gets or sets a value indicating whether the schedule is active.
-        /// </summary>
-        public bool IsActive { get; set; }
-
         /// <summary>
         /// Gets or sets routine description, optional.
         /// </summary>
@@ -48,20 +41,6 @@ namespace Pomodoro.Dal.Entities
         /// Gets or sets navigation property represents category, optional.
         /// </summary>
         public Category? Category { get; set; }
-
-        // TODO: should I use it, maybe delete.
-
-        /// <summary>
-        /// Gets or sets DateTime when routine created.
-        /// </summary>
-        public DateTime CreatedDt { get; set; }
-
-        // TODO: should I use it, maybe delete.
-
-        /// <summary>
-        /// Gets or sets DateTime when routine modified.
-        /// </summary>
-        public DateTime? ModifiedDt { get; set; }
 
         /// <summary>
         /// Gets or sets DateTime when schedule finished.

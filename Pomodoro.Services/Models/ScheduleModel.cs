@@ -47,11 +47,6 @@ namespace Pomodoro.Services.Models
         public string Title { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets a value indicating whether the schedule is active.
-        /// </summary>
-        public bool IsActive { get; set; }
-
-        /// <summary>
         /// Gets or sets routine description, optional.
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
@@ -59,11 +54,6 @@ namespace Pomodoro.Services.Models
             PomoConstants.ScheduleDescriptionMaxLength,
             ErrorMessage = "The {0} should be less or equal than {1} characters.")]
         public string? Description { get; set; }
-
-        /// <summary>
-        /// Gets or sets DateTime when routine created.
-        /// </summary>
-        public DateTime CreatedDt { get; set; }
 
         /// <summary>
         /// Gets or sets DateTime when routine finished.
@@ -119,10 +109,8 @@ namespace Pomodoro.Services.Models
             this.Description = entity.Description;
             this.ScheduleType = entity.ScheduleType;
             this.Template = entity.Template;
-            this.CreatedDt = entity.CreatedDt;
             this.FinishAt = entity.FinishAtDt;
             this.StartDt = entity.StartDt;
-            this.IsActive = entity.IsActive;
             this.AllocatedDuration = (int)entity.AllocatedDuration.TotalSeconds;
             this.Category = entity.Category?.Name;
             this.CategoryId = entity.Category?.Id;
@@ -150,14 +138,11 @@ namespace Pomodoro.Services.Models
                 ScheduleType = this.ScheduleType,
                 Template = this.Template,
                 Description = this.Description,
-                CreatedDt = this.CreatedDt == DateTime.MinValue
-                    ? DateTime.UtcNow : this.CreatedDt,
                 StartDt = this.StartDt,
                 FinishAtDt = this.FinishAt,
                 AllocatedDuration = TimeSpan.FromSeconds(this.AllocatedDuration),
                 CategoryId = this.CategoryId,
                 AppUserId = userId,
-                IsActive = this.IsActive,
                 Tasks = this.Tasks.Any() ?
                     this.Tasks.Select(e => e.ToDalEntity(userId)).ToList() : new List<AppTask>(),
             };
@@ -172,7 +157,7 @@ namespace Pomodoro.Services.Models
         {
             List<ValidationResult> results = new ();
 
-            // TODO: how validate related tasks;
+            // TODO: how validate related tasks, don't create or update them;
 
             if (this.FinishAt < this.StartDt)
             {

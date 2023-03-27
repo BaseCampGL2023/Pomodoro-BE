@@ -225,14 +225,11 @@ namespace Pomodoro.Dal.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Template = table.Column<string>(type: "nvarchar(370)", maxLength: 370, nullable: false),
+                    Template = table.Column<string>(type: "nvarchar(365)", maxLength: 365, nullable: false),
                     ScheduleType = table.Column<byte>(type: "tinyint", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedDt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    ModifiedDt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     FinishAtDt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AllocatedDuration = table.Column<long>(type: "bigint", nullable: false),
                     StartDt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -261,10 +258,8 @@ namespace Pomodoro.Dal.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: true),
                     SequenceNumber = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
-                    CreatedDt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    ModifiedDt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     StartDt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FinishDt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     AllocatedDuration = table.Column<long>(type: "bigint", nullable: false),
@@ -300,7 +295,6 @@ namespace Pomodoro.Dal.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     StartDt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Duration = table.Column<long>(type: "bigint", nullable: false),
-                    Comment = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     TaskId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TimerSettingsId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },

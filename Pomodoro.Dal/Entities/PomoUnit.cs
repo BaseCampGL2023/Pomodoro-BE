@@ -21,13 +21,6 @@ namespace Pomodoro.Dal.Entities
         /// </summary>
         public TimeSpan Duration { get; set; }
 
-        // TODO: should i need comment in pomodoro? Delete it
-
-        /// <summary>
-        /// Gets or sets optional comment.
-        /// </summary>
-        public string? Comment { get; set; }
-
         /// <summary>
         /// Gets or sets foreign key to AppTask entity.
         /// </summary>

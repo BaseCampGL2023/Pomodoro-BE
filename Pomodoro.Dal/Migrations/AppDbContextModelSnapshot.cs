@@ -235,19 +235,11 @@ namespace Pomodoro.Dal.Migrations
                     b.Property<Guid?>("CategoryId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedDt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
                     b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
 
                     b.Property<DateTime?>("FinishDt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("ModifiedDt")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("ScheduleId")
@@ -336,10 +328,6 @@ namespace Pomodoro.Dal.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Comment")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
                     b.Property<long>("Duration")
                         .HasColumnType("bigint");
 
@@ -377,22 +365,11 @@ namespace Pomodoro.Dal.Migrations
                     b.Property<Guid?>("CategoryId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedDt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
                     b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<DateTime>("FinishAtDt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("ModifiedDt")
                         .HasColumnType("datetime2");
 
                     b.Property<byte>("ScheduleType")
@@ -404,8 +381,8 @@ namespace Pomodoro.Dal.Migrations
 
                     b.Property<string>("Template")
                         .IsRequired()
-                        .HasMaxLength(370)
-                        .HasColumnType("nvarchar(370)");
+                        .HasMaxLength(365)
+                        .HasColumnType("nvarchar(365)");
 
                     b.Property<string>("Title")
                         .IsRequired()

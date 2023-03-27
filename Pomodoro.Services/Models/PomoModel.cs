@@ -55,7 +55,6 @@ namespace Pomodoro.Services.Models
             {
                 StartDt = pomodoro.StartDt,
                 Duration = (int)pomodoro.Duration.TotalSeconds,
-                Comment = pomodoro.Comment,
             };
         }
 
@@ -69,7 +68,6 @@ namespace Pomodoro.Services.Models
             {
                 StartDt = this.StartDt,
                 Duration = TimeSpan.FromSeconds(this.Duration),
-                Comment = this.Comment,
                 TaskId = this.TaskId,
                 TimerSettingsId = this.TimerSettingsId,
             };
