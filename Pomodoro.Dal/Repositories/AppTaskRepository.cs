@@ -51,6 +51,17 @@ namespace Pomodoro.Dal.Repositories
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
 
+        /// <summary>
+        /// Get AppTask object by id with TaskAttempts collection ebtities didn't added to change tracker.
+        /// </summary>
+        /// <param name="id">AppTask id.</param>
+        /// <returns>Queried object or null, if object with this id belonging to user doesn't exist in database.</returns>
+        public async Task<AppTask?> GetByIdWithRelatedNoTrackingAsync(Guid id)
+        {
+            return await this.Table.Include(e => e.Pomodoros)
+               .AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
+        }
+
         /// <inheritdoc/>
         public async Task<ICollection<AppTask>> GetScheduledAllAsync(Guid ownerId, DateTime start, DateTime end)
         {

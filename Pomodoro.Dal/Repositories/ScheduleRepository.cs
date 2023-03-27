@@ -29,5 +29,13 @@ namespace Pomodoro.Dal.Repositories
                 .Include(c => c.Category)
                 .FirstOrDefaultAsync(s => s.Id == id);
         }
+
+        /// <inheritdoc/>
+        public async Task<Schedule?> GetByIdWithRelatedNoTrackingAsync(Guid id)
+        {
+            return await this.Table.Include(s => s.Tasks)
+               .Include(c => c.Category).AsNoTracking()
+               .FirstOrDefaultAsync(s => s.Id == id);
+        }
     }
 }

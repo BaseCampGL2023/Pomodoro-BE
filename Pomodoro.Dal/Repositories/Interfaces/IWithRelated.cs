@@ -4,6 +4,8 @@
 
 using Pomodoro.Dal.Entities.Base;
 
+// TODO: delete it's usefull
+
 namespace Pomodoro.Dal.Repositories.Interfaces
 {
     /// <summary>
@@ -19,5 +21,12 @@ namespace Pomodoro.Dal.Repositories.Interfaces
         /// <param name="id">Entity id.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         public Task<T?> GetByIdWithRelatedAsync(Guid id);
+
+        /// <summary>
+        /// Retrive entity from database by id no tracking with all related data.
+        /// </summary>
+        /// <param name="id">Entity id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public Task<T?> GetByIdWithRelatedNoTrackingAsync(Guid id);
     }
 }
