@@ -60,6 +60,8 @@ namespace Pomodoro.Services.Models
         /// <summary>
         /// Gets or sets planned duration of the task.
         /// </summary>
+        [Required(ErrorMessage = "Allocated duration is required, if you no allocate time - set 0")]
+        [Range(0, int.MaxValue, ErrorMessage = "Allocated duration shouldn't be less than 0 second.")]
         public int AllocatedDuration { get; set; }
 
         /// <summary>

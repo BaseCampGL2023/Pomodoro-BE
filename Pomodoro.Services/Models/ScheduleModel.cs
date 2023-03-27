@@ -24,6 +24,7 @@ namespace Pomodoro.Services.Models
         /// Gets or sets schedule type.
         /// </summary>
         [Required(ErrorMessage = "Schedule type is required")]
+        [EnumDataType(typeof(ScheduleType), ErrorMessage = "Attr: Non exisiting schedule type")]
         public ScheduleType ScheduleType { get; set; }
 
         /// <summary>
@@ -159,13 +160,8 @@ namespace Pomodoro.Services.Models
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             List<ValidationResult> results = new ();
-            if (!Enum.GetValues<ScheduleType>().Any(e => e == this.ScheduleType))
-            {
-                results.Add(new ValidationResult(
-                    "Non exisiting schedule type",
-                    new List<string> { nameof(this.ScheduleType) }));
-            }
 
+            // TODO: how validate related tasks;
             if (this.StartDt < DateTime.UtcNow)
             {
                 results.Add(new ValidationResult(
@@ -251,12 +247,11 @@ namespace Pomodoro.Services.Models
 
                     break;
                 case ScheduleType.AnnualOnDate:
-                    if (!string.IsNullOrWhiteSpace(this.Template)
-                        && !DateTime.TryParse(this.Template, out _))
+                    if (!string.IsNullOrWhiteSpace(this.Template))
                     {
                         results.Add(new ValidationResult(
                            "Template should correspond to schedule type," +
-                           " for annual should be equal with StartDt field, or don't add any template",
+                           " for annual don't add any template",
                            new List<string> { nameof(this.Template) }));
                     }
 
