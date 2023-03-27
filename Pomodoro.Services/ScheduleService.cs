@@ -106,7 +106,7 @@ namespace Pomodoro.Services
         /// <returns>Updated schedule.</returns>
         public override async Task<ServiceResponse<bool>> UpdateOneOwnAsync(ScheduleModel model, Guid ownerId)
         {
-            var previous = await this.Repo.GetByIdWithRelatedAsync(model.Id);
+            var previous = await this.Repo.GetByIdWithRelatedNoTrackingAsync(model.Id);
             if (previous == null)
             {
                 return new ServiceResponse<bool> { Result = ResponseType.Conflict, Message = "Unexistable schedule." };
@@ -138,6 +138,8 @@ namespace Pomodoro.Services
                     {
                         task.CategoryId = model.CategoryId;
                     }
+
+                    await this.taskRepository.UpdateRangeAsync(previous.Tasks);
 
                     return await base.UpdateOneOwnAsync(model, ownerId);
                 }
