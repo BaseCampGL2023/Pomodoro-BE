@@ -15,6 +15,7 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.11" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.11" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.3" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
 		<PackageReference Include="Moq" Version="4.18.3" />
 		<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
@@ -30,6 +31,13 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Pomodoro.Api\Pomodoro.Api.csproj" />
+	  <ProjectReference Include="..\Pomodoro.Core\Pomodoro.Core.csproj" />
+	  <ProjectReference Include="..\Pomodoro.DataAccess\Pomodoro.DataAccess.csproj" />
+	  <ProjectReference Include="..\Pomodoro.Services\Pomodoro.Services.csproj" />
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(BuildingInsideVisualStudio)' != 'true'">

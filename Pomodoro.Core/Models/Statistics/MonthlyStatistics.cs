@@ -1,4 +1,5 @@
 ﻿using Pomodoro.Core.Enums;
+using Pomodoro.Core.Models.Base;
 
 namespace Pomodoro.Core.Models.Statistics
 {

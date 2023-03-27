@@ -3,6 +3,7 @@
 // </copyright>
 
 using System.Reflection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using Pomodoro.Api.ActionFilterAttributes;
 using Pomodoro.Api.Extensions;
@@ -10,6 +11,9 @@ using Pomodoro.Api.Services;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.DataAccess.Extensions;
 using Pomodoro.Services.Realizations;
+using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.MSSqlServer;
 
 var pomodoroSpecificOrigins = "_pomodoroSpecificOrigins";
 
@@ -27,7 +31,13 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IFrequencyService, FrequencyService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
 
-builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddScoped<ISettingsService, SettingsService>();
+
+builder.Services
+    .AddJwtAuthentication(builder.Configuration)
+    .AddGoogleAuthentication(builder.Configuration);
+
+builder.Services.AddCookiesForExternalAuth();
 
 builder.Services.AddCors(options =>
 {
@@ -78,6 +88,30 @@ builder.Services.AddSwaggerGen(option =>
 
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     option.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+
+    // Include 'SecurityScheme' to use JWT Authentication
+    var jwtSecurityScheme = new OpenApiSecurityScheme
+    {
+        Scheme = JwtBearerDefaults.AuthenticationScheme,
+        BearerFormat = "JWT",
+        Name = "JWT Authentication",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
+
+        Reference = new OpenApiReference
+        {
+            Id = JwtBearerDefaults.AuthenticationScheme,
+            Type = ReferenceType.SecurityScheme,
+        },
+    };
+
+    option.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+
+    option.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { jwtSecurityScheme, Array.Empty<string>() },
+    });
 });
 
 var app = builder.Build();

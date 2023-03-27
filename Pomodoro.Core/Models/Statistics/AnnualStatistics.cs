@@ -1,4 +1,6 @@
-﻿namespace Pomodoro.Core.Models.Statistics
+﻿using Pomodoro.Core.Models.Base;
+
+namespace Pomodoro.Core.Models.Statistics
 {
     public class AnnualStatistics : BaseUserOrientedModel
     {
