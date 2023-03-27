@@ -101,6 +101,30 @@ namespace Pomodoro.Services.Utilities
         }
 
         /// <summary>
+        /// Add tasks for given schedule.
+        /// </summary>
+        /// <param name="model">Schedule model.</param>
+        /// <param name="fromDate">Date from which tasks created.</param>
+        /// <param name="index">Start number of new tasks sequence.</param>
+        /// <exception cref="NotImplementedException">Throws if ScheduleType unknown.</exception>
+        /// <returns>Tasks for given schedule.</returns>
+        public static List<AppTask> AddTasks(ScheduleModel model, DateTime fromDate, int index)
+        {
+            return model.ScheduleType switch
+            {
+                ScheduleType.EveryDay => CreateEveryday(model, fromDate, index),
+                ScheduleType.WorkDay => CreateWorkday(model, fromDate, index),
+                ScheduleType.WeekEnd => CreateWeekEnd(model, fromDate, index),
+                ScheduleType.AnnualOnDate => CreateAnnual(model, fromDate, index),
+                ScheduleType.WeekTemplate => CreateWeek(model, fromDate, index),
+                ScheduleType.MonthTemplate => CreateMonth(model, fromDate, index),
+                ScheduleType.EveryNDay => CreateEveryNDay(model, fromDate, index),
+                ScheduleType.Sequence => CreateSequence(model, fromDate, index),
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        /// <summary>
         /// Check is it possible to create new task.
         /// </summary>
         /// <param name="model">Schedule.</param>
@@ -232,12 +256,11 @@ namespace Pomodoro.Services.Utilities
             return result;
         }
 
-        private static List<AppTask> CreateSequence(ScheduleModel model)
+        private static List<AppTask> CreateSequence(ScheduleModel model, DateTime lastPlanned = default, int idx = 1)
         {
             List<AppTask> tasks = new ();
             DateTime current = model.StartDt;
             DateTime finish = model.FinishAt;
-            int idx = 1;
             int pos = 0;
             var template = model.Template.ToCharArray();
 
@@ -245,19 +268,23 @@ namespace Pomodoro.Services.Utilities
             {
                 if (template[pos] == '1')
                 {
-                    AppTask task = new ()
+                    if (lastPlanned > model.StartDt)
                     {
-                        Title = model.Title,
-                        Description = model.Description,
-                        SequenceNumber = idx,
-                        AllocatedDuration = TimeSpan.FromSeconds(model.AllocatedDuration),
-                        CategoryId = model.CategoryId,
-                        AppUserId = model.OwnerId,
-                        StartDt = current,
-                    };
+                        AppTask task = new ()
+                        {
+                            Title = model.Title,
+                            Description = model.Description,
+                            SequenceNumber = idx,
+                            AllocatedDuration = TimeSpan.FromSeconds(model.AllocatedDuration),
+                            CategoryId = model.CategoryId,
+                            AppUserId = model.OwnerId,
+                            StartDt = current,
+                        };
 
-                    tasks.Add(task);
-                    idx++;
+                        tasks.Add(task);
+                        idx++;
+                    }
+
                     pos = pos < template.Length - 1 ? pos + 1 : 0;
                 }
 
@@ -267,13 +294,13 @@ namespace Pomodoro.Services.Utilities
             return tasks;
         }
 
-        private static List<AppTask> CreateEveryNDay(ScheduleModel model)
+        private static List<AppTask> CreateEveryNDay(ScheduleModel model, DateTime lastPlanned = default, int idx = 1)
         {
             List<AppTask> tasks = new ();
-            DateTime current = model.StartDt;
             DateTime finish = model.FinishAt;
-            int idx = 1;
             var template = model.Template.ToCharArray();
+            DateTime current = model.StartDt >= lastPlanned ? model.StartDt
+                : lastPlanned.AddDays(template.Length);
 
             while (current <= finish)
             {
@@ -296,12 +323,11 @@ namespace Pomodoro.Services.Utilities
             return tasks;
         }
 
-        private static List<AppTask> CreateMonth(ScheduleModel model)
+        private static List<AppTask> CreateMonth(ScheduleModel model, DateTime lastPlanned = default, int idx = 1)
         {
             List<AppTask> tasks = new ();
-            DateTime current = model.StartDt;
+            DateTime current = model.StartDt >= lastPlanned ? model.StartDt : lastPlanned.AddDays(1);
             DateTime finish = model.FinishAt;
-            int idx = 1;
             var template = model.Template.ToCharArray();
 
             while (current <= finish)
@@ -328,12 +354,11 @@ namespace Pomodoro.Services.Utilities
             return tasks;
         }
 
-        private static List<AppTask> CreateWeek(ScheduleModel model)
+        private static List<AppTask> CreateWeek(ScheduleModel model, DateTime lastPlanned = default, int idx = 1)
         {
             List<AppTask> tasks = new ();
-            DateTime current = model.StartDt;
+            DateTime current = model.StartDt >= lastPlanned ? model.StartDt : lastPlanned.AddDays(1);
             DateTime finish = model.FinishAt;
-            int idx = 1;
             var template = model.Template.ToCharArray();
 
             while (current <= finish)
@@ -360,12 +385,11 @@ namespace Pomodoro.Services.Utilities
             return tasks;
         }
 
-        private static List<AppTask> CreateAnnual(ScheduleModel model)
+        private static List<AppTask> CreateAnnual(ScheduleModel model, DateTime lastPlanned = default, int idx = 1)
         {
             List<AppTask> tasks = new ();
-            DateTime current = model.StartDt;
+            DateTime current = model.StartDt >= lastPlanned ? model.StartDt : lastPlanned.AddYears(1);
             DateTime finish = model.FinishAt;
-            int idx = 1;
 
             while (current <= finish)
             {
@@ -387,12 +411,11 @@ namespace Pomodoro.Services.Utilities
             return tasks;
         }
 
-        private static List<AppTask> CreateWeekEnd(ScheduleModel model)
+        private static List<AppTask> CreateWeekEnd(ScheduleModel model, DateTime lastPlanned = default, int idx = 1)
         {
             List<AppTask> tasks = new ();
-            DateTime current = model.StartDt;
+            DateTime current = model.StartDt >= lastPlanned ? model.StartDt : lastPlanned.AddDays(1);
             DateTime finish = model.FinishAt;
-            int idx = 1;
 
             while (current <= finish)
             {
@@ -419,12 +442,11 @@ namespace Pomodoro.Services.Utilities
             return tasks;
         }
 
-        private static List<AppTask> CreateWorkday(ScheduleModel model)
+        private static List<AppTask> CreateWorkday(ScheduleModel model, DateTime lastPlanned = default, int idx = 1)
         {
             List<AppTask> tasks = new ();
-            DateTime current = model.StartDt;
+            DateTime current = model.StartDt >= lastPlanned ? model.StartDt : lastPlanned.AddDays(1);
             DateTime finish = model.FinishAt;
-            int idx = 1;
 
             while (current <= finish)
             {
@@ -451,12 +473,11 @@ namespace Pomodoro.Services.Utilities
             return tasks;
         }
 
-        private static List<AppTask> CreateEveryday(ScheduleModel model)
+        private static List<AppTask> CreateEveryday(ScheduleModel model, DateTime lastPlanned = default, int idx = 1)
         {
             List<AppTask> tasks = new ();
-            DateTime current = model.StartDt;
+            DateTime current = model.StartDt >= lastPlanned ? model.StartDt : lastPlanned.AddDays(1);
             DateTime finish = model.FinishAt;
-            int idx = 1;
 
             while (current <= finish)
             {
