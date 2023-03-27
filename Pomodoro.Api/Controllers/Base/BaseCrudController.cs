@@ -91,7 +91,7 @@ namespace Pomodoro.Api.Controllers.Base
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(201, "Object created")]
         [SwaggerResponse(400, "The request was invalid")]
-        public async Task<ActionResult<TM>> AddOne([FromBody]TM model)
+        public virtual async Task<ActionResult<TM>> AddOne([FromBody]TM model)
         {
             var result = await this.service.AddOneOwnAsync(model, this.UserId);
             if (result.Result == ResponseType.Ok)
@@ -160,6 +160,7 @@ namespace Pomodoro.Api.Controllers.Base
                 ResponseType.NotFound => this.NotFound(),
                 ResponseType.Forbid => this.Forbid(),
                 ResponseType.Error => this.BadRequest(response.Message),
+                ResponseType.Conflict => this.Conflict(response.Message),
                 _ => this.BadRequest()
             };
         }
