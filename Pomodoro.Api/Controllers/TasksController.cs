@@ -154,7 +154,7 @@ namespace Pomodoro.Api.Controllers
                 return this.BadRequest();
             }
 
-            var result = this.mapper.Map<TaskViewModel>(task);
+            var result = this.mapper.Map<TaskViewModel>(taskModel);
 
             return this.CreatedAtAction(nameof(this.GetTaskById), new { id = result.Id }, result);
         }
@@ -200,7 +200,7 @@ namespace Pomodoro.Api.Controllers
                 return this.BadRequest();
             }
 
-            return this.Ok("Task was deleted.");
+            return this.Ok();
         }
 
         /// <summary>
@@ -249,7 +249,7 @@ namespace Pomodoro.Api.Controllers
                 return this.BadRequest();
             }
 
-            var result = this.mapper.Map<TaskViewModel>(task);
+            var result = this.mapper.Map<TaskViewModel>(taskModel);
 
             return this.AcceptedAtAction(nameof(this.GetTaskById), new { id = result.Id }, result);
         }
@@ -258,9 +258,8 @@ namespace Pomodoro.Api.Controllers
         /// Completes task related to the current user by task and pomodoro ids.
         /// </summary>
         /// <param name="id">Represents an id of the task that needs to be completed.</param>
-        /// <param name="pomodoroId">Represents an id of the pomodoro that save task completed state.</param>
         /// <returns>A <see cref="ActionResult"/> representing the result of task completion.</returns>
-        [HttpDelete("{id}/pomodoros/{pomodoroId}")]
+        [HttpPut("{id}/completeTodayTask")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -273,7 +272,7 @@ namespace Pomodoro.Api.Controllers
         [SwaggerResponse(403, "User cannot complete task of another person.")]
         [SwaggerResponse(404, "No task or pomodoro found by the provided ids.")]
         [SwaggerResponse(500, "An unhandled exception occurred on the server while executing the request.")]
-        public async Task<ActionResult> CompleteTask(Guid id, Guid pomodoroId)
+        public async Task<ActionResult> CompleteTask(Guid id)
         {
             var task = await this.tasksService.GetTaskByIdAsync(id);
 
@@ -289,21 +288,22 @@ namespace Pomodoro.Api.Controllers
 
             try
             {
-                await this.tasksService.CompleteTaskAsync(id, pomodoroId);
+                await this.tasksService.CompleteTaskAsync(id);
             }
             catch (Exception)
             {
                 return this.BadRequest();
             }
 
-            return this.Ok("Task was completed.");
+            return this.Ok();
         }
 
         /// <summary>
         /// Adds pomodoro to task that related to the current user.
         /// </summary>
         /// <param name="id">Represents an id of the task that needs to add pomodoro to it.</param>
-        /// <returns>Id of the created object represented by<see cref="ActionResult{CompletedViewModel}"/>.</returns>
+        /// <param name="pomodoro">Represents object to be created.</param>
+        /// <returns>Updated task of the created object represented by<see cref="ActionResult{TaskViewModel}"/>.</returns>
         [HttpPost("{id}/pomodoros")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -313,7 +313,7 @@ namespace Pomodoro.Api.Controllers
         [SwaggerResponse(400, "The model state is invalid.")]
         [SwaggerResponse(401, "An unauthorized request cannot be processed.")]
         [SwaggerResponse(500, "An unhandled exception occurred on the server while executing the request.")]
-        public async Task<ActionResult<CompletedViewModel>> AddPomodoro(Guid id, [FromBody] CompletedViewModel pomodoro)
+        public async Task<ActionResult<TaskViewModel>> AddPomodoro(Guid id, [FromBody] CompletedViewModel pomodoro)
         {
             var task = await this.tasksService.GetTaskByIdAsync(id);
 

@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Pomodoro.Core.Enums;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.Core.Models;
-using Pomodoro.Core.Models.Base;
 using Pomodoro.DataAccess.Entities;
 using Pomodoro.DataAccess.Repositories.Interfaces;
 
@@ -209,7 +208,7 @@ namespace Pomodoro.Services.Realizations
             return _mapper.Map<TaskModel>(task);
         }
 
-        public async Task CompleteTaskAsync(Guid taskId, Guid pomId)
+        public async Task CompleteTaskAsync(Guid taskId)
         {
             var tasks = await _tasksRepo.FindAllAsync(t => t.Id == taskId);
 
@@ -225,7 +224,7 @@ namespace Pomodoro.Services.Realizations
                 throw new InvalidOperationException("Can`t find any task pomodoros in db.");
             }
 
-            var pomodoro = task.CompletedTasks.FirstOrDefault(p => p.Id == pomId);
+            var pomodoro = task.CompletedTasks.LastOrDefault(p => p.ActualDate.Date == DateTime.Now.Date);
 
             if (pomodoro == null)
             {

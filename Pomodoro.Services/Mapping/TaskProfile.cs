@@ -19,10 +19,10 @@ namespace Pomodoro.Services.Mapping
 
         private byte GetProgress(TaskEntity task)
         {
-            if (task == null || task.CompletedTasks == null)
+            if (task == null || task.CompletedTasks == null || task.CompletedTasks.Count == 0)
                 return 0;
 
-            if (task.AllocatedTime == 0)
+            if (task.AllocatedTime == 0 || task.CompletedTasks.Last().IsDone)
                 return 100;
 
             var totalTimeSpent = task.CompletedTasks.Sum(ct => ct.TimeSpent);
