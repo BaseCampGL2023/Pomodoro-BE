@@ -101,7 +101,7 @@ namespace Pomodoro.Services.Models
         /// </summary>
         /// <param name="entity">Instance of Schedule <see cref="Schedule"/>.</param>
         /// <param name="isMapOwner">If TRUE add owner id to DTO.</param>
-        public void Assign(Schedule entity, bool isMapOwner = false)
+        public void Assign(Schedule entity, bool isMapOwner = true)
         {
             this.Id = entity.Id;
             this.Title = entity.Title;

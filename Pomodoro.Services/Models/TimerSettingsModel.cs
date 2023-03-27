@@ -66,7 +66,7 @@ namespace Pomodoro.Services.Models
         /// </summary>
         /// <param name="entity">Instance of TimerSettings <see cref="TimerSettings"/>.</param>
         /// <param name="isMapOwner">If TRUE add owner id to DTO.</param>
-        public void Assign(TimerSettings entity, bool isMapOwner = false)
+        public void Assign(TimerSettings entity, bool isMapOwner = true)
         {
             this.Id = entity.Id;
             this.Name = entity.Name;

@@ -27,6 +27,7 @@ namespace Pomodoro.Services.Models
         /// <summary>
         /// Gets or sets optional comment.
         /// </summary>
+        // TODO: set length
         public string? Comment { get; set; }
 
         /// <summary>

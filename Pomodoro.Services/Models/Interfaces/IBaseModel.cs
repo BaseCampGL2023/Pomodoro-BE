@@ -23,7 +23,7 @@ namespace Pomodoro.Services.Models.Interfaces
         /// </summary>
         /// <param name="entity">Object of IBelongEntity.</param>
         /// <param name="isMapOwner">If TRUE add owner id to DTO.</param>
-        void Assign(T entity, bool isMapOwner = false);
+        void Assign(T entity, bool isMapOwner = true);
 
         /// <summary>
         /// Map properties from DTO to Dal instance.

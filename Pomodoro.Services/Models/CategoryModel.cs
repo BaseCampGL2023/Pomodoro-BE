@@ -47,7 +47,7 @@ namespace Pomodoro.Services.Models
         public ICollection<TaskModel> Tasks { get; set; } = new List<TaskModel>();
 
         /// <inheritdoc/>
-        public void Assign(Category entity, bool isMapOwner = false)
+        public void Assign(Category entity, bool isMapOwner = true)
         {
             this.Id = entity.Id;
             this.Name = entity.Name;

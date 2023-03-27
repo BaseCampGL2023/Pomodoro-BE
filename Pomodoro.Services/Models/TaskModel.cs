@@ -12,6 +12,9 @@ namespace Pomodoro.Services.Models
     /// <summary>
     /// Represent task for client.
     /// </summary>
+     
+    // TODO: start DT validation. 
+
     public class TaskModel : IBaseModel<AppTask>
     {
         /// <summary>
@@ -104,7 +107,7 @@ namespace Pomodoro.Services.Models
         /// </summary>
         /// <param name="entity">Instance of AppTask <see cref="AppTask"/>.</param>
         /// <param name="isMapOwner">If TRUE add owner id to DTO.</param>
-        public void Assign(AppTask entity, bool isMapOwner = false)
+        public void Assign(AppTask entity, bool isMapOwner = true)
         {
             this.Id = entity.Id;
             this.Title = entity.Title;
