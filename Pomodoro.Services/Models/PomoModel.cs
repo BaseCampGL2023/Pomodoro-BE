@@ -3,6 +3,7 @@
 // </copyright>
 
 using System.ComponentModel.DataAnnotations;
+using Pomodoro.Dal.Configs;
 using Pomodoro.Dal.Entities;
 
 namespace Pomodoro.Services.Models
@@ -15,25 +16,27 @@ namespace Pomodoro.Services.Models
         /// <summary>
         /// Gets or sets DateTime when task performing started.
         /// </summary>
-        [Required(ErrorMessage = "Start date and time is required.")]
+        [Required(ErrorMessage = "The {0} DateTime and time is required.")]
         public DateTime StartDt { get; set; }
 
         /// <summary>
         /// Gets or sets duration of tasks performing round.
         /// </summary>
-        [Required(ErrorMessage = "Duration is required.")]
+        [Required(ErrorMessage = "The {0} is required.")]
         public int Duration { get; set; }
 
         /// <summary>
         /// Gets or sets optional comment.
         /// </summary>
-        // TODO: set length
+        [StringLength(
+            100,
+            ErrorMessage = "The {0} should be less or equal than {1} characters.")]
         public string? Comment { get; set; }
 
         /// <summary>
         /// Gets or sets foreign key to AppTask entity.
         /// </summary>
-        [Required(ErrorMessage = "Task id is required.")]
+        [Required(ErrorMessage = "The {0} is required.")]
         public Guid TaskId { get; set; }
 
         /// <summary>

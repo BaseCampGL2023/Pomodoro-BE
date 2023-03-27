@@ -3,6 +3,7 @@
 // </copyright>
 
 using System.ComponentModel.DataAnnotations;
+using Pomodoro.Dal.Configs;
 
 namespace Pomodoro.Api.Models
 {
@@ -15,6 +16,9 @@ namespace Pomodoro.Api.Models
         /// Gets or sets user name.
         /// </summary>
         [Required(ErrorMessage = "Name is requireed.")]
+        [StringLength(
+            PomoConstants.AppUserNameMaxLength,
+            ErrorMessage = "The {0} should be less than {1} characters.")]
         public string UserName { get; set; } = string.Empty;
 
         /// <summary>

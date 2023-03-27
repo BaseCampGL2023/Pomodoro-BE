@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
+using Pomodoro.Dal.Configs;
 using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Enums;
 using Pomodoro.Dal.Exceptions;
@@ -108,7 +109,7 @@ namespace Pomodoro.Dal.Data
             builder.Entity<AppUser>(entity =>
             {
                 entity.Property(e => e.Name).IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(PomoConstants.AppUserNameMaxLength);
 
                 entity.Property(e => e.CreatedDt).IsRequired()
                     .HasDefaultValueSql("GETUTCDATE()");
@@ -168,16 +169,16 @@ namespace Pomodoro.Dal.Data
                 entity.Property(e => e.CreatedAt).IsRequired()
                     .HasDefaultValueSql("GETUTCDATE()");
 
-                entity.Property(e => e.Name).HasMaxLength(50);
+                entity.Property(e => e.Name).HasMaxLength(PomoConstants.TimerSettingsNameMaxLength);
             });
 
             builder.Entity<AppTask>(entity =>
             {
                 entity.Property(e => e.Title)
-                    .IsRequired().HasMaxLength(100);
+                    .IsRequired().HasMaxLength(PomoConstants.TaskTitleMaxLength);
 
                 entity.Property(e => e.Description)
-                    .HasMaxLength(1000);
+                    .HasMaxLength(PomoConstants.TaskDescriptionMaxLength);
 
                 entity.Property(e => e.SequenceNumber).IsRequired()
                     .HasDefaultValue(1);
@@ -207,6 +208,8 @@ namespace Pomodoro.Dal.Data
             {
                 entity.ToTable("Pomodoros");
 
+
+                // TODO: DELETE
                 entity.Property(e => e.Comment)
                     .HasMaxLength(1000);
 
@@ -226,10 +229,10 @@ namespace Pomodoro.Dal.Data
                     .Cast<int>().Max() + 1;
 
                 entity.Property(e => e.Title)
-                    .IsRequired().HasMaxLength(100);
+                    .IsRequired().HasMaxLength(PomoConstants.ScheduleTitleMaxLength);
 
                 entity.Property(e => e.Template).IsRequired()
-                    .HasMaxLength(370);
+                    .HasMaxLength(PomoConstants.ScheduleTemplateMaxLength);
 
                 entity.Property(e => e.ScheduleType).IsRequired()
                 .HasColumnName("ScheduleType").HasConversion<byte>();
@@ -239,7 +242,7 @@ namespace Pomodoro.Dal.Data
                 entity.Property(e => e.CreatedDt).IsRequired()
                     .HasDefaultValueSql("GETUTCDATE()");
 
-                entity.Property(e => e.Description).HasMaxLength(1000);
+                entity.Property(e => e.Description).HasMaxLength(PomoConstants.ScheduleDescriptionMaxLength);
 
                 entity.Property(e => e.AllocatedDuration)
                     .HasConversion<long>();
@@ -251,9 +254,9 @@ namespace Pomodoro.Dal.Data
 
             builder.Entity<Category>(entity =>
             {
-                entity.Property(e => e.Name).IsRequired().HasMaxLength(60);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(PomoConstants.CategoryNameMaxLength);
 
-                entity.Property(e => e.Description).HasMaxLength(1000);
+                entity.Property(e => e.Description).HasMaxLength(PomoConstants.CategoryDescriptionMaxLength);
 
                 entity.Property(e => e.AppUserId).IsConcurrencyToken();
 

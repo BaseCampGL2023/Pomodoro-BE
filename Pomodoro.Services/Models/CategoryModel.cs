@@ -2,7 +2,9 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using Pomodoro.Dal.Configs;
 using Pomodoro.Dal.Entities;
 using Pomodoro.Services.Models.Interfaces;
 
@@ -22,12 +24,19 @@ namespace Pomodoro.Services.Models
         /// <summary>
         /// Gets or sets category name.
         /// </summary>
+        [Required(ErrorMessage = "Category {0} is required.")]
+        [StringLength(
+            PomoConstants.CategoryNameMaxLength,
+            ErrorMessage = "The {0} should be less than {1} characters.")]
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets category description.
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        [StringLength(
+            PomoConstants.CategoryDescriptionMaxLength,
+            ErrorMessage = "The {0} should be less or equal than {1} characters.")]
         public string? Description { get; set; }
 
         /// <summary>

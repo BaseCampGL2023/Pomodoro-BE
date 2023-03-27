@@ -4,6 +4,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using Pomodoro.Dal.Configs;
 using Pomodoro.Dal.Entities;
 using Pomodoro.Services.Models.Interfaces;
 
@@ -26,15 +27,19 @@ namespace Pomodoro.Services.Models
         /// <summary>
         /// Gets or sets task title.
         /// </summary>
-        [Required(ErrorMessage = "Task title is required.")]
-        [StringLength(100, ErrorMessage = "Should be less or equal than 100 letters.")]
+        [Required(ErrorMessage = "Task {0} is required.")]
+        [StringLength(
+            PomoConstants.TaskTitleMaxLength,
+            ErrorMessage = "The {0} should be less than {1} characters.")]
         public string Title { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets task description, optional.
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        [StringLength(100, ErrorMessage = "Should be less or equal than 1000 letters.")]
+        [StringLength(
+            PomoConstants.TaskDescriptionMaxLength,
+            ErrorMessage = "The {0} should be less or equal than {1} characters.")]
         public string? Description { get; set; }
 
         /// <summary>
@@ -63,7 +68,7 @@ namespace Pomodoro.Services.Models
         /// <summary>
         /// Gets or sets planned duration of the task.
         /// </summary>
-        [Required(ErrorMessage = "Allocated duration is required, if you no allocate time - set 0")]
+        [Required(ErrorMessage = "The {0} is required, if you no allocate time - set 0.")]
         [Range(0, int.MaxValue, ErrorMessage = "Allocated duration shouldn't be less than 0 second.")]
         public int AllocatedDuration { get; set; }
 

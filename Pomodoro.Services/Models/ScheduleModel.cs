@@ -4,6 +4,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using Pomodoro.Dal.Configs;
 using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Enums;
 using Pomodoro.Services.Models.Interfaces;
@@ -23,19 +24,26 @@ namespace Pomodoro.Services.Models
         /// <summary>
         /// Gets or sets schedule type.
         /// </summary>
-        [Required(ErrorMessage = "Schedule type is required")]
-        [EnumDataType(typeof(ScheduleType), ErrorMessage = "Attr: Non exisiting schedule type")]
+        [Required(ErrorMessage = "Schedule {0} is required.")]
+        [EnumDataType(typeof(ScheduleType), ErrorMessage = "Non exisiting {0}")]
         public ScheduleType ScheduleType { get; set; }
 
         /// <summary>
         /// Gets or sets pattern of frequency of task execution.
         /// </summary>
+        [Required(ErrorMessage = "Schedule {0} is required.")]
+        [StringLength(
+            PomoConstants.ScheduleTemplateMaxLength,
+            ErrorMessage = "The {0} should be less or equal than {1} characters.")]
         public string Template { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets routine title.
         /// </summary>
-        [Required(ErrorMessage = "Title is required")]
+        [Required(ErrorMessage = "Schedule {0} is required.")]
+        [StringLength(
+            PomoConstants.ScheduleTitleMaxLength,
+            ErrorMessage = "The {0} should be less or equal than {1} characters.")]
         public string Title { get; set; } = string.Empty;
 
         /// <summary>
@@ -47,6 +55,9 @@ namespace Pomodoro.Services.Models
         /// Gets or sets routine description, optional.
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        [StringLength(
+            PomoConstants.ScheduleDescriptionMaxLength,
+            ErrorMessage = "The {0} should be less or equal than {1} characters.")]
         public string? Description { get; set; }
 
         /// <summary>
@@ -57,19 +68,19 @@ namespace Pomodoro.Services.Models
         /// <summary>
         /// Gets or sets DateTime when routine finished.
         /// </summary>
-        [Required(ErrorMessage = "Finish datetime is required")]
+        [Required(ErrorMessage = "Schedule {0} datetime is required")]
         public DateTime FinishAt { get; set; }
 
         /// <summary>
         /// Gets or sets planned start time.
         /// </summary>
-        [Required(ErrorMessage = "Start date time is required")]
+        [Required(ErrorMessage = "Schedule {0} date time is required")]
         public DateTime StartDt { get; set; }
 
         /// <summary>
         /// Gets or sets planned duration of the routine round.
         /// </summary>
-        [Required(ErrorMessage = "Allocated duration is required")]
+        [Required(ErrorMessage = "Schedule {0} is required")]
         [Range(60, 86400, ErrorMessage = "Allocated duration should be between one minute and 1 day.")]
         public int AllocatedDuration { get; set; }
 
@@ -162,6 +173,7 @@ namespace Pomodoro.Services.Models
             List<ValidationResult> results = new ();
 
             // TODO: how validate related tasks;
+            // TODO: DELETE
             if (this.StartDt < DateTime.UtcNow)
             {
                 results.Add(new ValidationResult(

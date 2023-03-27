@@ -3,6 +3,7 @@
 // </copyright>
 
 using System.ComponentModel.DataAnnotations;
+using Pomodoro.Dal.Configs;
 using Pomodoro.Dal.Entities;
 using Pomodoro.Services.Models.Interfaces;
 
@@ -21,7 +22,9 @@ namespace Pomodoro.Services.Models
         /// <summary>
         /// Gets or sets settings name.
         /// </summary>
-        [StringLength(50, ErrorMessage = "Should be less or equal than 50 letters.")]
+        [StringLength(
+            PomoConstants.TimerSettingsNameMaxLength,
+            ErrorMessage = "The {0} should be less or equal than {1} characters.")]
         public string? Name { get; set; }
 
         /// <summary>
