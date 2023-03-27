@@ -27,10 +27,14 @@ namespace Pomodoro.Dal.Entities
         /// </summary>
         public int SequenceNumber { get; set; }
 
+        // TODO: should I use it, maybe delete.
+
         /// <summary>
         /// Gets or sets DateTime when task created.
         /// </summary>
         public DateTime CreatedDt { get; set; }
+
+        // TODO: should I use it, maybe delete.
 
         /// <summary>
         /// Gets or sets DateTime when task modified.

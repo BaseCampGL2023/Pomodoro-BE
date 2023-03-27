@@ -33,6 +33,8 @@ namespace Pomodoro.Dal.Repositories.Interfaces
         /// <returns>ICollection collection of objects.</returns>
         public Task<ICollection<AppTask>> GetBelonginStartedAllAsync(Guid ownerId);
 
+        // TODO: Maybe rename in between?
+
         /// <summary>
         /// Return all tasks related to schedules from start to end DateTime.
         /// </summary>
