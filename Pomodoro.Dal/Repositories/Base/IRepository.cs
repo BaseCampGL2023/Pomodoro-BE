@@ -85,6 +85,13 @@ namespace Pomodoro.Dal.Repositories.Base
         Task<T?> GetByIdAsync(Guid id);
 
         /// <summary>
+        /// Retrive entity from database by id without adding to change tracker.
+        /// </summary>
+        /// <param name="id">Entity id.</param>
+        /// <returns>Queried object or null, if object with this id doesn't exist in database.</returns>
+        Task<T?> GetByIdNoTrackingAsync(Guid id);
+
+        /// <summary>
         /// Retrieve all entites from database.
         /// </summary>
         /// <returns>ICollection collection of objects.</returns>

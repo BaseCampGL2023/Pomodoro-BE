@@ -109,5 +109,9 @@ namespace Pomodoro.Dal.Repositories.Base
             this.Table.UpdateRange(entities);
             return persist ? await this.SaveChangesAsync() : 0;
         }
+
+        /// <inheritdoc/>
+        public async Task<T?> GetByIdNoTrackingAsync(Guid id)
+            => await this.Table.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
     }
 }
