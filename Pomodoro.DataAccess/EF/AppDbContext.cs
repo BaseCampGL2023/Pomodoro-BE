@@ -12,7 +12,7 @@ namespace Pomodoro.DataAccess.EF
 {
     public class AppDbContext : IdentityDbContext<PomoIdentityUser, IdentityRole<Guid>, Guid>
     {
-        public DbSet<Completed> CompletedTasks => Set<Completed>();
+        public DbSet<PomodoroEntity> Pomodoros => Set<PomodoroEntity>();
         public DbSet<Frequency> Frequencies => Set<Frequency>();
         public DbSet<FrequencyType> FrequencyTypes => Set<FrequencyType>();
         public DbSet<Settings> Settings => Set<Settings>();

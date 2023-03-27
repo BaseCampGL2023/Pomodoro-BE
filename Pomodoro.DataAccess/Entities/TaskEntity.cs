@@ -1,4 +1,4 @@
-﻿// <copyright file="Task.cs" company="PomodoroGroup_GL_BaseCamp">
+﻿// <copyright file="TaskEntity.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
@@ -19,6 +19,6 @@ namespace Pomodoro.DataAccess.Entities
         //
         public AppUser? User { get; set; }
         public Frequency? Frequency { get; set; }
-        public ICollection<Completed>? CompletedTasks { get; set; }
+        public ICollection<PomodoroEntity>? Pomodoros { get; set; }
     }
 }

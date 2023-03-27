@@ -33,6 +33,8 @@ builder.Services.AddScoped<ITaskService, TaskService>();
 
 builder.Services.AddScoped<ISettingsService, SettingsService>();
 
+builder.Services.AddScoped<IStatisticsService, StatisticsService>();
+
 builder.Services
     .AddJwtAuthentication(builder.Configuration)
     .AddGoogleAuthentication(builder.Configuration);
