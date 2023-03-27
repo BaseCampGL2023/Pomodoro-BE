@@ -30,8 +30,13 @@ namespace Pomodoro.Services.Models.Results
         Forbid,
 
         /// <summary>
-        /// Execution throw's exeption.
+        /// Execution throw's exeption, and this exception handled.
         /// </summary>
         Error,
+
+        /// <summary>
+        /// Unable to execute, because this cause of conflict in application state.
+        /// </summary>
+        Conflict,
     }
 }
