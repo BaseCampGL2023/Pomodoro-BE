@@ -11,6 +11,7 @@ using Pomodoro.Services.Models;
 using Pomodoro.Services.Models.Results;
 using Pomodoro.Services.Utilities;
 
+// TODO: GetActive, GetCompleted
 namespace Pomodoro.Services
 {
     /// <summary>
@@ -69,7 +70,7 @@ namespace Pomodoro.Services
             {
                 return new ServiceResponse<bool>
                 {
-                    Result = ResponseType.Error,
+                    Result = ResponseType.Conflict,
                     Message = $"Tasks intersects with already planned tasks, ID: {intersected}.",
                 };
             }
@@ -108,7 +109,7 @@ namespace Pomodoro.Services
             var previous = await this.Repo.GetByIdWithRelatedAsync(model.Id);
             if (previous == null)
             {
-                return new ServiceResponse<bool> { Result = ResponseType.Error, Message = "Unexistable schedule." };
+                return new ServiceResponse<bool> { Result = ResponseType.Conflict, Message = "Unexistable schedule." };
             }
 
             if (previous.AppUserId != model.OwnerId)
@@ -130,7 +131,8 @@ namespace Pomodoro.Services
                 if (model.ScheduleType == previous.ScheduleType
                     && model.Template == previous.Template
                     && model.StartDt == previous.StartDt
-                    && model.FinishAt == previous.FinishAtDt)
+                    && model.FinishAt == previous.FinishAtDt
+                    && model.CategoryId != previous.CategoryId)
                 {
                     foreach (var task in previous.Tasks)
                     {
@@ -151,21 +153,40 @@ namespace Pomodoro.Services
                     }
                     else
                     {
-                        // TODO: add new tasks.
+                        var startAddDt = previous.Tasks.Max(t => t.StartDt);
+
+                        List<AppTask> tasks = ScheduleUtility.AddTasks(
+                            model,
+                            startAddDt,
+                            previous.Tasks.Max(t => t.SequenceNumber));
+
+                        List<AppTask> existingScheduled = (await this.taskRepository.GetScheduledAllAsync(
+                            ownerId,
+                            startAddDt,
+                            tasks.Max(t => t.StartDt).AddSeconds(model.AllocatedDuration))).ToList();
+
+                        Guid intersected = ScheduleUtility.GetIntersectedGuid(tasks, existingScheduled);
+
+                        if (intersected != Guid.Empty)
+                        {
+                            return new ServiceResponse<bool>
+                            {
+                                Result = ResponseType.Conflict,
+                                Message = $"Tasks intersects with already planned tasks, ID: {intersected}.",
+                            };
+                        }
+
+                        await this.taskRepository.AddRangeAsync(tasks);
+
                         return await base.UpdateOneOwnAsync(model, ownerId);
                     }
-                }
-                else if (model.StartDt == previous.StartDt)
-                {
-                    // TODO: rebuild tasks.
-                    return await base.UpdateOneOwnAsync(model, ownerId);
                 }
                 else
                 {
                     return new ServiceResponse<bool>
                     {
-                        Result = ResponseType.Error,
-                        Message = "Schedule has planned tasks - delete them or create new schedule instead",
+                        Result = ResponseType.Conflict,
+                        Message = "Schedule has planned or performed tasks - delete them or create new schedule instead",
                     };
                 }
             }
