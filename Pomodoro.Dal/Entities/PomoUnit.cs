@@ -21,6 +21,8 @@ namespace Pomodoro.Dal.Entities
         /// </summary>
         public TimeSpan Duration { get; set; }
 
+        // TODO: should i need comment in pomodoro? Delete it
+
         /// <summary>
         /// Gets or sets optional comment.
         /// </summary>

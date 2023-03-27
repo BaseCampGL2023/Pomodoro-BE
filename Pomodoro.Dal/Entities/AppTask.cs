@@ -16,6 +16,7 @@ namespace Pomodoro.Dal.Entities
         /// </summary>
         public string Title { get; set; } = string.Empty;
 
+        // TODO: change length to maximum
         /// <summary>
         /// Gets or sets task description, optional.
         /// </summary>
