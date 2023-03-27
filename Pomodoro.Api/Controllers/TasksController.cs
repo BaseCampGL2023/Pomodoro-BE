@@ -13,7 +13,7 @@ using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.Core.Models.Tasks;
 using Pomodoro.DataAccess.Entities;
 using Pomodoro.DataAccess.Repositories.Interfaces;
-using Pomodoro.Services.Services;
+using Pomodoro.Services;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Pomodoro.Api.Controllers
