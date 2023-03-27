@@ -55,7 +55,7 @@ namespace Pomodoro.Services.Base
         /// </summary>
         /// <param name="id">Object id.</param>
         /// <param name="ownerId">Object owner id.</param>
-        /// <returns>Return object without related objects.</returns>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         public virtual async Task<ServiceResponse<TM>> GetOwnByIdAsync(Guid id, Guid ownerId)
         {
             var result = await this.repo.GetByIdAsync(id);
@@ -84,7 +84,7 @@ namespace Pomodoro.Services.Base
         /// </summary>
         /// <param name="model">Object for persisting, model updated after persistance.</param>
         /// <param name="ownerId">Object owner id.</param>
-        /// <returns>TRUE if value persist succesfully, FALSE otherwise.</returns>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         public virtual async Task<ServiceResponse<bool>> AddOneOwnAsync(TM model, Guid ownerId)
         {
             try
@@ -112,7 +112,7 @@ namespace Pomodoro.Services.Base
         /// Retrieve all belonging to the user object from database without adding them to ChangeTracker.
         /// </summary>
         /// <param name="ownerId">Owner id.</param>
-        /// <returns>Belongin to user objects collection.</returns>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         public virtual async Task<ICollection<TM>> GetOwnAllAsync(Guid ownerId)
         {
             var collection = await this.repo.GetBelongingAllAsNoTracking(ownerId);
