@@ -1,6 +1,7 @@
 ﻿// <copyright file="TaskViewModel.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
+using Pomodoro.Api.ViewModels.Base;
 using Pomodoro.Api.ViewModels.Frequency;
 
 namespace Pomodoro.Api.ViewModels.Tasks
