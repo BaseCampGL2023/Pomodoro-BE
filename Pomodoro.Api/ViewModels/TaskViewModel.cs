@@ -29,7 +29,7 @@ namespace Pomodoro.Api.ViewModels
         /// <summary>
         /// Gets or sets a value of the allocated time of the task.
         /// </summary>
-        [Range(1, byte.MaxValue, ErrorMessage = "The {0} property must be in the range from {1} to {2}.")]
+        [Range(1, short.MaxValue, ErrorMessage = "The {0} property must be in the range from {1} to {2}.")]
         public short AllocatedTime { get; set; }
 
         /// <summary>

@@ -311,7 +311,21 @@ namespace Pomodoro.Services.Realizations
             switch (task.Frequency.FrequencyType.Value)
             {
                 case FrequencyValue.None:
-                    return initialDateOnly == dateOnly;
+                    {
+                        if(task.CompletedTasks == null || !task.CompletedTasks.Any())
+                        {
+                            return true;
+                        }
+
+                        var lastPomodoro = task.CompletedTasks.Last();
+
+                        if (lastPomodoro.IsDone && lastPomodoro.ActualDate.Date == dateOnly)
+                        {
+                            return true;
+                        }
+
+                        return !lastPomodoro.IsDone;
+                    }
 
                 case FrequencyValue.Day:
                     {
