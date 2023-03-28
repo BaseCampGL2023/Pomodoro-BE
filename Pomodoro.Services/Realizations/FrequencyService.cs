@@ -48,7 +48,7 @@ namespace Pomodoro.Services.Realizations
             try
             {
                 await _freqRepo.AddAsync(freq);
-            }
+        }
             catch (Exception e)
             {
                 _log.LogError(e.Message + " - occureed while adding frequency to db.");
@@ -70,7 +70,7 @@ namespace Pomodoro.Services.Realizations
             if (freqTypeId == Guid.Empty)
             {
                 throw new InvalidOperationException("Can`t find frequency with frequency type in db.");
-            }
+        }
 
             var freqs = await _freqRepo.FindAsync(f => 
             f.FrequencyTypeId == freqTypeId && 
@@ -80,7 +80,7 @@ namespace Pomodoro.Services.Realizations
             var freq = freqs.FirstOrDefault();
 
             if (freq == null)
-            {
+        {
                 return Guid.Empty;
             }
 
@@ -107,7 +107,7 @@ namespace Pomodoro.Services.Realizations
                 }
 
                 freq.FrequencyTypeId = freqTypeId;
-            }
+        }
 
             freq.IsCustom = freqModel.IsCustom;
             freq.Every = freqModel.Every;
@@ -117,7 +117,7 @@ namespace Pomodoro.Services.Realizations
                 _freqRepo.Update(freq);
             }
             catch (Exception e)
-            {
+        {
                 _log.LogError(e.Message + " - occureed while updating frequency in db.");
                 throw;
             }
@@ -143,7 +143,7 @@ namespace Pomodoro.Services.Realizations
                 _log.LogError(e.Message + " - occureed while deleting frequency from db.");
                 throw;
             }
-        }
+            }
 
         private async Task<Guid> GetFrequencyTypeIdAsync(FrequencyValue freqValue)
         {

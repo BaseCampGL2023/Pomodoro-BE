@@ -1,4 +1,4 @@
-﻿// <copyright file="CompletedComparer.cs" company="PomodoroGroup_GL_BaseCamp">
+﻿// <copyright file="PomodoroComparer.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
@@ -8,12 +8,12 @@ using Pomodoro.DataAccess.Entities;
 namespace Pomodoro.Tests.EqualityComparers
 {
     /// <summary>
-    /// Comparer for Completed.
+    /// Comparer for Pomodoro.
     /// </summary>
-    public class CompletedComparer : IEqualityComparer<Completed?>
+    public class PomodoroComparer : IEqualityComparer<PomodoroEntity?>
     {
         /// <inheritdoc/>
-        public bool Equals([AllowNull] Completed x, [AllowNull] Completed y)
+        public bool Equals([AllowNull] PomodoroEntity x, [AllowNull] PomodoroEntity y)
         {
             if (x == null && y == null)
             {
@@ -29,12 +29,11 @@ namespace Pomodoro.Tests.EqualityComparers
                 && x.TaskId == y.TaskId
                 && x.ActualDate == y.ActualDate
                 && x.TimeSpent == y.TimeSpent
-                && x.PomodorosCount == y.PomodorosCount
-                && x.IsDone == y.IsDone;
+                && x.TaskIsDone == y.TaskIsDone;
         }
 
         /// <inheritdoc/>
-        public int GetHashCode([DisallowNull] Completed obj)
+        public int GetHashCode([DisallowNull] PomodoroEntity obj)
         {
             return obj.GetHashCode();
         }

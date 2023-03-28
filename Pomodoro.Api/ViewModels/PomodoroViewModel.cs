@@ -9,7 +9,7 @@ namespace Pomodoro.Api.ViewModels
     /// <summary>
     /// Represents a view model for pomodoro.
     /// </summary>
-    public class CompletedViewModel
+    public class PomodoroViewModel
     {
         /// <summary>
         /// Gets or sets a value of the id of the pomodoro.

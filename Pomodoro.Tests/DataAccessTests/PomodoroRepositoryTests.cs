@@ -1,4 +1,4 @@
-﻿// <copyright file="CompletedRepositoryTests.cs" company="PomodoroGroup_GL_BaseCamp">
+﻿// <copyright file="PomodoroRepositoryTests.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
@@ -11,9 +11,9 @@ using Pomodoro.Tests.EqualityComparers;
 namespace Pomodoro.Tests.DataAccessTests
 {
     /// <summary>
-    /// Compled repository test class.
+    /// Pomodoro repository test class.
     /// </summary>
-    public class CompletedRepositoryTests
+    public class PomodoroRepositoryTests
     {
         /// <summary>
         /// Adds completed to database.
@@ -24,23 +24,22 @@ namespace Pomodoro.Tests.DataAccessTests
         {
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
-            var completedRepository = new CompletedRepository(context);
-            var completed = new Completed
+            var pomodoroRepository = new PomodoroRepository(context);
+            var pomodoro = new PomodoroEntity
             {
                 TaskId = UnitTestHelper.Tasks[1].Id,
                 ActualDate = new DateTime(2023, 1, 14),
                 TimeSpent = 3000,
-                PomodorosCount = 2,
-                IsDone = true,
+                TaskIsDone = true,
             };
-            int expectedCount = UnitTestHelper.CompletedTasks.Count + 1;
+            int expectedCount = UnitTestHelper.Pomodoros.Count + 1;
 
             // act
-            await completedRepository.AddAsync(completed);
+            await pomodoroRepository.AddAsync(pomodoro);
             await context.SaveChangesAsync();
 
             // assert
-            Assert.Equal(expectedCount, context.CompletedTasks.Count());
+            Assert.Equal(expectedCount, context.Pomodoros.Count());
         }
 
         /// <summary>
@@ -52,19 +51,18 @@ namespace Pomodoro.Tests.DataAccessTests
         {
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
-            var completedRepository = new CompletedRepository(context);
-            var completed = new Completed
+            var pomodoroRepository = new PomodoroRepository(context);
+            var pomodoro = new PomodoroEntity
             {
                 ActualDate = new DateTime(2023, 1, 14),
                 TimeSpent = 3000,
-                PomodorosCount = 2,
-                IsDone = true,
+                TaskIsDone = true,
             };
 
             // act
             var act = async () =>
             {
-                await completedRepository.AddAsync(completed);
+                await pomodoroRepository.AddAsync(pomodoro);
                 await context.SaveChangesAsync();
             };
 
@@ -81,34 +79,32 @@ namespace Pomodoro.Tests.DataAccessTests
         {
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
-            var completedRepository = new CompletedRepository(context);
-            var completeds = new List<Completed>
+            var pomodoroRepository = new PomodoroRepository(context);
+            var pomodoros = new List<PomodoroEntity>
             {
-                new Completed
+                new PomodoroEntity
                 {
                     TaskId = UnitTestHelper.Tasks[0].Id,
                     ActualDate = new DateTime(2023, 1, 14),
                     TimeSpent = 3000,
-                    PomodorosCount = 2,
-                    IsDone = true,
+                    TaskIsDone = true,
                 },
-                new Completed
+                new PomodoroEntity
                 {
                     TaskId = UnitTestHelper.Tasks[1].Id,
                     ActualDate = new DateTime(2023, 1, 14),
                     TimeSpent = 3000,
-                    PomodorosCount = 2,
-                    IsDone = true,
+                    TaskIsDone = true,
                 },
             };
-            int expectedCount = UnitTestHelper.CompletedTasks.Count + completeds.Count;
+            int expectedCount = UnitTestHelper.Pomodoros.Count + pomodoros.Count;
 
             // act
-            await completedRepository.AddRangeAsync(completeds);
+            await pomodoroRepository.AddRangeAsync(pomodoros);
             await context.SaveChangesAsync();
 
             // assert
-            Assert.Equal(expectedCount, context.CompletedTasks.Count());
+            Assert.Equal(expectedCount, context.Pomodoros.Count());
         }
 
         /// <summary>
@@ -120,29 +116,27 @@ namespace Pomodoro.Tests.DataAccessTests
         {
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
-            var completedRepository = new CompletedRepository(context);
-            var completeds = new List<Completed>
+            var pomodoroRepository = new PomodoroRepository(context);
+            var pomodoros = new List<PomodoroEntity>
             {
-                new Completed
+                new PomodoroEntity
                 {
                     ActualDate = new DateTime(2023, 1, 14),
                     TimeSpent = 3000,
-                    PomodorosCount = 2,
-                    IsDone = true,
+                    TaskIsDone = true,
                 },
-                new Completed
+                new PomodoroEntity
                 {
                     ActualDate = new DateTime(2023, 1, 14),
                     TimeSpent = 3000,
-                    PomodorosCount = 2,
-                    IsDone = true,
+                    TaskIsDone = true,
                 },
             };
 
             // act
             var act = async () =>
             {
-                await completedRepository.AddRangeAsync(completeds);
+                await pomodoroRepository.AddRangeAsync(pomodoros);
                 await context.SaveChangesAsync();
             };
 
@@ -159,15 +153,15 @@ namespace Pomodoro.Tests.DataAccessTests
         {
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
-            var completedRepository = new CompletedRepository(context);
-            var expCompleteds = UnitTestHelper.CompletedTasks.Where(c => c.TaskId == UnitTestHelper.Tasks[0].Id)
+            var pomodoroRepository = new PomodoroRepository(context);
+            var expPomodoros = UnitTestHelper.Pomodoros.Where(c => c.TaskId == UnitTestHelper.Tasks[0].Id)
                                                              .ToList();
 
             // act
-            var actCompleteds = await completedRepository.FindAsync(x => x.TaskId == expCompleteds[0].TaskId);
+            var actPomodoros = await pomodoroRepository.FindAsync(x => x.TaskId == expPomodoros[0].TaskId);
 
             // assert
-            Assert.Equal(expCompleteds, actCompleteds, new CompletedComparer());
+            Assert.Equal(expPomodoros, actPomodoros, new PomodoroComparer());
         }
 
         /// <summary>
@@ -179,14 +173,14 @@ namespace Pomodoro.Tests.DataAccessTests
         {
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
-            var completedRepository = new CompletedRepository(context);
-            var expCompleteds = UnitTestHelper.CompletedTasks;
+            var pomodoroRepository = new PomodoroRepository(context);
+            var expPomodoros = UnitTestHelper.Pomodoros;
 
             // act
-            var actCompleteds = await completedRepository.GetAllAsync();
+            var actPomodoros = await pomodoroRepository.GetAllAsync();
 
             // assert
-            Assert.Equal(expCompleteds, actCompleteds, new CompletedComparer());
+            Assert.Equal(expPomodoros, actPomodoros, new PomodoroComparer());
         }
 
         /// <summary>
@@ -198,14 +192,14 @@ namespace Pomodoro.Tests.DataAccessTests
         {
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
-            var completedRepository = new CompletedRepository(context);
-            var expCompleted = UnitTestHelper.CompletedTasks[0];
+            var pomodoroRepository = new PomodoroRepository(context);
+            var expPomodoro = UnitTestHelper.Pomodoros[0];
 
             // act
-            var actCompleted = await completedRepository.GetByIdAsync(expCompleted.Id);
+            var actPomodoro = await pomodoroRepository.GetByIdAsync(expPomodoro.Id);
 
             // assert
-            Assert.Equal(expCompleted, actCompleted, new CompletedComparer());
+            Assert.Equal(expPomodoro, actPomodoro, new PomodoroComparer());
         }
 
         /// <summary>
@@ -216,16 +210,16 @@ namespace Pomodoro.Tests.DataAccessTests
         {
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
-            var completedRepository = new CompletedRepository(context);
-            var completed = UnitTestHelper.CompletedTasks[0];
-            int expectedCount = UnitTestHelper.CompletedTasks.Count - 1;
+            var pomodoroRepository = new PomodoroRepository(context);
+            var pomodoro = UnitTestHelper.Pomodoros[0];
+            int expectedCount = UnitTestHelper.Pomodoros.Count - 1;
 
             // act
-            completedRepository.Remove(completed);
+            pomodoroRepository.Remove(pomodoro);
             context.SaveChanges();
 
             // assert
-            Assert.Equal(expectedCount, context.CompletedTasks.Count());
+            Assert.Equal(expectedCount, context.Pomodoros.Count());
         }
 
         /// <summary>
@@ -236,15 +230,15 @@ namespace Pomodoro.Tests.DataAccessTests
         {
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
-            var completedRepository = new CompletedRepository(context);
-            var completeds = UnitTestHelper.CompletedTasks;
+            var pomodoroRepository = new PomodoroRepository(context);
+            var pomodoros = UnitTestHelper.Pomodoros;
 
             // act
-            completedRepository.RemoveRange(completeds);
+            pomodoroRepository.RemoveRange(pomodoros);
             context.SaveChanges();
 
             // assert
-            Assert.Empty(context.CompletedTasks);
+            Assert.Empty(context.Pomodoros);
         }
 
         /// <summary>
@@ -256,19 +250,18 @@ namespace Pomodoro.Tests.DataAccessTests
         {
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
-            var completedRepository = new CompletedRepository(context);
-            var expCompleted = UnitTestHelper.CompletedTasks[0];
-            expCompleted.TimeSpent = 5000;
-            expCompleted.PomodorosCount = 3;
-            expCompleted.IsDone = false;
+            var pomodoroRepository = new PomodoroRepository(context);
+            var expPomodoro = UnitTestHelper.Pomodoros[0];
+            expPomodoro.TimeSpent = 5000;
+            expPomodoro.TaskIsDone = false;
 
             // act
-            completedRepository.Update(expCompleted);
+            pomodoroRepository.Update(expPomodoro);
             context.SaveChanges();
-            var actCompleted = await completedRepository.GetByIdAsync(expCompleted.Id);
+            var actPomodoro = await pomodoroRepository.GetByIdAsync(expPomodoro.Id);
 
             // assert
-            Assert.Equal(expCompleted, actCompleted, new CompletedComparer());
+            Assert.Equal(expPomodoro, actPomodoro, new PomodoroComparer());
         }
 
         /// <summary>
@@ -279,17 +272,16 @@ namespace Pomodoro.Tests.DataAccessTests
         {
             // arrange
             using var context = new AppDbContext(UnitTestHelper.DbOptions);
-            var completedRepository = new CompletedRepository(context);
-            var expCompleted = UnitTestHelper.CompletedTasks[0];
-            expCompleted.TaskId = Guid.Empty;
-            expCompleted.TimeSpent = 5000;
-            expCompleted.PomodorosCount = 3;
-            expCompleted.IsDone = false;
+            var pomodoroRepository = new PomodoroRepository(context);
+            var expPomodoro = UnitTestHelper.Pomodoros[0];
+            expPomodoro.TaskId = Guid.Empty;
+            expPomodoro.TimeSpent = 5000;
+            expPomodoro.TaskIsDone = false;
 
             // act
             var act = () =>
             {
-                completedRepository.Update(expCompleted);
+                pomodoroRepository.Update(expPomodoro);
                 context.SaveChanges();
             };
 

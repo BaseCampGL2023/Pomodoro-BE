@@ -24,7 +24,7 @@ namespace Pomodoro.DataAccess.Extensions
         public static IServiceCollection AddRepositories(
             this IServiceCollection services)
         {
-            services.AddScoped<ICompletedRepository, CompletedRepository>();
+            services.AddScoped<IPomodoroRepository, PomodoroRepository>();
             services.AddScoped<IFrequencyRepository, FrequencyRepository>();
             services.AddScoped<IFrequencyTypeRepository, FrequencyTypeRepository>();
             services.AddScoped<ISettingsRepository, SettingsRepository>();

@@ -1,4 +1,4 @@
-﻿// <copyright file="CompletedConfig.cs" company="PomodoroGroup_GL_BaseCamp">
+﻿// <copyright file="PomodoroConfig.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
@@ -8,9 +8,9 @@ using Pomodoro.DataAccess.Entities;
 
 namespace Pomodoro.DataAccess.Configurations
 {
-    internal class CompletedConfig : IEntityTypeConfiguration<Completed>
+    internal class PomodoroConfig : IEntityTypeConfiguration<PomodoroEntity>
     {
-        public void Configure(EntityTypeBuilder<Completed> builder)
+        public void Configure(EntityTypeBuilder<PomodoroEntity> builder)
         {
             builder
                 .Property(c => c.ActualDate)

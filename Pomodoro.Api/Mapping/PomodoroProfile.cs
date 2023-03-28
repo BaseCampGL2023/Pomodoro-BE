@@ -19,7 +19,7 @@ namespace Pomodoro.Api.Mapping
         /// </summary>
         public PomodoroProfile()
         {
-            this.CreateMap<CompletedModel, CompletedViewModel>().ReverseMap();
+            this.CreateMap<PomodoroModel, PomodoroViewModel>().ReverseMap();
         }
     }
 }

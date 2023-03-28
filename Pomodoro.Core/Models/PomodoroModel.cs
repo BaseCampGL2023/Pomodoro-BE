@@ -1,6 +1,6 @@
 ﻿namespace Pomodoro.Core.Models
 {
-    public class CompletedModel
+    public class PomodoroModel
     {
         public Guid Id { get; set; }
         public Guid TaskId { get; set; }

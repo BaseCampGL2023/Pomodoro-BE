@@ -31,7 +31,13 @@ builder.Services.AddScoped<ITaskService, TaskService>();
 
 builder.Services.AddScoped<ISettingsService, SettingsService>();
 
-builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddScoped<IStatisticsService, StatisticsService>();
+
+builder.Services
+    .AddJwtAuthentication(builder.Configuration)
+    .AddGoogleAuthentication(builder.Configuration);
+
+builder.Services.AddCookiesForExternalAuth();
 
 builder.Services.AddCors(options =>
 {

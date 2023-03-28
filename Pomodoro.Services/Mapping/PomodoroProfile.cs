@@ -4,11 +4,11 @@ using Pomodoro.DataAccess.Entities;
 
 namespace Pomodoro.Services.Mapping
 {
-    public class CompletedProfile : Profile
+    public class PomodoroProfile : Profile
     {
-        public CompletedProfile()
+        public PomodoroProfile()
         {
-            CreateMap<CompletedModel, Completed>().ReverseMap();
+            CreateMap<PomodoroModel, PomodoroEntity>().ReverseMap();
         }
     }
 }

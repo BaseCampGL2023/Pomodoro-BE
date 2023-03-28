@@ -33,7 +33,7 @@ namespace Pomodoro.Tests
         /// <summary>
         /// Gets completedTasks for testing.
         /// </summary>
-        public static List<Completed> CompletedTasks => GetCompletedTasks();
+        public static List<PomodoroEntity> Pomodoros => GetPomodoros();
 
         /// <summary>
         /// Gets appUsers for testing.
@@ -83,7 +83,7 @@ namespace Pomodoro.Tests
             context.AppUsers.AddRange(AppUsers);
             context.Settings.AddRange(Settings);
             context.Tasks.AddRange(Tasks);
-            context.CompletedTasks.AddRange(CompletedTasks);
+            context.Pomodoros.AddRange(Pomodoros);
         }
 
         private static List<FrequencyType> GetFrequencyTypes()
@@ -202,54 +202,49 @@ namespace Pomodoro.Tests
             };
         }
 
-        private static List<Completed> GetCompletedTasks()
+        private static List<PomodoroEntity> GetPomodoros()
         {
-            return new List<Completed>
+            return new List<PomodoroEntity>
             {
-                new Completed
+                new PomodoroEntity
                 {
                     Id = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     TaskId = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     ActualDate = new DateTime(2023, 1, 10),
                     TimeSpent = 3000,
-                    PomodorosCount = 2,
-                    IsDone = true,
+                    TaskIsDone = true,
                 },
-                new Completed
+                new PomodoroEntity
                 {
                     Id = new Guid(2, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     TaskId = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     ActualDate = new DateTime(2023, 1, 11),
                     TimeSpent = 4500,
-                    PomodorosCount = 3,
-                    IsDone = true,
+                    TaskIsDone = true,
                 },
-                new Completed
+                new PomodoroEntity
                 {
                     Id = new Guid(3, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     TaskId = new Guid(1, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     ActualDate = new DateTime(2023, 1, 12),
                     TimeSpent = 3000,
-                    PomodorosCount = 2,
-                    IsDone = true,
+                    TaskIsDone = true,
                 },
-                new Completed
+                new PomodoroEntity
                 {
                     Id = new Guid(4, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     TaskId = new Guid(2, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     ActualDate = new DateTime(2023, 1, 11),
                     TimeSpent = 3000,
-                    PomodorosCount = 2,
-                    IsDone = true,
+                    TaskIsDone = true,
                 },
-                new Completed
+                new PomodoroEntity
                 {
                     Id = new Guid(5, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     TaskId = new Guid(2, 2, 3, new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }),
                     ActualDate = new DateTime(2023, 1, 13),
                     TimeSpent = 1500,
-                    PomodorosCount = 1,
-                    IsDone = true,
+                    TaskIsDone = true,
                 },
             };
         }

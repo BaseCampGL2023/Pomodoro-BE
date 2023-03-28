@@ -19,7 +19,7 @@ namespace Pomodoro.DataAccess.Repositories.Realizations
                 .Where(t => t.Id == id)
                 .Include(t => t.Frequency)
                     .ThenInclude(f => f.FrequencyType)
-                .Include(t => t.CompletedTasks)
+                .Include(t => t.Pomodoros)
                 .FirstOrDefaultAsync();
         }
 
@@ -29,7 +29,7 @@ namespace Pomodoro.DataAccess.Repositories.Realizations
                 .Where(predicate)
                 .Include(t => t.Frequency)
                     .ThenInclude(f => f.FrequencyType)
-                .Include(t => t.CompletedTasks)
+                .Include(t => t.Pomodoros)
                 .ToListAsync();
         }
     }

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Pomodoro.Core.Enums;
 using Pomodoro.Core.Models;
 using Pomodoro.DataAccess.Entities;
 
@@ -19,13 +18,13 @@ namespace Pomodoro.Services.Mapping
 
         private byte GetProgress(TaskEntity task)
         {
-            if (task == null || task.CompletedTasks == null || task.CompletedTasks.Count == 0)
+            if (task == null || task.Pomodoros == null || task.Pomodoros.Count == 0)
                 return 0;
 
-            if (task.AllocatedTime == 0 || task.CompletedTasks.Last().IsDone)
+            if (task.AllocatedTime == 0 || task.Pomodoros.Last().TaskIsDone)
                 return 100;
 
-            var totalTimeSpent = task.CompletedTasks.Sum(ct => ct.TimeSpent);
+            var totalTimeSpent = task.Pomodoros.Sum(ct => ct.TimeSpent);
 
             return (byte)(totalTimeSpent * 100 / task.AllocatedTime);
         }

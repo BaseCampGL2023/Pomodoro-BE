@@ -6,6 +6,7 @@ namespace Pomodoro.Core.Models.Statistics
     {
         public int Year { get; set; }
 
-        public List<AnalyticsPerMonth>? AnalyticsPerMonths { get; set; }
+        public List<AnalyticsPerMonth> AnalyticsPerMonths { get; set; }
+            = new List<AnalyticsPerMonth>();
     }
 }

@@ -11,20 +11,20 @@ namespace Pomodoro.Services.Realizations
     public class TaskService : ITaskService
     {
         private readonly ITaskRepository _tasksRepo;
-        private readonly ICompletedRepository _pomodorosRepo;
+        private readonly IPomodoroRepository _pomodoroRepo;
         private readonly IMapper _mapper;
         private readonly IFrequencyService _freqService;
         private readonly ILogger _log;
 
         public TaskService(
             ITaskRepository tasksRepo,
-            ICompletedRepository pomodorosRepo,
+            IPomodoroRepository pomodoroRepo,
             IFrequencyService freqService,
             IMapper mapper,
             ILogger<TaskService> logger)
         {
             _tasksRepo = tasksRepo;
-            _pomodorosRepo = pomodorosRepo;
+            _pomodoroRepo = pomodoroRepo;
             _mapper = mapper;
             _freqService = freqService;
             _log = logger;
@@ -219,23 +219,23 @@ namespace Pomodoro.Services.Realizations
                 throw new InvalidOperationException("Can`t find task in db.");
             }
 
-            if (task.CompletedTasks == null)
+            if (task.Pomodoros == null)
             {
                 throw new InvalidOperationException("Can`t find any task pomodoros in db.");
             }
 
-            var pomodoro = task.CompletedTasks.LastOrDefault(p => p.ActualDate.Date == DateTime.Now.Date);
+            var pomodoro = task.Pomodoros.LastOrDefault(p => p.ActualDate.Date == DateTime.Now.Date);
 
             if (pomodoro == null)
             {
                 throw new InvalidOperationException("Can`t find task pomodoro in db.");
             }
 
-            pomodoro.IsDone = true;
+            pomodoro.TaskIsDone = true;
 
             try
             {
-                _pomodorosRepo.Update(pomodoro);
+                _pomodoroRepo.Update(pomodoro);
                 await _tasksRepo.SaveChangesAsync();
             }
             catch (Exception e)
@@ -246,7 +246,7 @@ namespace Pomodoro.Services.Realizations
 
         }
 
-        public async Task<TaskModel> AddPomodoroToTaskAsync(CompletedModel pomodoroModel)
+        public async Task<TaskModel> AddPomodoroToTaskAsync(PomodoroModel pomodoroModel)
         {
             if (pomodoroModel == null)
             {
@@ -260,21 +260,21 @@ namespace Pomodoro.Services.Realizations
                 throw new InvalidOperationException("Can`t find task in db.");
             }
 
-            if (task.CompletedTasks != null && task.CompletedTasks.Any())
+            if (task.Pomodoros != null && task.Pomodoros.Any())
             {
-                var lastPomodoro = task.CompletedTasks.Where(p => p.ActualDate.Date == DateTime.Now.Date).Last();
+                var lastPomodoro = task.Pomodoros.Where(p => p.ActualDate.Date == DateTime.Now.Date).Last();
 
-                if (lastPomodoro != null && lastPomodoro.IsDone)
+                if (lastPomodoro != null && lastPomodoro.TaskIsDone)
                 {
                     throw new InvalidOperationException("Task is already finished for today.");
                 }
             }
 
-            var pomodoro = _mapper.Map<Completed>(pomodoroModel);
+            var pomodoro = _mapper.Map<PomodoroEntity>(pomodoroModel);
 
             try
             {
-                await _pomodorosRepo.AddAsync(pomodoro);
+                await _pomodoroRepo.AddAsync(pomodoro);
                 await _tasksRepo.SaveChangesAsync();
             }
             catch (Exception e)
@@ -290,20 +290,20 @@ namespace Pomodoro.Services.Realizations
 
         private bool IsTaskCompletedOnDate(TaskEntity task, DateTime date)
         {
-            if (task.CompletedTasks == null)
+            if (task.Pomodoros == null)
             {
                 return false;
             }
 
-            return task.CompletedTasks.Any(c => c.ActualDate.Date == date.Date && c.IsDone);
+            return task.Pomodoros.Any(c => c.ActualDate.Date == date.Date && c.TaskIsDone);
         }
 
         private bool IsTaskOnDate(TaskEntity task, DateTime date)
         {
             if (task.Frequency == null || task.Frequency.FrequencyType == null)
-            {
+        {
                 return false;
-            }
+        }
 
             var dateOnly = date.Date;
             var initialDateOnly = task.InitialDate.Date;
@@ -313,27 +313,27 @@ namespace Pomodoro.Services.Realizations
                 case FrequencyValue.None:
                     {
                         if (dateOnly < initialDateOnly) 
-                        {
+        {
                             return false; 
-                        }
+        }
 
-                        if (task.CompletedTasks == null || !task.CompletedTasks.Any())
-                        {
+                        if (task.Pomodoros == null || !task.Pomodoros.Any())
+        {
+                            return true;
+        }
+
+                        var lastPomodoro = task.Pomodoros.Last();
+
+                        if (lastPomodoro.TaskIsDone && lastPomodoro.ActualDate.Date == dateOnly)
+        {
                             return true;
                         }
 
-                        var lastPomodoro = task.CompletedTasks.Last();
-
-                        if (lastPomodoro.IsDone && lastPomodoro.ActualDate.Date == dateOnly)
-                        {
-                            return true;
-                        }
-
-                        return !lastPomodoro.IsDone;
-                    }
+                        return !lastPomodoro.TaskIsDone;
+        }
 
                 case FrequencyValue.Day:
-                    {
+        {
                         var every = 1;
 
                         if (task.Frequency.IsCustom)
@@ -355,10 +355,10 @@ namespace Pomodoro.Services.Realizations
                                 return true;
                         }
                         return false;
-                    }
+        }
 
                 case FrequencyValue.Month:
-                    {
+        {
                         var every = 1;
 
                         if (task.Frequency.IsCustom)
@@ -370,7 +370,7 @@ namespace Pomodoro.Services.Realizations
                                 return true;
                         }
                         return false;
-                    }
+        }
 
                 case FrequencyValue.Year:
                     {
@@ -380,7 +380,7 @@ namespace Pomodoro.Services.Realizations
                             every = task.Frequency.Every;
 
                         for (var d = initialDateOnly; d <= dateOnly; d = d.AddYears(every))
-                        {
+        {
                             if (d == dateOnly)
                                 return true;
                         }

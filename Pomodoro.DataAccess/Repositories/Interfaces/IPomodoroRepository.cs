@@ -3,7 +3,7 @@ using Pomodoro.DataAccess.Entities;
 
 namespace Pomodoro.DataAccess.Repositories.Interfaces
 {
-    public interface ICompletedRepository : IBaseRepository<Completed>
+    public interface IPomodoroRepository : IBaseRepository<PomodoroEntity>
     {
     }
 }

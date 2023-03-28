@@ -259,7 +259,7 @@ namespace Pomodoro.Api.Controllers
         /// </summary>
         /// <param name="id">Represents an id of the task that needs to be completed.</param>
         /// <returns>A <see cref="ActionResult"/> representing the result of task completion.</returns>
-        [HttpPut("{id}/completeTodayTask")]
+        [HttpPut("{id}/completeTask")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -312,7 +312,7 @@ namespace Pomodoro.Api.Controllers
         [SwaggerResponse(400, "The model state is invalid.")]
         [SwaggerResponse(401, "An unauthorized request cannot be processed.")]
         [SwaggerResponse(500, "An unhandled exception occurred on the server while executing the request.")]
-        public async Task<ActionResult<TaskViewModel>> AddPomodoro([FromBody] CompletedViewModel pomodoro)
+        public async Task<ActionResult<TaskViewModel>> AddPomodoro([FromBody] PomodoroViewModel pomodoro)
         {
             var task = await this.tasksService.GetTaskByIdAsync(pomodoro.TaskId);
 
@@ -326,7 +326,7 @@ namespace Pomodoro.Api.Controllers
                 return this.Forbid("Can`t add pomodoro to task that doesn`t related to current user.");
             }
 
-            var pomoModel = this.mapper.Map<CompletedModel>(pomodoro);
+            var pomoModel = this.mapper.Map<PomodoroModel>(pomodoro);
 
             TaskModel result;
 

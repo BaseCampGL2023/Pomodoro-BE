@@ -11,6 +11,6 @@ namespace Pomodoro.Core.Interfaces.IServices
         public Task DeleteTaskAsync(TaskModel taskModel);
         public Task<TaskModel> UpdateTaskAsync(TaskModel taskModel);
         public Task CompleteTaskAsync(Guid taskId);
-        public Task<TaskModel> AddPomodoroToTaskAsync(CompletedModel pomodoroModel);
+        public Task<TaskModel> AddPomodoroToTaskAsync(PomodoroModel pomodoroModel);
     }
 }
