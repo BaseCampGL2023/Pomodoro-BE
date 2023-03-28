@@ -3,9 +3,9 @@
 // </copyright>
 
 using Microsoft.EntityFrameworkCore;
+using Pomodoro.Core.Enums;
 using Pomodoro.DataAccess.EF;
 using Pomodoro.DataAccess.Entities;
-using Pomodoro.DataAccess.Enums;
 using Pomodoro.DataAccess.Repositories.Realizations;
 using Pomodoro.Tests.EqualityComparers;
 
