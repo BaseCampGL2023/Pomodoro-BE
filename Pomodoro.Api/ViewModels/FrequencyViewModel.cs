@@ -2,6 +2,7 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 using Pomodoro.Core.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Pomodoro.Api.ViewModels
 {
@@ -29,6 +30,7 @@ namespace Pomodoro.Api.ViewModels
         /// <summary>
         /// Gets or sets a value of short type indicating how often the task should repeat.
         /// </summary>
+        [Range(0, short.MaxValue, ErrorMessage = "The {0} property must be in the range from {1} to {2}.")]
         public short Every { get; set; }
     }
 }

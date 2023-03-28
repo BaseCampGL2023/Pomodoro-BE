@@ -2,6 +2,8 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Pomodoro.Api.ViewModels
 {
     /// <summary>
@@ -27,6 +29,7 @@ namespace Pomodoro.Api.ViewModels
         /// <summary>
         /// Gets or sets a value of the spent dime of the pomodoro.
         /// </summary>
+        [Range(1, byte.MaxValue, ErrorMessage = "The {0} property must be in the range from {1} to {2}.")]
         public int TimeSpent { get; set; }
 
         /// <summary>
