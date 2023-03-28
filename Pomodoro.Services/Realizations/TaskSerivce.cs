@@ -98,6 +98,16 @@ namespace Pomodoro.Services.Realizations
 
             var tasksOnDate = userTasks.Where(t => IsTaskOnDate(t, date)).ToList();
 
+            foreach (var task in tasksOnDate)
+            {
+                if(task.Pomodoros != null)
+                {
+                    var pomodorosOnDate = task.Pomodoros.Where(p => p.ActualDate.Date == date.Date).ToList();
+                    task.Pomodoros = pomodorosOnDate;
+                }
+
+            }
+
             return _mapper.Map<IEnumerable<TaskModel>>(tasksOnDate);
         }
 
@@ -262,7 +272,7 @@ namespace Pomodoro.Services.Realizations
 
             if (task.Pomodoros != null && task.Pomodoros.Any())
             {
-                var lastPomodoro = task.Pomodoros.Where(p => p.ActualDate.Date == DateTime.Now.Date).Last();
+                var lastPomodoro = task.Pomodoros.LastOrDefault(p => p.ActualDate.Date == DateTime.Now.Date);
 
                 if (lastPomodoro != null && lastPomodoro.TaskIsDone)
                 {
@@ -301,9 +311,9 @@ namespace Pomodoro.Services.Realizations
         private bool IsTaskOnDate(TaskEntity task, DateTime date)
         {
             if (task.Frequency == null || task.Frequency.FrequencyType == null)
-        {
+            {
                 return false;
-        }
+            }
 
             var dateOnly = date.Date;
             var initialDateOnly = task.InitialDate.Date;
@@ -312,28 +322,11 @@ namespace Pomodoro.Services.Realizations
             {
                 case FrequencyValue.None:
                     {
-                        if (dateOnly < initialDateOnly) 
-        {
-                            return false; 
-        }
-
-                        if (task.Pomodoros == null || !task.Pomodoros.Any())
-        {
-                            return true;
-        }
-
-                        var lastPomodoro = task.Pomodoros.Last();
-
-                        if (lastPomodoro.TaskIsDone && lastPomodoro.ActualDate.Date == dateOnly)
-        {
-                            return true;
-                        }
-
-                        return !lastPomodoro.TaskIsDone;
-        }
+                        return initialDateOnly == dateOnly;
+                    }
 
                 case FrequencyValue.Day:
-        {
+                    {
                         var every = 1;
 
                         if (task.Frequency.IsCustom)
@@ -355,10 +348,10 @@ namespace Pomodoro.Services.Realizations
                                 return true;
                         }
                         return false;
-        }
+                    }
 
                 case FrequencyValue.Month:
-        {
+                    {
                         var every = 1;
 
                         if (task.Frequency.IsCustom)
@@ -370,7 +363,7 @@ namespace Pomodoro.Services.Realizations
                                 return true;
                         }
                         return false;
-        }
+                    }
 
                 case FrequencyValue.Year:
                     {
@@ -380,7 +373,7 @@ namespace Pomodoro.Services.Realizations
                             every = task.Frequency.Every;
 
                         for (var d = initialDateOnly; d <= dateOnly; d = d.AddYears(every))
-        {
+                        {
                             if (d == dateOnly)
                                 return true;
                         }
