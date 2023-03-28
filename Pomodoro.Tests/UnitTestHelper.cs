@@ -4,9 +4,9 @@
 
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Pomodoro.Core.Enums;
 using Pomodoro.DataAccess.EF;
 using Pomodoro.DataAccess.Entities;
-using Pomodoro.DataAccess.Enums;
 
 namespace Pomodoro.Tests
 {
