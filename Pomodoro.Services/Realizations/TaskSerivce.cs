@@ -260,11 +260,11 @@ namespace Pomodoro.Services.Realizations
                 throw new InvalidOperationException("Can`t find task in db.");
             }
 
-            if(task.CompletedTasks != null && task.CompletedTasks.Any())
+            if (task.CompletedTasks != null && task.CompletedTasks.Any())
             {
                 var lastPomodoro = task.CompletedTasks.Where(p => p.ActualDate.Date == DateTime.Now.Date).Last();
 
-                if(lastPomodoro != null && lastPomodoro.IsDone) 
+                if (lastPomodoro != null && lastPomodoro.IsDone)
                 {
                     throw new InvalidOperationException("Task is already finished for today.");
                 }
@@ -295,7 +295,7 @@ namespace Pomodoro.Services.Realizations
                 return false;
             }
 
-           return task.CompletedTasks.Any(c => c.ActualDate.Date == date.Date && c.IsDone);
+            return task.CompletedTasks.Any(c => c.ActualDate.Date == date.Date && c.IsDone);
         }
 
         private bool IsTaskOnDate(TaskEntity task, DateTime date)
@@ -312,7 +312,12 @@ namespace Pomodoro.Services.Realizations
             {
                 case FrequencyValue.None:
                     {
-                        if(task.CompletedTasks == null || !task.CompletedTasks.Any())
+                        if (dateOnly < initialDateOnly) 
+                        {
+                            return false; 
+                        }
+
+                        if (task.CompletedTasks == null || !task.CompletedTasks.Any())
                         {
                             return true;
                         }
