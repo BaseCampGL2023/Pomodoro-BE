@@ -57,7 +57,7 @@ namespace Pomodoro.Services
                 };
             }
 
-            List<AppTask> existingScheduled = (await this.taskRepository.GetScheduledAllAsync(
+            List<AppTask> existingScheduled = (await this.taskRepository.GetScheduledBetweenAsync(
                 ownerId,
                 model.StartDt,
                 tasks.Max(t => t.StartDt).AddSeconds(model.AllocatedDuration))).ToList();
@@ -160,7 +160,7 @@ namespace Pomodoro.Services
                             startAddDt,
                             previous.Tasks.Max(t => t.SequenceNumber));
 
-                        List<AppTask> existingScheduled = (await this.taskRepository.GetScheduledAllAsync(
+                        List<AppTask> existingScheduled = (await this.taskRepository.GetScheduledBetweenAsync(
                             ownerId,
                             startAddDt,
                             tasks.Max(t => t.StartDt).AddSeconds(model.AllocatedDuration))).ToList();

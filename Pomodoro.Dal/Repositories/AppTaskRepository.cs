@@ -63,7 +63,7 @@ namespace Pomodoro.Dal.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<ICollection<AppTask>> GetScheduledAllAsync(Guid ownerId, DateTime start, DateTime end)
+        public async Task<ICollection<AppTask>> GetScheduledBetweenAsync(Guid ownerId, DateTime start, DateTime end)
         {
             return await this.Table.Where(
                 e => e.AppUserId == ownerId

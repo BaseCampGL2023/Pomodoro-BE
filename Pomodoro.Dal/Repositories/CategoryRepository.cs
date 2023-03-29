@@ -22,20 +22,14 @@ namespace Pomodoro.Dal.Repositories
         {
         }
 
-        // TODO: include task and schedules together - wrong way
-
         /// <inheritdoc/>
-        public async Task<Category?> GetByIdWithRelatedAsync(Guid id)
-        {
-            return await this.Table.Include(c => c.Tasks).Include(c => c.Schedules)
+        public async Task<Category?> GetByIdWithSchedulesNoTrackingAsync(Guid id)
+            => await this.Table.Include(c => c.Schedules).AsNoTracking()
                 .FirstOrDefaultAsync(c => c.Id == id);
-        }
 
         /// <inheritdoc/>
-        public async Task<Category?> GetByIdWithRelatedNoTrackingAsync(Guid id)
-        {
-            return await this.Table.Include(c => c.Tasks).Include(c => c.Schedules)
-                .AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
-        }
+        public async Task<Category?> GetByIdWithTasksdNoTrackingAsync(Guid id)
+            => await this.Table.Include(c => c.Tasks).AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == id);
     }
 }

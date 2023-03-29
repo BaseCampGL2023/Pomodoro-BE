@@ -10,7 +10,7 @@ namespace Pomodoro.Dal.Repositories.Interfaces
     /// <summary>
     /// Providing operations with AppTask objects.
     /// </summary>
-    public interface IAppTaskRepository : IBelongRepository<AppTask>, IWithRelated<AppTask>
+    public interface IAppTaskRepository : IBelongRepository<AppTask>
     {
         /// <summary>
         /// Retrieve all belonging to the user finished tasks from database.
@@ -33,8 +33,6 @@ namespace Pomodoro.Dal.Repositories.Interfaces
         /// <returns>ICollection collection of objects.</returns>
         public Task<ICollection<AppTask>> GetBelonginStartedAllAsync(Guid ownerId);
 
-        // TODO: Maybe rename in between?
-
         /// <summary>
         /// Return all tasks related to schedules from start to end DateTime.
         /// </summary>
@@ -42,6 +40,20 @@ namespace Pomodoro.Dal.Repositories.Interfaces
         /// <param name="start">Start DateTime.</param>
         /// <param name="end">End DateTime.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        public Task<ICollection<AppTask>> GetScheduledAllAsync(Guid ownerId, DateTime start, DateTime end);
+        public Task<ICollection<AppTask>> GetScheduledBetweenAsync(Guid ownerId, DateTime start, DateTime end);
+
+        /// <summary>
+        /// Retrive AppTask from database by id with pomodoros collection.
+        /// </summary>
+        /// <param name="id">Entity id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public Task<AppTask?> GetByIdWithRelatedAsync(Guid id);
+
+        /// <summary>
+        /// Retrive entity from database by id no tracking with pomodoros collection.
+        /// </summary>
+        /// <param name="id">Entity id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public Task<AppTask?> GetByIdWithRelatedNoTrackingAsync(Guid id);
     }
 }

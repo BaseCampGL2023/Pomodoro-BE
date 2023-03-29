@@ -2,7 +2,6 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
-using Microsoft.EntityFrameworkCore;
 using Pomodoro.Dal.Data;
 using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Repositories.Base;
