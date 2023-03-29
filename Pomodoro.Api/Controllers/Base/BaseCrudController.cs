@@ -63,7 +63,7 @@ namespace Pomodoro.Api.Controllers.Base
         /// <summary>
         /// Return belonging object by id, or 404 if not exist, or 403 if access denied.
         /// </summary>
-        /// <param name="id">Schedule id.</param>
+        /// <param name="id">Object id.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         [HttpGet("own/{id}")]
         [Produces("application/json")]
