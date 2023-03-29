@@ -12,6 +12,8 @@ using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.DataAccess.Extensions;
 using Pomodoro.Services.Realizations;
 using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.MSSqlServer;
 
 var pomodoroSpecificOrigins = "_pomodoroSpecificOrigins";
 
@@ -26,7 +28,9 @@ builder.Services.AddRepositories();
 builder.Services.AddIdentityEF();
 
 builder.Services.AddScoped<AuthService>();
+
 builder.Services.AddScoped<IFrequencyService, FrequencyService>();
+
 builder.Services.AddScoped<ITaskService, TaskService>();
 
 builder.Services.AddScoped<ISettingsService, SettingsService>();
@@ -52,29 +56,18 @@ builder.Services.AddCors(options =>
 });
 
 // setup Serilog
-//builder.Host.UseSerilog((ctx, lc) => lc
-//  .ReadFrom.Configuration(ctx.Configuration)
-//  .WriteTo.MSSqlServer(
-//      connectionString:
-//      ctx.Configuration.GetConnectionString("PomodoroBE"),
-//      restrictedToMinimumLevel: LogEventLevel.Information,
-//      sinkOptions: new MSSqlServerSinkOptions
-//      {
-//          TableName = "LogEvents",
-//          AutoCreateSqlTable = true,
-//      }
-//      )
-//  .WriteTo.Console());
-
-var logger = new LoggerConfiguration()
-    .MinimumLevel.Debug()
-    .WriteTo.Console()
-    .CreateLogger();
-
-builder.Services.AddLogging(loggingBuilder =>
-{
-    loggingBuilder.AddSerilog(logger);
-});
+builder.Host.UseSerilog((ctx, lc) => lc
+  .ReadFrom.Configuration(ctx.Configuration)
+  .WriteTo.MSSqlServer(
+      connectionString:
+      ctx.Configuration.GetConnectionString("LocalDB"),
+      restrictedToMinimumLevel: LogEventLevel.Information,
+      sinkOptions: new MSSqlServerSinkOptions
+      {
+          TableName = "LogEvents",
+          AutoCreateSqlTable = true,
+      })
+  .WriteTo.Console());
 
 builder.Services.AddControllers(options =>
 {
@@ -97,6 +90,7 @@ builder.Services.AddSwaggerGen(option =>
     option.EnableAnnotations();
 
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+
     option.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 
     // Include 'SecurityScheme' to use JWT Authentication
@@ -131,7 +125,7 @@ app.UseExceptionMiddleware();
 // Configure the HTTP request pipeline.
 
 // uncomment, if want logging HTTP requests
-//app.UseSerilogRequestLogging();
+app.UseSerilogRequestLogging();
 
 if (app.Environment.IsDevelopment())
 {

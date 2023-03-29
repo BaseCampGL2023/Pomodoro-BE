@@ -1,7 +1,7 @@
 ﻿// <copyright file="FrequencyViewModel.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
-using Pomodoro.Core.Enums;
+
 using System.ComponentModel.DataAnnotations;
 
 namespace Pomodoro.Api.ViewModels
@@ -20,7 +20,7 @@ namespace Pomodoro.Api.ViewModels
         /// <summary>
         /// Gets or sets a type of frequency that is used by user in this task.
         /// </summary>
-        public string FrequencyValue { get; set; }
+        public string? FrequencyValue { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether it is a custom frequency or not.

@@ -18,7 +18,7 @@ namespace Pomodoro.DataAccess.Repositories.Realizations
             return await context.Set<TaskEntity>()
                 .Where(t => t.Id == id)
                 .Include(t => t.Frequency)
-                    .ThenInclude(f => f.FrequencyType)
+                    .ThenInclude(f => f!.FrequencyType)
                 .Include(t => t.Pomodoros)
                 .FirstOrDefaultAsync();
         }
@@ -28,7 +28,7 @@ namespace Pomodoro.DataAccess.Repositories.Realizations
             return await context.Set<TaskEntity>()
                 .Where(predicate)
                 .Include(t => t.Frequency)
-                    .ThenInclude(f => f.FrequencyType)
+                    .ThenInclude(f => f!.FrequencyType)
                 .Include(t => t.Pomodoros)
                 .ToListAsync();
         }

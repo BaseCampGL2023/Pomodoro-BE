@@ -1,4 +1,4 @@
-﻿// <copyright file="CompletedViewModel.cs" company="PomodoroGroup_GL_BaseCamp">
+﻿// <copyright file="PomodoroViewModel.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
