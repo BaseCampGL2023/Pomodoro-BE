@@ -59,24 +59,7 @@ namespace Pomodoro.Services.Base
         public virtual async Task<ServiceResponse<TM>> GetOwnByIdAsync(Guid id, Guid ownerId)
         {
             var result = await this.repo.GetByIdNoTrackingAsync(id);
-            if (result is null)
-            {
-                return new ServiceResponse<TM> { Result = ResponseType.NotFound };
-            }
-            else if (result.AppUserId != ownerId)
-            {
-                return new ServiceResponse<TM> { Result = ResponseType.Forbid };
-            }
-            else
-            {
-                var data = new TM();
-                data.Assign(result);
-                return new ServiceResponse<TM>
-                {
-                    Result = ResponseType.Ok,
-                    Data = data,
-                };
-            }
+            return this.ReturnOneOwnAsync(result, ownerId);
         }
 
         /// <summary>
@@ -116,15 +99,7 @@ namespace Pomodoro.Services.Base
         public virtual async Task<ICollection<TM>> GetOwnAllAsync(Guid ownerId)
         {
             var collection = await this.repo.GetBelongingAllAsNoTracking(ownerId);
-            var result = new List<TM>();
-            foreach (var item in collection)
-            {
-                var model = new TM();
-                model.Assign(item);
-                result.Add(model);
-            }
-
-            return result;
+            return this.MapEntitiesToModels(collection);
         }
 
         /// <summary>
@@ -181,6 +156,52 @@ namespace Pomodoro.Services.Base
             {
                 return new ServiceResponse<bool> { Result = ResponseType.Error, Message = "Wrong data" };
             }
+        }
+
+        /// <summary>
+        /// Check retrived entity for null, check ownership, then return correspond ServiceResponse.
+        /// </summary>
+        /// <param name="entity">IBelongEntity instance <see cref="IBelongEntity"/>.</param>
+        /// <param name="ownerId">Owner id.</param>
+        /// <returns>Service response, witn statuses: Ok or NotFound or Forbid.</returns>
+        protected ServiceResponse<TM> ReturnOneOwnAsync(TE? entity, Guid ownerId)
+        {
+            if (entity is null)
+            {
+                return new ServiceResponse<TM> { Result = ResponseType.NotFound };
+            }
+            else if (entity.AppUserId != ownerId)
+            {
+                return new ServiceResponse<TM> { Result = ResponseType.Forbid };
+            }
+            else
+            {
+                var data = new TM();
+                data.Assign(entity);
+                return new ServiceResponse<TM>
+                {
+                    Result = ResponseType.Ok,
+                    Data = data,
+                };
+            }
+        }
+
+        /// <summary>
+        /// Map entity collection to model collection.
+        /// </summary>
+        /// <param name="entities">Collection of entity instances.</param>
+        /// <returns>Collection of model instances.</returns>
+        protected ICollection<TM> MapEntitiesToModels(ICollection<TE> entities)
+        {
+            var result = new List<TM>();
+            foreach (var item in entities)
+            {
+                var model = new TM();
+                model.Assign(item);
+                result.Add(model);
+            }
+
+            return result;
         }
     }
 }
