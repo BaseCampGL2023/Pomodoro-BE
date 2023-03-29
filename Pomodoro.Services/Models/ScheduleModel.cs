@@ -17,7 +17,7 @@ namespace Pomodoro.Services.Models
     public class ScheduleModel : IBaseModel<Schedule>, IValidatableObject
     {
         /// <summary>
-        /// Gets or sets task id.
+        /// Gets or sets schedule id.
         /// </summary>
         public Guid Id { get; set; }
 

@@ -9,6 +9,7 @@ using Pomodoro.Dal.Repositories.Interfaces;
 using Pomodoro.Services;
 using Pomodoro.Services.Models;
 using Pomodoro.Services.Models.Query;
+using Pomodoro.Services.Models.Results;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Pomodoro.Api.Controllers
@@ -101,6 +102,28 @@ namespace Pomodoro.Api.Controllers
         public async Task<ActionResult<ICollection<TaskModel>>> GetOwnAll([FromQuery] TaskQueryModel query)
         {
             return this.Ok(await this.Service.GetOwnByQueryAsync(this.UserId, query));
+        }
+
+        /// <summary>
+        /// Add new pomodoro.
+        /// </summary>
+        /// <param name="model">New object.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        [HttpPost("pomodoro")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [SwaggerResponse(201, "Object created")]
+        [SwaggerResponse(400, "The request was invalid")]
+        public virtual async Task<ActionResult<PomoModel>> AddPomodoro([FromBody] PomoModel model)
+        {
+            var result = await this.Service.AddPomodoro(model, this.UserId);
+            if (result.Result == ResponseType.Ok)
+            {
+                return this.CreatedAtAction(nameof(this.GetById), new { model.Id }, model);
+            }
+
+            return this.MapServiceResponse(result);
         }
     }
 }

@@ -14,6 +14,11 @@ namespace Pomodoro.Services.Models
     public class PomoModel
     {
         /// <summary>
+        /// Gets or sets pomodoro id.
+        /// </summary>
+        public Guid Id { get; set; }
+
+        /// <summary>
         /// Gets or sets DateTime when task performing started.
         /// </summary>
         [Required(ErrorMessage = "The {0} DateTime and time is required.")]
@@ -53,6 +58,7 @@ namespace Pomodoro.Services.Models
         {
             return new PomoModel
             {
+                Id = pomodoro.Id,
                 StartDt = pomodoro.StartDt,
                 Duration = (int)pomodoro.Duration.TotalSeconds,
             };
