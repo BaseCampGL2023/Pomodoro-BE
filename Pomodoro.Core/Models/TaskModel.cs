@@ -14,6 +14,6 @@ namespace Pomodoro.Core.Models
 
         public FrequencyModel? Frequency { get; set; }
 
-        public byte Progress { get; set; }
+        public float Progress { get; set; }
     }
 }

@@ -295,6 +295,11 @@ namespace Pomodoro.Services.Realizations
 
             var updatedTask = await _tasksRepo.FindOneTaskAsync(pomodoro.TaskId);
 
+            if (updatedTask != null && updatedTask.Pomodoros != null)
+            {
+                updatedTask.Pomodoros = updatedTask.Pomodoros.Where(p => p.ActualDate.Date == pomodoro.ActualDate.Date).ToList();
+            }
+
             return _mapper.Map<TaskModel>(updatedTask);
         }
 

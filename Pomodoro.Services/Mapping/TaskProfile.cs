@@ -16,17 +16,17 @@ namespace Pomodoro.Services.Mapping
                 .ForMember(dest => dest.Progress, act => act.MapFrom(src => GetProgress(src)));
         }
 
-        private byte GetProgress(TaskEntity task)
+        private float GetProgress(TaskEntity task)
         {
             if (task == null || task.Pomodoros == null || task.Pomodoros.Count == 0)
-                return 0;
+                return 0f;
 
             if (task.AllocatedTime == 0 || task.Pomodoros.Last().TaskIsDone)
-                return 100;
+                return 100f;
 
             var totalTimeSpent = task.Pomodoros.Sum(ct => ct.TimeSpent);
 
-            return (byte)(totalTimeSpent * 100 / task.AllocatedTime);
+            return totalTimeSpent * 100f / task.AllocatedTime;
         }
     }
 }

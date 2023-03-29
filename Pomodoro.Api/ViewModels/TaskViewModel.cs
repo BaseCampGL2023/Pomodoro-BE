@@ -41,6 +41,6 @@ namespace Pomodoro.Api.ViewModels
         /// Gets or sets task progress.
         /// </summary>
         [Range(0, byte.MaxValue, ErrorMessage = "The {0} property must be in the range from {1} to {2}.")]
-        public byte Progress { get; set; }
+        public float Progress { get; set; }
     }
 }
