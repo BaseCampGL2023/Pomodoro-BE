@@ -27,6 +27,46 @@ namespace Pomodoro.Services
         }
 
         /// <summary>
+        /// Add new category to database, Tasks and Schedules collections should be empty.
+        /// </summary>
+        /// <param name="model">Category for persisting, model updated after persistance.</param>
+        /// <param name="ownerId">Category owner id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public override async Task<ServiceResponse<bool>> AddOneOwnAsync(CategoryModel model, Guid ownerId)
+        {
+            if (model.Tasks.Any() || model.Schedules.Any())
+            {
+                return new ServiceResponse<bool>
+                {
+                    Result = ResponseType.Error,
+                    Message = "Tasks or schedules shouldn't be add with category.",
+                };
+            }
+
+            return await base.AddOneOwnAsync(model, ownerId);
+        }
+
+        /// <summary>
+        /// Update exisiting category, Tasks and Schedules collections should be empty.
+        /// </summary>
+        /// <param name="model">Category object, value updated after persistance.</param>
+        /// <param name="ownerId">Category owner Id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public override async Task<ServiceResponse<bool>> UpdateOneOwnAsync(CategoryModel model, Guid ownerId)
+        {
+            if (model.Tasks.Any() || model.Schedules.Any())
+            {
+                return new ServiceResponse<bool>
+                {
+                    Result = ResponseType.Error,
+                    Message = "Tasks or schedules shouldn't be add when updating category.",
+                };
+            }
+
+            return await this.UpdateOneOwnAsync(model, ownerId);
+        }
+
+        /// <summary>
         /// Return ServiceResponse, if result Ok ServiceResponse.Data contain
         /// CategoryModel with tasks related to category.
         /// </summary>
@@ -60,7 +100,7 @@ namespace Pomodoro.Services
         public async Task<ICollection<CategoryModel>> GetOwnAllEmptyAsync(Guid ownerId)
         {
             var result = await this.Repo.FindAsync(
-                c => c.Id == ownerId
+                c => c.AppUserId == ownerId
                 && !c.Schedules.Any()
                 && !c.Tasks.Any());
 
