@@ -11,7 +11,6 @@ using Pomodoro.Services.Models;
 using Pomodoro.Services.Models.Results;
 using Pomodoro.Services.Utilities;
 
-// TODO: GetActive, GetCompleted, GetEmpty
 namespace Pomodoro.Services
 {
     /// <summary>
@@ -224,6 +223,65 @@ namespace Pomodoro.Services
             {
                 return new ServiceResponse<bool> { Result = ResponseType.Error, Message = "Wrong data" };
             }
+        }
+
+        /// <summary>
+        /// Return belonging to current user schedule, with all tasks correponding to this schedule.
+        /// </summary>
+        /// <param name="id">Schedule id.</param>
+        /// <param name="ownerId">Owner id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ServiceResponse<ScheduleModel>> GetScheduleWithTasksAsync(Guid id, Guid ownerId)
+        {
+            var schedule = await this.Repo.GetByIdWithRelatedNoTrackingAsync(id);
+            return this.ReturnOneOwnAsync(schedule, ownerId);
+        }
+
+        /// <summary>
+        /// Return all active schedules belonging to current user.
+        /// "Active" means that schedule has tasks with start date greater than request datetime.
+        /// </summary>
+        /// <param name="ownerId">Owner id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ICollection<ScheduleModel>> GetActiveSchedulesAsync(Guid ownerId)
+        {
+            var active = await this.Repo.FindAsync(
+                s => s.AppUserId == ownerId
+                && s.Tasks.Any()
+                && s.Tasks.Max(t => t.StartDt) > DateTime.UtcNow);
+
+            return this.MapEntitiesToModels(active);
+        }
+
+        /// <summary>
+        /// Return all completed schedules belonging to current user.
+        /// "Completed" means that all schedule tasks has start date less than request datetime.
+        /// </summary>
+        /// <param name="ownerId">Owner id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ICollection<ScheduleModel>> GetCompletedSchedulesAsync(Guid ownerId)
+        {
+            var active = await this.Repo.FindAsync(
+               s => s.AppUserId == ownerId
+               && s.Tasks.Any()
+               && s.Tasks.Max(t => t.StartDt) < DateTime.UtcNow);
+
+            return this.MapEntitiesToModels(active);
+        }
+
+        /// <summary>
+        /// Return all empty schedules belonging to current user.
+        /// "Empty" means that schedule don't have scheduled tasks.
+        /// </summary>
+        /// <param name="ownerId">Owner id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ICollection<ScheduleModel>> GetEmptySchedulesAsync(Guid ownerId)
+        {
+            var active = await this.Repo.FindAsync(
+               s => s.AppUserId == ownerId
+               && !s.Tasks.Any());
+
+            return this.MapEntitiesToModels(active);
         }
     }
 }

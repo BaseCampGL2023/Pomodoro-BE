@@ -80,5 +80,64 @@ namespace Pomodoro.Api.Controllers
 
             return await base.AddOne(model);
         }
+
+        /// <summary>
+        /// Retrieve Schedule owned by autheticated user with tasks. 
+        /// </summary>
+        /// <param name="id">Schedule id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        [HttpGet("own/with-tasks/{id}")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [SwaggerResponse(200, "The execution was successful")]
+        [SwaggerResponse(403, "This schedule object don't belong to current user")]
+        [SwaggerResponse(404, "Schedule not found")]
+        public async Task<ActionResult<CategoryModel>> GetByIdWithTasks(Guid id)
+        {
+            var result = await this.Service.GetScheduleWithTasksAsync(id, this.UserId);
+
+            return this.MapServiceResponse(result);
+        }
+
+        /// <summary>
+        /// Return all schedules belonging to user that don't have any tasks.
+        /// </summary>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        [HttpGet("own/empty")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [SwaggerResponse(200, "All schedules belonging to user that don't have any tasks.")]
+        public async Task<ActionResult<ICollection<CategoryModel>>> GetOwnAllEmpty()
+        {
+            return this.Ok(await this.Service.GetEmptySchedulesAsync(this.UserId));
+        }
+
+        /// <summary>
+        /// Return all schedules belonging to user that don't have any future tasks.
+        /// </summary>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        [HttpGet("own/completed")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [SwaggerResponse(200, "All schedules belonging to user that don't have any future tasks.")]
+        public async Task<ActionResult<ICollection<CategoryModel>>> GetOwnAllCompleted()
+        {
+            return this.Ok(await this.Service.GetCompletedSchedulesAsync(this.UserId));
+        }
+
+        /// <summary>
+        /// Return all schedules belonging to user that have any future tasks.
+        /// </summary>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        [HttpGet("own/active")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [SwaggerResponse(200, "All schedules belonging to user that have any future tasks.")]
+        public async Task<ActionResult<ICollection<CategoryModel>>> GetOwnAllActive()
+        {
+            return this.Ok(await this.Service.GetActiveSchedulesAsync(this.UserId));
+        }
     }
 }
