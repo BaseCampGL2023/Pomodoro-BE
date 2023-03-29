@@ -7,6 +7,7 @@ using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Exceptions;
 using Pomodoro.Dal.Repositories.Interfaces;
 using Pomodoro.Services.Base;
+using Pomodoro.Services.Interfaces;
 using Pomodoro.Services.Models;
 using Pomodoro.Services.Models.Results;
 using Pomodoro.Services.Utilities;
@@ -16,7 +17,7 @@ namespace Pomodoro.Services
     /// <summary>
     /// Perform operations with schedules.
     /// </summary>
-    public class ScheduleService : BaseService<Schedule, ScheduleModel, IScheduleRepository>
+    public class ScheduleService : BaseService<Schedule, ScheduleModel, IScheduleRepository>, IScheduleService
     {
         private readonly IAppTaskRepository taskRepository;
 

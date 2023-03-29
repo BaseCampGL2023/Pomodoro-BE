@@ -10,6 +10,7 @@ using Pomodoro.Api.Services;
 using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Extensions;
 using Pomodoro.Services;
+using Pomodoro.Services.Interfaces;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
@@ -28,14 +29,13 @@ builder.Services.AddIdentityEF();
 
 builder.Services.AddScoped<AuthService>();
 
-// TODO: implement interfaces
-builder.Services.AddScoped<TimerSettingsService>();
+builder.Services.AddScoped<ITimerSettingsService, TimerSettingsService>();
 
-builder.Services.AddScoped<TaskService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
 
-builder.Services.AddScoped<ScheduleService>();
+builder.Services.AddScoped<IScheduleService, ScheduleService>();
 
-builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 builder.Services.AddJwtAuthentication(builder.Configuration);
 

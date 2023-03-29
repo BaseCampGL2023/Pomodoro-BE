@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Repositories.Interfaces;
 using Pomodoro.Services.Base;
+using Pomodoro.Services.Interfaces;
 using Pomodoro.Services.Models;
 using Pomodoro.Services.Models.Results;
 
@@ -14,7 +15,7 @@ namespace Pomodoro.Services
     /// <summary>
     /// Perform operations with categories.
     /// </summary>
-    public class CategoryService : BaseService<Category, CategoryModel, ICategoryRepository>
+    public class CategoryService : BaseService<Category, CategoryModel, ICategoryRepository>, ICategoryService
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CategoryService"/> class.
