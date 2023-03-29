@@ -3,6 +3,7 @@
 // </copyright>
 
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Pomodoro.Dal.Entities.Base;
 
 namespace Pomodoro.Dal.Repositories.Base
@@ -14,6 +15,11 @@ namespace Pomodoro.Dal.Repositories.Base
     public interface IRepository<T>
         where T : IEntity
     {
+        /// <summary>
+        /// Gets a All property to perform specific query in client code.
+        /// </summary>
+        IQueryable<T> All { get; }
+
         /// <summary>
         /// Add one entity in database.
         /// </summary>

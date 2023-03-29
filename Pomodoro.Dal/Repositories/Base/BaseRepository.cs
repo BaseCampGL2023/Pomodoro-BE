@@ -34,6 +34,8 @@ namespace Pomodoro.Dal.Repositories.Base
         /// </summary>
         public DbSet<T> Table { get; }
 
+        public IQueryable<T> All => this.Table;
+
         /// <inheritdoc/>
         public async Task<int> AddAsync(T entity, bool persist = false)
         {

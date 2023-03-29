@@ -2,6 +2,7 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Pomodoro.Dal.Configs;
 using Pomodoro.Dal.Entities;
@@ -9,10 +10,10 @@ using Pomodoro.Dal.Exceptions;
 using Pomodoro.Dal.Repositories.Interfaces;
 using Pomodoro.Services.Base;
 using Pomodoro.Services.Models;
+using Pomodoro.Services.Models.Enums;
+using Pomodoro.Services.Models.Query;
 using Pomodoro.Services.Models.Results;
 
-// TODO: GetToday
-// TODO: GetCompleted
 // TODO: Pagination
 namespace Pomodoro.Services
 {
@@ -178,6 +179,72 @@ namespace Pomodoro.Services
             {
                 return new ServiceResponse<bool> { Result = ResponseType.Error, Message = "Wrong data, check related" };
             }
+        }
+
+        /// <summary>
+        /// Retrive tasks with query filter.
+        /// </summary>
+        /// <param name="ownerId">Owner id.</param>
+        /// <param name="query">Query filter <see cref="TaskQueryModel"/>.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ICollection<TaskModel>> GetOwnByQueryAsync(Guid ownerId, TaskQueryModel query)
+        {
+            var result = this.Repo.All.Where(t => t.AppUserId == ownerId);
+            switch (query.ExecutionState)
+            {
+                case TaskExecutionState.All:
+                    break;
+                case TaskExecutionState.Started:
+                    result = result.Where(t => t.Pomodoros.Any() && t.FinishDt == null);
+                    break;
+                case TaskExecutionState.Pristine:
+                    result = result.Where(t => !t.Pomodoros.Any() && t.FinishDt == null);
+                    break;
+                case TaskExecutionState.Pending:
+                    result = result.Where(t => t.FinishDt == null);
+                    break;
+                case TaskExecutionState.Finished:
+                    result = result.Where(t => t.FinishDt != null);
+                    break;
+            }
+
+            switch (query.Repeatable)
+            {
+                case TaskRepeatable.Any:
+                    break;
+                case TaskRepeatable.Routine:
+                    result = result.Where(t => t.ScheduleId != null);
+                    break;
+                case TaskRepeatable.Alone:
+                    result = result.Where(t => t.ScheduleId == null);
+                    break;
+            }
+
+            if (query.StartDate.HasValue && !query.EndDate.HasValue)
+            {
+                result = result.Where(t => t.StartDt > query.StartDate.Value);
+            }
+            else if (!query.StartDate.HasValue && query.EndDate.HasValue)
+            {
+                result = result.Where(t => t.StartDt < query.EndDate.Value);
+            }
+            else if (query.StartDate.HasValue && query.EndDate.HasValue)
+            {
+                result = result.Where(t => t.StartDt > query.StartDate.Value
+                && t.StartDt < query.EndDate.Value);
+            }
+            else if (!query.EndDate.HasValue && !query.StartDate.HasValue)
+            {
+                var now = DateTime.UtcNow;
+                query.StartDate = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0);
+
+                query.EndDate = query.StartDate.Value.AddDays(1);
+
+                result = result.Where(t => t.StartDt > query.StartDate!.Value
+                && t.StartDt < query.EndDate!.Value);
+            }
+
+            return this.MapEntitiesToModels(await result.ToListAsync());
         }
     }
 }

@@ -16,9 +16,6 @@ namespace Pomodoro.Api.Controllers
     /// <summary>
     /// Manage schedule.
     /// </summary>
-    [Authorize]
-    [ApiController]
-    [Route("api/[controller]")]
     public class ScheduleController : BaseCrudController<ScheduleService, Schedule, ScheduleModel, IScheduleRepository>
     {
         /// <summary>
@@ -30,7 +27,7 @@ namespace Pomodoro.Api.Controllers
         {
         }
 
-        // TODO : Add remarks to describe endpoints.
+        // TODO : Add remarks to describe endpoints. When create schedule all template correspond to utc date and days of week.
 
         /// <summary>
         /// Update schedule only if ScheduleType, template, start and finish date don't change,

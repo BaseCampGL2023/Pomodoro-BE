@@ -16,9 +16,6 @@ namespace Pomodoro.Api.Controllers
     /// <summary>
     /// Manage tracker settings.
     /// </summary>
-    [Route("api/[controller]")]
-    [ApiController]
-    [Authorize]
     public class TimerSettingsController : BaseCrudController<ITimerSettingsService, TimerSettings, TimerSettingsModel, ITimerSettingRepository>
     {
         /// <summary>

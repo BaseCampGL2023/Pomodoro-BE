@@ -2,14 +2,13 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pomodoro.Api.Controllers.Base;
 using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Repositories.Interfaces;
 using Pomodoro.Services;
 using Pomodoro.Services.Models;
-using Pomodoro.Services.Models.Results;
+using Pomodoro.Services.Models.Query;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Pomodoro.Api.Controllers
@@ -17,9 +16,6 @@ namespace Pomodoro.Api.Controllers
     /// <summary>
     /// Manage tasks.
     /// </summary>
-    [Route("api/[controller]")]
-    [ApiController]
-    [Authorize]
     public class TaskController : BaseCrudController<TaskService, AppTask, TaskModel, IAppTaskRepository>
     {
         /// <summary>
@@ -71,6 +67,40 @@ namespace Pomodoro.Api.Controllers
             }
 
             return await base.UpdateOne(id, model);
+        }
+
+        /// <summary>
+        /// Return all tasks corresponds to query (filtering by task execution state, relation to schedules,
+        /// task start dateTime).
+        /// </summary>
+        /// <remarks>
+        /// <code>
+        /// Execution state enum:
+        /// 1 - means any task (started or pristine or finished), default value;
+        /// 2 - means not finished tasks (both started and pristine);
+        /// 3 - means tasks that already in progress (have pomodoros);
+        /// 4 - means tasks that don't be started;
+        /// 5 - means task that already performed.
+        /// Repeatable enum:
+        /// 1 - (Any) both scheduled and standalone tasks, default value;
+        /// 2 - (Routine) scheduled task (generated accomplish to existing schedule);
+        /// 3 - (Alone) "standalone" task.
+        /// Start date, end date:
+        /// if provided both start and end datetime - retrieved tasks with startDt between this two datetimes;
+        /// if provided only start datetime - retrieved tasks with startDt above start datetime;
+        /// if provided only end datetime = retrieved tasks with startDt lower than end datetime;
+        /// if nor start or end date time provided - retrieve tasks for current day (utc 0:00 - 24:00).
+        /// </code>
+        /// </remarks>
+        /// <param name="query">Query model <see cref="TaskQueryModel"/>.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        [HttpGet("own/filter")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [SwaggerResponse(200, "Retrieved all user's objects.")]
+        public async Task<ActionResult<ICollection<TaskModel>>> GetOwnAll([FromQuery] TaskQueryModel query)
+        {
+            return this.Ok(await this.Service.GetOwnByQueryAsync(this.UserId, query));
         }
     }
 }
