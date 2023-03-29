@@ -157,13 +157,6 @@ namespace Pomodoro.Services.Models
         {
             List<ValidationResult> results = new ();
 
-            if (this.Tasks.Any())
-            {
-                results.Add(new ValidationResult(
-                    "Tasks shouldn't be updated or created with schedule entity",
-                    new List<string> { nameof(this.Tasks) }));
-            }
-
             if (this.FinishAt < this.StartDt)
             {
                 results.Add(new ValidationResult(

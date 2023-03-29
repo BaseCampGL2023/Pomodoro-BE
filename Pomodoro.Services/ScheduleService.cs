@@ -103,6 +103,15 @@ namespace Pomodoro.Services
         /// <returns>Updated schedule.</returns>
         public override async Task<ServiceResponse<bool>> UpdateOneOwnAsync(ScheduleModel model, Guid ownerId)
         {
+            if (model.Tasks.Any())
+            {
+                return new ServiceResponse<bool>
+                {
+                    Result = ResponseType.Error,
+                    Message = "Tasks should be updated by task service.",
+                };
+            }
+
             var previous = await this.Repo.GetByIdWithRelatedNoTrackingAsync(model.Id);
             if (previous == null)
             {
