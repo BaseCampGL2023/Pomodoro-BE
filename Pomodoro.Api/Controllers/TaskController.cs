@@ -7,6 +7,7 @@ using Pomodoro.Api.Controllers.Base;
 using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Repositories.Interfaces;
 using Pomodoro.Services;
+using Pomodoro.Services.Interfaces;
 using Pomodoro.Services.Models;
 using Pomodoro.Services.Models.Query;
 using Pomodoro.Services.Models.Results;
@@ -17,13 +18,13 @@ namespace Pomodoro.Api.Controllers
     /// <summary>
     /// Manage tasks.
     /// </summary>
-    public class TaskController : BaseCrudController<TaskService, AppTask, TaskModel, IAppTaskRepository>
+    public class TaskController : BaseCrudController<ITaskService, AppTask, TaskModel, IAppTaskRepository>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TaskController"/> class.
         /// </summary>
         /// <param name="service">Instance of Task service.</param>
-        public TaskController(TaskService service)
+        public TaskController(ITaskService service)
             : base(service)
         {
         }
@@ -124,6 +125,20 @@ namespace Pomodoro.Api.Controllers
             }
 
             return this.MapServiceResponse(result);
+        }
+
+        /// <summary>
+        /// Return a page of sorted and filtered objects.
+        /// </summary>
+        /// <param name="query">Paginationquery model <see cref="PaginQueryModel"/>.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        [HttpGet("own/pagination")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [SwaggerResponse(200, "Retrieved all user's objects.")]
+        public async Task<ActionResult<ICollection<TaskModel>>> GetOwnPaginated([FromQuery] PaginQueryModel query)
+        {
+            return this.Ok(await this.Service.GetPaginatedOwnAsync(this.UserId, query));
         }
     }
 }

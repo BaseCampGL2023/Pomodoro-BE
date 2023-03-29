@@ -2,12 +2,12 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pomodoro.Api.Controllers.Base;
 using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Repositories.Interfaces;
 using Pomodoro.Services;
+using Pomodoro.Services.Interfaces;
 using Pomodoro.Services.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -16,13 +16,13 @@ namespace Pomodoro.Api.Controllers
     /// <summary>
     /// Manage schedule.
     /// </summary>
-    public class ScheduleController : BaseCrudController<ScheduleService, Schedule, ScheduleModel, IScheduleRepository>
+    public class ScheduleController : BaseCrudController<IScheduleService, Schedule, ScheduleModel, IScheduleRepository>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduleController"/> class.
         /// </summary>
         /// <param name="service">Instance of Schedule service.</param>
-        public ScheduleController(ScheduleService service)
+        public ScheduleController(IScheduleService service)
             : base(service)
         {
         }
@@ -79,7 +79,7 @@ namespace Pomodoro.Api.Controllers
         }
 
         /// <summary>
-        /// Retrieve Schedule owned by autheticated user with tasks. 
+        /// Retrieve Schedule owned by autheticated user with tasks.
         /// </summary>
         /// <param name="id">Schedule id.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>

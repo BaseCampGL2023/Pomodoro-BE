@@ -31,5 +31,13 @@ namespace Pomodoro.Services.Interfaces
         /// <param name="query">Query filter <see cref="TaskQueryModel"/>.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<ICollection<TaskModel>> GetOwnByQueryAsync(Guid ownerId, TaskQueryModel query);
+
+        /// <summary>
+        /// Return pagination result.
+        /// </summary>
+        /// <param name="ownerId">Owner id.</param>
+        /// <param name="query">Pagination query.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public Task<PaginResult<TaskModel>> GetPaginatedOwnAsync(Guid ownerId, PaginQueryModel query);
     }
 }

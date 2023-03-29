@@ -15,7 +15,6 @@ using Pomodoro.Services.Models.Enums;
 using Pomodoro.Services.Models.Query;
 using Pomodoro.Services.Models.Results;
 
-// TODO: Pagination
 namespace Pomodoro.Services
 {
     /// <summary>
@@ -246,6 +245,84 @@ namespace Pomodoro.Services
             }
 
             return this.MapEntitiesToModels(await result.ToListAsync());
+        }
+
+        /// <summary>
+        /// Return pagination result.
+        /// </summary>
+        /// <param name="ownerId">Owner id.</param>
+        /// <param name="query">Pagination query.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<PaginResult<TaskModel>> GetPaginatedOwnAsync(Guid ownerId, PaginQueryModel query)
+        {
+            int count = await this.Repo.CountAsync(t => t.AppUserId == ownerId);
+            var source = this.Repo.All.Include(t => t.Category)
+                .Include(t => t.Pomodoros).Where(t => t.AppUserId == ownerId);
+            if (!string.IsNullOrWhiteSpace(query.FilterQuery)
+                && !string.IsNullOrWhiteSpace(query.FilterColumn))
+            {
+                source = query.FilterColumn.ToLower() switch
+                {
+                    "title" => source.Where(t => t.Title.StartsWith(query.FilterQuery)),
+                    "description" => source.Where(t => t.Description != null
+                        && t.Description.StartsWith(query.FilterQuery)),
+                    "category" => source.Where(t => t.Category != null
+                            && t.Category.Name.StartsWith(query.FilterQuery)),
+                    _ => source,
+                };
+            }
+
+            if (!string.IsNullOrWhiteSpace(query.SortColumn))
+            {
+                query.SortOrder = !string.IsNullOrWhiteSpace(query.SortOrder)
+                    && query.SortOrder.ToUpper() == "ASC" ? "ASC" : "DESC";
+
+                source = query.SortOrder.ToLower() switch
+                {
+                    "title" => query.SortOrder == "ASC"
+                        ? source.OrderBy(t => t)
+                        : source.OrderByDescending(t => t),
+                    "description" => query.SortOrder == "ASC"
+                        ? source.OrderBy(t => t)
+                        : source.OrderByDescending(t => t),
+                    "sequenceNumber" => query.SortOrder == "ASC"
+                        ? source.OrderBy(t => t)
+                        : source.OrderByDescending(t => t),
+                    "startDt" => query.SortOrder == "ASC"
+                        ? source.OrderBy(t => t.StartDt)
+                        : source.OrderByDescending(t => t.StartDt),
+                    "allocatedDuration" => query.SortOrder == "ASC"
+                        ? source.OrderBy(t => t.AllocatedDuration)
+                        : source.OrderByDescending(t => t.AllocatedDuration),
+                    "finishft" => query.SortOrder == "ASC"
+                        ? source.OrderBy(t => t.FinishDt)
+                        : source.OrderByDescending(t => t.FinishDt),
+                    _ => source,
+                };
+            }
+
+            source = source.Skip(query.PageIndex * query.PageSize).Take(query.PageSize);
+            var list = await source.ToListAsync();
+            var data = new List<TaskModel>();
+
+            foreach (var item in list)
+            {
+                var model = new TaskModel();
+                model.Assign(item);
+                data.Add(model);
+            }
+
+            return new PaginResult<TaskModel>
+            {
+                Data = data,
+                TotalCount = count,
+                PageIndex = query.PageIndex,
+                PageSize = query.PageSize,
+                FilterColumn = query.FilterColumn,
+                FilterQuery = query.FilterQuery,
+                SortColumn = query.SortColumn,
+                SortOrder = query.SortOrder,
+            };
         }
     }
 }

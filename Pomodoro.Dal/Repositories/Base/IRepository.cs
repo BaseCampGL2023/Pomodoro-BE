@@ -117,6 +117,13 @@ namespace Pomodoro.Dal.Repositories.Base
         Task<ICollection<T>> FindAsync(Expression<Func<T, bool>> predicate);
 
         /// <summary>
+        /// Retrieve count od entites that that satisfying predicate.
+        /// </summary>
+        /// <param name="predicate">Expression for query filtration.</param>
+        /// <returns>Number of records.</returns>
+        Task<int> CountAsync(Expression<Func<T, bool>> predicate);
+
+        /// <summary>
         /// Check if object with this id already exist in database.
         /// </summary>
         /// <param name="id">Entity id.</param>

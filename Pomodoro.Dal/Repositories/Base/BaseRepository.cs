@@ -34,6 +34,9 @@ namespace Pomodoro.Dal.Repositories.Base
         /// </summary>
         public DbSet<T> Table { get; }
 
+        /// <summary>
+        /// Gets IQueryable to perform request out of repository.
+        /// </summary>
         public IQueryable<T> All => this.Table;
 
         /// <inheritdoc/>
@@ -115,5 +118,9 @@ namespace Pomodoro.Dal.Repositories.Base
         /// <inheritdoc/>
         public async Task<T?> GetByIdNoTrackingAsync(Guid id)
             => await this.Table.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
+
+        /// <inheritdoc/>
+        public async Task<int> CountAsync(Expression<Func<T, bool>> predicate)
+            => await this.Table.Where(predicate).CountAsync();
     }
 }
