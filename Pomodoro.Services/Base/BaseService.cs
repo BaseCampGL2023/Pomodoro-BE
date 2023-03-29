@@ -58,7 +58,7 @@ namespace Pomodoro.Services.Base
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         public virtual async Task<ServiceResponse<TM>> GetOwnByIdAsync(Guid id, Guid ownerId)
         {
-            var result = await this.repo.GetByIdAsync(id);
+            var result = await this.repo.GetByIdNoTrackingAsync(id);
             if (result is null)
             {
                 return new ServiceResponse<TM> { Result = ResponseType.NotFound };
