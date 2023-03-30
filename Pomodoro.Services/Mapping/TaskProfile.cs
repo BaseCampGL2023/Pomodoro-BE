@@ -21,10 +21,13 @@ namespace Pomodoro.Services.Mapping
             if (task == null || task.Pomodoros == null || task.Pomodoros.Count == 0)
                 return 0f;
 
-            if (task.AllocatedTime == 0 || task.Pomodoros.Last().TaskIsDone)
+            if (task.Pomodoros.Last().TaskIsDone)
                 return 100f;
 
             var totalTimeSpent = task.Pomodoros.Sum(ct => ct.TimeSpent);
+
+            if (task.AllocatedTime == 0 || totalTimeSpent >= task.AllocatedTime)
+                return 99f;
 
             return totalTimeSpent * 100f / task.AllocatedTime;
         }
