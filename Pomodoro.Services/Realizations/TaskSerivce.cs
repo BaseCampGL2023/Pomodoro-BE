@@ -122,24 +122,9 @@ namespace Pomodoro.Services.Realizations
 
         public async Task DeleteTaskAsync(TaskModel taskModel)
         {
-            if (taskModel == null || taskModel.Frequency == null)
+            if (taskModel == null)
             {
-                throw new ArgumentNullException(nameof(taskModel), "Can`t be Null also it`s Frequency can`t be Null.");
-            }
-
-            try
-            {
-                await _freqService.DeleteFrequencyAsync(taskModel.Frequency);
-            }
-            catch (InvalidOperationException e)
-            {
-                _log.LogError(e.Message + " - occureed while deleting frequency from db.");
-                throw;
-            }
-            catch (Exception e)
-            {
-                _log.LogError(e.Message + " - occureed while deleting frequency from db.");
-                throw;
+                throw new ArgumentNullException(nameof(taskModel), "Can`t be Null.");
             }
 
             var task = await _tasksRepo.GetByIdAsync(taskModel.Id);
