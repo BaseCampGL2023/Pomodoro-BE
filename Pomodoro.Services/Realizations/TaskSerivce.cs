@@ -226,6 +226,11 @@ namespace Pomodoro.Services.Realizations
                 throw new InvalidOperationException("Can`t find task pomodoro in db.");
             }
 
+            if (pomodoro.TaskIsDone)
+            {
+                return;
+            }
+
             pomodoro.TaskIsDone = true;
 
             try
