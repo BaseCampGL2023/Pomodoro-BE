@@ -1,22 +1,35 @@
 ﻿using AutoMapper;
-using Pomodoro.Core.Models.Tasks;
-using Pomodoro.Core.Enums;
+using Pomodoro.Core.Models;
 using Pomodoro.DataAccess.Entities;
-using Pomodoro.Core.Models.Frequency;
 
-namespace Pomodoro.Serices.Mapping
+namespace Pomodoro.Services.Mapping
 {
-    public class TaskToReturnProfile : Profile
+    public class TaskProfile : Profile
     {
-        public TaskToReturnProfile()
+        public TaskProfile()
         {
-            this.CreateMap<TaskEntity, TaskModel>()
-                .ForMember(t => t.TaskId, o => o.MapFrom(s => s.Id))
-                .ForPath(f => f.FrequencyData.FrequencyTypeValue, o => o.MapFrom(s => s.Frequency.FrequencyType.Value))
-                .ForPath(f => f.FrequencyData.IsCustom, o => o.MapFrom(s => s.Frequency.IsCustom))
-                .ForPath(f => f.FrequencyData.Every, o => o.MapFrom(s => s.Frequency.Every));
-            this.CreateMap<TaskModel, TaskEntity>()
-                .ForMember(t => t.Id, o => o.MapFrom(s => s.TaskId));
+            CreateMap<TaskModel, TaskEntity>()
+                .ForMember(dest => dest.Id, act => act.MapFrom(src => Guid.Empty))
+                .AfterMap((src, dist) => dist.Frequency = null);
+            CreateMap<TaskEntity, TaskModel>()
+                .ForMember(dest => dest.Frequency, act => act.MapFrom(src => src.Frequency))
+                .ForMember(dest => dest.Progress, act => act.MapFrom(src => GetProgress(src)));
+        }
+
+        private float GetProgress(TaskEntity task)
+        {
+            if (task == null || task.Pomodoros == null || task.Pomodoros.Count == 0)
+                return 0f;
+
+            if (task.Pomodoros.Last().TaskIsDone)
+                return 100f;
+
+            var totalTimeSpent = task.Pomodoros.Sum(ct => ct.TimeSpent);
+
+            if (task.AllocatedTime == 0 || totalTimeSpent >= task.AllocatedTime)
+                return 99f;
+
+            return totalTimeSpent * 100f / task.AllocatedTime;
         }
     }
 }

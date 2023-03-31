@@ -1,21 +1,20 @@
-﻿// <copyright file="TaskModel.cs" company="PomodoroGroup_GL_BaseCamp">
+﻿// <copyright file="TaskViewModel.cs" company="PomodoroGroup_GL_BaseCamp">
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
-using Pomodoro.Core.Enums;
-using Pomodoro.Core.Models.Base;
-using Pomodoro.Core.Models.Frequency;
 
-namespace Pomodoro.Core.Models.Tasks
+using System.ComponentModel.DataAnnotations;
+
+namespace Pomodoro.Api.ViewModels
 {
     /// <summary>
     /// Represents a view model for task.
     /// </summary>
-    public class TaskModel : BaseUserOrientedModel
+    public class TaskViewModel
     {
         /// <summary>
         /// Gets or sets a value of the id of the task.
         /// </summary>
-        public Guid TaskId { get; set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Gets or sets a value of the title of the task.
@@ -30,11 +29,18 @@ namespace Pomodoro.Core.Models.Tasks
         /// <summary>
         /// Gets or sets a value of the allocated time of the task.
         /// </summary>
+        [Range(1, short.MaxValue, ErrorMessage = "The {0} property must be in the range from {1} to {2}.")]
         public short AllocatedTime { get; set; }
 
         /// <summary>
         /// Gets or sets an information about the frequency used in the task.
         /// </summary>
-        public FrequencyModel? FrequencyData { get; set; }
+        public FrequencyViewModel? Frequency { get; set; }
+
+        /// <summary>
+        /// Gets or sets task progress.
+        /// </summary>
+        [Range(0, byte.MaxValue, ErrorMessage = "The {0} property must be in the range from {1} to {2}.")]
+        public float Progress { get; set; }
     }
 }

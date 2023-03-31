@@ -1,6 +1,4 @@
-﻿using Pomodoro.Core.Models.Frequency;
-using Pomodoro.Core.Models.Tasks;
-using Pomodoro.DataAccess.EF;
+﻿using Pomodoro.DataAccess.EF;
 using Pomodoro.DataAccess.Entities;
 using Pomodoro.DataAccess.Repositories.Interfaces;
 

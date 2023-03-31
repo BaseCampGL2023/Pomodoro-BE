@@ -12,7 +12,7 @@ namespace Pomodoro.DataAccess.Entities
         public Guid FrequencyId { get; set; }
 
         [MaxLength(50)]
-        public string Title { get; set; } = string.Empty;
+        public string? Title { get; set; }
         public DateTime InitialDate { get; set; }
         public short AllocatedTime { get; set; }
 

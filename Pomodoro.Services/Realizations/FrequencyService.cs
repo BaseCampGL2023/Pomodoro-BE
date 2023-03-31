@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
+using Pomodoro.Core.Enums;
 using Pomodoro.Core.Interfaces.IServices;
-using Pomodoro.Core.Models.Frequency;
+using Pomodoro.Core.Models;
 using Pomodoro.DataAccess.Entities;
 using Pomodoro.DataAccess.Repositories.Interfaces;
 
@@ -8,83 +10,146 @@ namespace Pomodoro.Services.Realizations
 {
     public class FrequencyService : IFrequencyService
     {
-        private readonly IFrequencyTypeRepository freqTypeRepo;
-        private readonly IFrequencyRepository freqRepo;
-        private readonly IMapper mapper;
+        private readonly IFrequencyTypeRepository _freqTypeRepo;
+        private readonly IFrequencyRepository _freqRepo;
+        private readonly IMapper _mapper;
+        private readonly ILogger _log;
+
         public FrequencyService(
             IFrequencyTypeRepository freqTypeRepo,
             IFrequencyRepository freqRepo,
-            IMapper mapper)
+            IMapper mapper,
+            ILogger<FrequencyService> logger)
         {
-            this.mapper = mapper;
-            this.freqTypeRepo = freqTypeRepo;
-            this.freqRepo = freqRepo;
+            _mapper = mapper;
+            _freqTypeRepo = freqTypeRepo;
+            _freqRepo = freqRepo;
+            _log = logger;
         }
 
-        public async Task<Guid> GetFrequencyId(FrequencyModel freqModel)
+        public async Task<FrequencyModel> CreateFrequencyAsync(FrequencyModel freqModel)
         {
-            Guid freqId = await FindFrequencyId(freqModel);
-
-            if (freqId == Guid.Empty)
+            if (freqModel == null)
             {
-                freqId = await AddFrequencyAsync(freqModel);
+                throw new ArgumentNullException(nameof(freqModel), "Can`t be Null.");
             }
 
-            return freqId;
-        }
+            var freqTypeId = await GetFrequencyTypeIdAsync(freqModel.FrequencyValue);
 
-        public async Task<Guid> FindFrequencyTypeId(FrequencyModel freq)
-        {
-            var freqTypeData = await freqTypeRepo.FindAsync(x =>
-                x.Value == freq.FrequencyTypeValue
-            );
-
-            return freqTypeData.FirstOrDefault().Id;
-        }
-
-        public async Task<Guid> FindFrequencyId(FrequencyModel freq)
-        {
-            Guid freqTypeId = await FindFrequencyTypeId(freq);
-
-            var freqData = await freqRepo.FindAsync(
-                f => f.FrequencyTypeId == freqTypeId
-                && f.IsCustom == freq.IsCustom && f.Every == freq.Every
-            );
-
-            if (freqData.Count() == 0)
+            if (freqTypeId == Guid.Empty)
             {
+                throw new InvalidOperationException("Can`t find frequency type in db.");
+            }
+
+            var freq = _mapper.Map<Frequency>(freqModel);
+
+            freq.FrequencyTypeId = freqTypeId;
+
+            try
+            {
+                await _freqRepo.AddAsync(freq);
+        }
+            catch (Exception e)
+            {
+                _log.LogError(e.Message + " - occureed while adding frequency to db.");
+                throw;
+            }
+
+            return _mapper.Map<FrequencyModel>(freq);
+        }
+
+        public async Task<Guid> GetFrequencyIdAsync(FrequencyModel freqModel)
+        {
+            if (freqModel == null)
+            {
+                throw new ArgumentNullException(nameof(freqModel), "Can`t be Null.");
+            }
+
+            var freqTypeId = await GetFrequencyTypeIdAsync(freqModel.FrequencyValue);
+
+            if (freqTypeId == Guid.Empty)
+            {
+                throw new InvalidOperationException("Can`t find frequency with frequency type in db.");
+        }
+
+            var freqs = await _freqRepo.FindAsync(f => 
+            f.FrequencyTypeId == freqTypeId && 
+            f.IsCustom == freqModel.IsCustom && 
+            f.Every == freqModel.Every);
+
+            var freq = freqs.FirstOrDefault();
+
+            if (freq == null)
+        {
                 return Guid.Empty;
             }
-            return freqData.FirstOrDefault() == null ? Guid.Empty : freqData.FirstOrDefault().Id;
 
-
+            return freq.Id;
         }
 
-        public async Task<IEnumerable<FrequencyModel>> FindAllFrequenciesAsync(FrequencyModel freq)
+        public async Task<FrequencyModel> UpdateFrequencyAsync(FrequencyModel freqModel)
         {
-            var freqId = await FindFrequencyTypeId(freq);
-            var result = await freqRepo.FindAsync(
-                f => f.FrequencyTypeId == freqId &&
-                f.Every == freq.Every && f.IsCustom == freq.IsCustom
-            );
+            var freq = await _freqRepo.GetByIdAsync(freqModel.Id);
 
-            return mapper.Map<IEnumerable<Frequency>, IEnumerable<FrequencyModel>>(result);
-        }
-
-        public async Task<Guid> AddFrequencyAsync(FrequencyModel freq)
-        {
-            Guid freqTypeId = await FindFrequencyTypeId(freq);
-
-            Frequency newFreq = mapper.Map<FrequencyModel, Frequency>(freq);
-
-            if (freqTypeId != Guid.Empty)
+            if (freq == null || freq.FrequencyType == null)
             {
-                newFreq.FrequencyTypeId = freqTypeId;
+                throw new InvalidOperationException("Can`t find frequency with frequency type in db.");
             }
 
-            await freqRepo.AddAsync(newFreq);
-            await freqRepo.SaveChangesAsync();
-            return newFreq.Id;
+            if (freq.FrequencyType.Value != freqModel.FrequencyValue)
+            {
+
+                var freqTypeId = await GetFrequencyTypeIdAsync(freqModel.FrequencyValue);
+
+                if (freqTypeId == Guid.Empty)
+                {
+                    throw new InvalidOperationException("Can`t find frequency type in db.");
+                }
+
+                freq.FrequencyTypeId = freqTypeId;
+        }
+
+            freq.IsCustom = freqModel.IsCustom;
+            freq.Every = freqModel.Every;
+
+            try
+            {
+                _freqRepo.Update(freq);
+            }
+            catch (Exception e)
+        {
+                _log.LogError(e.Message + " - occureed while updating frequency in db.");
+                throw;
+            }
+
+            return _mapper.Map<FrequencyModel>(freq);
+        }
+
+        public async Task DeleteFrequencyAsync(FrequencyModel freqModel)
+        {
+            var freq = await _freqRepo.GetByIdAsync(freqModel.Id);
+
+            if (freq == null)
+            {
+                throw new InvalidOperationException("Can`t find frequency in db.");
+            }
+
+            try
+            {
+                _freqRepo.Remove(freq);
+            }
+            catch (Exception e)
+            {
+                _log.LogError(e.Message + " - occureed while deleting frequency from db.");
+                throw;
+            }
+            }
+
+        private async Task<Guid> GetFrequencyTypeIdAsync(FrequencyValue freqValue)
+        {
+            var freqTypes = await _freqTypeRepo.FindAsync(ft => ft.Value == freqValue);
+
+            return freqTypes.Select(ft => ft.Id).FirstOrDefault();
         }
     }
 }

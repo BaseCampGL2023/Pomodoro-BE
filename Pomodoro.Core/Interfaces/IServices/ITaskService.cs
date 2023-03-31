@@ -1,20 +1,16 @@
-﻿using Pomodoro.Core.Models.Tasks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Pomodoro.Core.Models;
 
 namespace Pomodoro.Core.Interfaces.IServices
 {
     public interface ITaskService
     {
-        public Task<IEnumerable<TaskModel>> GetAllTasksAsync(Guid userId);
-        public Task<TaskModel?> GetTaskByIdAsync(Guid taskId);
-        public Task<TaskModel> PostTask(TaskModel task);
-        public Task<TaskModel> DeleteTask(TaskModel task);
-        public Task<TaskModel> UpdateTask(TaskModel task);
-        public Task<IEnumerable<TaskModel>> GetAllTasksAsyncTest();
-        public Task<IEnumerable<TaskModel>> GetAllTasksByDate(Guid userId, DateTime startDate, DateTime endDate);
+        public Task<TaskModel> GetTaskByIdAsync(Guid taskId);
+        public Task<IEnumerable<TaskModel>> GetTasksByDateAsync(Guid userId, DateTime date);
+        public Task<IEnumerable<TaskModel>> GetCompletedTasksByDateAsync(Guid userId, DateTime date);
+        public Task<TaskModel> CreateTaskAsync(TaskModel taskModel);
+        public Task DeleteTaskAsync(TaskModel taskModel);
+        public Task<TaskModel> UpdateTaskAsync(TaskModel taskModel);
+        public Task CompleteTaskAsync(Guid taskId);
+        public Task<TaskModel> AddPomodoroToTaskAsync(PomodoroModel pomodoroModel);
     }
 }
