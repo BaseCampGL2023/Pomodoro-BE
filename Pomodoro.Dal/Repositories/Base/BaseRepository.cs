@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Pomodoro.Dal.Data;
 using Pomodoro.Dal.Entities.Base;
 
+// TODO: Implement AsNoTracking as parametr.
 namespace Pomodoro.Dal.Repositories.Base
 {
     /// <inheritdoc/>
