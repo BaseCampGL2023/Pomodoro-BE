@@ -61,6 +61,7 @@ namespace Pomodoro.Api.Controllers
             }
 
             var task = await this.tasksService.GetTaskByIdAsync(id);
+
             if (task == null)
             {
                 return this.NotFound("Task wasn`t found.");
@@ -309,7 +310,6 @@ namespace Pomodoro.Api.Controllers
             }
 
             var pomoModel = this.mapper.Map<PomodoroModel>(pomodoro);
-
 
             var result = await this.tasksService.AddPomodoroToTaskAsync(pomoModel);
 
