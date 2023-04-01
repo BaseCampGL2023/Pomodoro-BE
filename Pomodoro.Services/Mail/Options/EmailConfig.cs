@@ -2,7 +2,7 @@
 // Copyright (c) PomodoroGroup_GL_BaseCamp. All rights reserved.
 // </copyright>
 
-namespace Pomodoro.Services.Mail.Models
+namespace Pomodoro.Services.Mail.Options
 {
     /// <summary>
     /// Mailing configuration.

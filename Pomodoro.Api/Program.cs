@@ -11,7 +11,8 @@ using Pomodoro.Dal.Entities;
 using Pomodoro.Dal.Extensions;
 using Pomodoro.Services;
 using Pomodoro.Services.Interfaces;
-using Pomodoro.Services.Mail.Models;
+using Pomodoro.Services.Mail;
+using Pomodoro.Services.Mail.Options;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
@@ -41,6 +42,8 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 var emailConfig = builder.Configuration.GetSection("EmailConfig")
     .Get<EmailConfig>();
 builder.Services.AddSingleton(emailConfig);
+
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 builder.Services.AddJwtAuthentication(builder.Configuration);
 
