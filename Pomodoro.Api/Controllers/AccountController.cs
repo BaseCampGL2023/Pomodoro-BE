@@ -77,5 +77,37 @@ namespace Pomodoro.Api.Controllers
 
             return this.Unauthorized(result);
         }
+
+        /// <summary>
+        /// Validate user email.
+        /// </summary>
+        /// <param name="userId">User Id.</param>
+        /// <param name="token">Emal validation token.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        [HttpGet("ConfirmEmail/{userId}/{token}", Name = "ConfirmEmail")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerResponse(200, "Registration was succesfull")]
+        [SwaggerResponse(400, "Invalid data")]
+        [SwaggerResponse(500, "Something went wrong")]
+        public async Task<ActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (string.IsNullOrWhiteSpace(userId)
+                || string.IsNullOrWhiteSpace(token))
+            {
+                return this.BadRequest();
+            }
+
+            var result = await this.authService.ConfirmEmailAsync(userId, token);
+
+            if (result)
+            {
+                var url = $"{this.Request.Scheme}://{this.Request.Host}/ConfirmEmail.html";
+                return this.Redirect(url);
+            }
+
+            return this.BadRequest();
+        }
     }
 }

@@ -29,6 +29,8 @@ builder.Services.AddRepositories();
 
 builder.Services.AddIdentityEF();
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddScoped<AuthService>();
 
 builder.Services.AddScoped<ITimerSettingsService, TimerSettingsService>();
@@ -131,6 +133,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles();
 
 app.UseCors(pomodoroSpecificOrigins);
 

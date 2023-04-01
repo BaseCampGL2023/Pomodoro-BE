@@ -6,10 +6,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
 using Pomodoro.Api.Models;
 using Pomodoro.Dal.Entities;
 using Pomodoro.Services.Exceptions;
+using Pomodoro.Services.Mail;
+using Pomodoro.Services.Models.Mail;
 
 namespace Pomodoro.Api.Services
 {
@@ -21,6 +24,9 @@ namespace Pomodoro.Api.Services
         private readonly IConfiguration configuration;
         private readonly ILogger<AuthService> logger;
         private readonly UserManager<AppIdentityUser> userManager;
+        private readonly IHttpContextAccessor accessor;
+        private readonly IEmailSender emailSender;
+        private readonly LinkGenerator linkGenerator;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthService"/> class.
@@ -28,14 +34,23 @@ namespace Pomodoro.Api.Services
         /// <param name="configuration">Set of key/value application configuration properties <see cref="IConfiguration"/>.</param>
         /// <param name="logger">Logger <see cref="ILogger"/>.</param>
         /// <param name="userManager">API for managing user in persistence store <see cref="UserManager{TUser}"/>.</param>
+        /// <param name="accessor">IHttpContextAccessor accessor.</param>
+        /// <param name="emailSender">Email sender service.</param>
+        /// <param name="linkGenerator">LinkGenerator instance.</param>
         public AuthService(
             IConfiguration configuration,
             ILogger<AuthService> logger,
-            UserManager<AppIdentityUser> userManager)
+            UserManager<AppIdentityUser> userManager,
+            IHttpContextAccessor accessor,
+            IEmailSender emailSender,
+            LinkGenerator linkGenerator)
         {
             this.configuration = configuration;
             this.logger = logger;
             this.userManager = userManager;
+            this.accessor = accessor;
+            this.emailSender = emailSender;
+            this.linkGenerator = linkGenerator;
         }
 
         /// <summary>
@@ -74,6 +89,23 @@ namespace Pomodoro.Api.Services
                     Errors = errors,
                 };
             }
+
+            var emailConfirmToken = await this.userManager.GenerateEmailConfirmationTokenAsync(pomoIdentityUser);
+            var encodedConfirmToken = Encoding.UTF8.GetBytes(emailConfirmToken);
+            var base64ConfirmToken = WebEncoders.Base64UrlEncode(encodedConfirmToken);
+
+            // TODO: delete user if don't send email.
+            var routeValues = new { userId = pomoIdentityUser.Id.ToString(), token = base64ConfirmToken };
+
+            var url = this.linkGenerator.GetUriByName(
+                this.accessor.HttpContext!,
+                "ConfirmEmail",
+                routeValues);
+
+            await this.emailSender.SendEmailAsync(new Message(
+                new string[] { pomoIdentityUser.Email },
+                "Confirm email",
+                $"<h1>Please confirm your email</h1><p><a href=\"{url}\">Click here</a></p>"));
 
             return new RegistrationResponseModel { Success = true };
         }
@@ -126,6 +158,33 @@ namespace Pomodoro.Api.Services
                 Token = jwt,
                 UserName = user.AppUser.Name,
             };
+        }
+
+        /// <summary>
+        /// Confirm user email.
+        /// </summary>
+        /// <param name="userId">User id.</param>
+        /// <param name="token">Confirmation token.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<bool> ConfirmEmailAsync(string userId, string token)
+        {
+            var user = await this.userManager.FindByIdAsync(userId);
+            if (user is null)
+            {
+                return false;
+            }
+
+            var decodedToken = WebEncoders.Base64UrlDecode(token);
+            string confirmToken = Encoding.UTF8.GetString(decodedToken);
+
+            var result = await this.userManager.ConfirmEmailAsync(user, confirmToken);
+
+            if (result.Succeeded)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>

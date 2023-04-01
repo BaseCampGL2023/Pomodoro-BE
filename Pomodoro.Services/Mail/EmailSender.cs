@@ -43,7 +43,7 @@ namespace Pomodoro.Services.Mail
             email.From.Add(MailboxAddress.Parse(this.emailConfig.From));
             email.To.AddRange(message.To);
             email.Subject = message.Subject;
-            email.Body = new TextPart(MimeKit.Text.TextFormat.Text)
+            email.Body = new TextPart(MimeKit.Text.TextFormat.Html)
             {
                 Text = message.Content,
             };
