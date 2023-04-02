@@ -10,6 +10,8 @@ using Pomodoro.Api.Extensions;
 using Pomodoro.Api.Services;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.DataAccess.Extensions;
+using Pomodoro.Services.Email;
+using Pomodoro.Services.Email.Options;
 using Pomodoro.Services.Realizations;
 using Serilog;
 using Serilog.Events;
@@ -42,6 +44,10 @@ builder.Services
     .AddGoogleAuthentication(builder.Configuration);
 
 builder.Services.AddCookiesForExternalAuth();
+
+builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfig"));
+
+builder.Services.AddScoped<IEmailSender, EmailSender>
 
 builder.Services.AddCors(options =>
 {
