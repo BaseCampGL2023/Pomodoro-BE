@@ -319,6 +319,97 @@ namespace Pomodoro.Api.Services
             return this.SuccessfulLoginResponse(user);
         }
 
+        /// <summary>
+        /// Reset forgot password.
+        /// </summary>
+        /// <param name="email">User email.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<AuthResponseModel> ForgetPasswordAsync(string email)
+        {
+            var user = await this.userManager.FindByEmailAsync(email);
+            if (user is null)
+            {
+                return new AuthResponseModel
+                {
+                    Success = false,
+                    Message = "No user with such email.",
+                };
+            }
+
+            var token = await this.userManager.GeneratePasswordResetTokenAsync(user);
+            var routeValues = new { email = user.Email, token = EncodeToken(token) };
+            var url = this.linkGenerator.GetUriByPage(
+                this.httpContextAccessor.HttpContext!,
+                "/ResetPassword",
+                null,
+                routeValues);
+            var messageBody = "<h1>Follow this instructions on this page to reset your password</h1>" +
+                $"<p><a href=\"{url}\">Click here</a></p>";
+
+            try
+            {
+                await this.emailSender.SendEmailAsync(
+                    new Message(
+                        new string[] { email },
+                        "Reset password",
+                        messageBody));
+                return new AuthResponseModel
+                {
+                    Success = true,
+                    Message = "Check your mailbox",
+                };
+            }
+            catch (PomoMailException)
+            {
+                return new AuthResponseModel
+                {
+                    Success = false,
+                    Message = "Mail service unavailable, try again later",
+                };
+            }
+        }
+
+        /// <summary>
+        /// Reset user password.
+        /// </summary>
+        /// <param name="model">Reset password model <see cref="ResetPasswordViewModel"/>.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<AuthResponseModel> ResetPasswordAsync(ResetPasswordViewModel model)
+        {
+            var user = await this.userManager.FindByEmailAsync(model.Email);
+            if (user is null)
+            {
+                return new AuthResponseModel
+                {
+                    Success = false,
+                    Message = "No user with such email.",
+                    InvalidRequest = true,
+                };
+            }
+
+            if (user.AppUser is null)
+            {
+                this.logger.LogCritical("Identity user doesn't contain AppUser property.");
+                throw new BrokenModelDataException("Identity user doesn't contain AppUser property.");
+            }
+
+            var result = await this.userManager.ResetPasswordAsync(
+                user,
+                DecodeToken(model.Token),
+                model.NewPassword);
+
+            if (result.Succeeded)
+            {
+                return new AuthResponseModel
+                {
+                    Success = true,
+                    Message = user.AppUser.Name,
+                };
+            }
+
+            return new AuthResponseModel { Success = false, Message = user.AppUser.Name };
+        }
+
         private static List<Claim> GetClaims(PomoIdentityUser user)
         {
             var claims = new List<Claim>()
