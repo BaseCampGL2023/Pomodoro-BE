@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
 using Pomodoro.Api.Models;
 using Pomodoro.Dal.Entities;
+using Pomodoro.Dal.Exceptions;
 using Pomodoro.Services.Exceptions;
 using Pomodoro.Services.Mail;
 using Pomodoro.Services.Models.Mail;
@@ -91,23 +92,40 @@ namespace Pomodoro.Api.Services
             }
 
             var emailConfirmToken = await this.userManager.GenerateEmailConfirmationTokenAsync(pomoIdentityUser);
-            var encodedConfirmToken = Encoding.UTF8.GetBytes(emailConfirmToken);
-            var base64ConfirmToken = WebEncoders.Base64UrlEncode(encodedConfirmToken);
-
-            // TODO: delete user if don't send email.
-            var routeValues = new { userId = pomoIdentityUser.Id.ToString(), token = base64ConfirmToken };
-
+            var routeValues = new
+            {
+                userId = pomoIdentityUser.Id.ToString(),
+                token = EncodeToken(emailConfirmToken),
+            };
             var url = this.linkGenerator.GetUriByName(
                 this.accessor.HttpContext!,
                 "ConfirmEmail",
                 routeValues);
-
-            await this.emailSender.SendEmailAsync(new Message(
+            try
+            {
+                await this.emailSender.SendEmailAsync(new Message(
                 new string[] { pomoIdentityUser.Email },
                 "Confirm email",
                 $"<h1>Please confirm your email</h1><p><a href=\"{url}\">Click here</a></p>"));
 
-            return new RegistrationResponseModel { Success = true };
+                return new RegistrationResponseModel { Success = true };
+            }
+            catch (PomoMailException)
+            {
+                await this.userManager.DeleteAsync(pomoIdentityUser);
+
+                return new RegistrationResponseModel
+                {
+                    Success = false,
+                    Errors = new List<string> { "Mail service unavailable" },
+                };
+            }
+            catch (Exception ex)
+            {
+                await this.userManager.DeleteAsync(pomoIdentityUser);
+                this.logger.LogCritical(ex, "Unexpected behaviour");
+                throw new PomoException("Unexpected behaviour", ex);
+            }
         }
 
         /// <summary>
@@ -175,25 +193,35 @@ namespace Pomodoro.Api.Services
         /// <param name="userId">User id.</param>
         /// <param name="token">Confirmation token.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        public async Task<bool> ConfirmEmailAsync(string userId, string token)
+        public async Task<AuthResponseModel> ConfirmEmailAsync(string userId, string token)
         {
             var user = await this.userManager.FindByIdAsync(userId);
             if (user is null)
             {
-                return false;
+                return new AuthResponseModel
+                {
+                    Success = false,
+                    Message = "No user with such id.",
+                    InvalidRequest = true,
+                };
             }
 
-            var decodedToken = WebEncoders.Base64UrlDecode(token);
-            string confirmToken = Encoding.UTF8.GetString(decodedToken);
-
-            var result = await this.userManager.ConfirmEmailAsync(user, confirmToken);
+            var result = await this.userManager.ConfirmEmailAsync(user, DecodeToken(token));
 
             if (result.Succeeded)
             {
-                return true;
+                return new AuthResponseModel
+                {
+                    Success = true,
+                    Message = user.AppUser!.Name,
+                };
             }
 
-            return false;
+            return new AuthResponseModel
+            {
+                Success = false,
+                Message = user.AppUser!.Name,
+            };
         }
 
         /// <summary>
@@ -201,35 +229,50 @@ namespace Pomodoro.Api.Services
         /// </summary>
         /// <param name="email">User email.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        public async Task<bool> ForgetPasswordAsync(string email)
+        public async Task<AuthResponseModel> ForgetPasswordAsync(string email)
         {
             var user = await this.userManager.FindByEmailAsync(email);
             if (user is null)
             {
-                return false;
+                return new AuthResponseModel
+                {
+                    Success = false,
+                    Message = "No user with such email.",
+                };
             }
 
             var token = await this.userManager.GeneratePasswordResetTokenAsync(user);
-            var encodedToken = EncodeToken(token);
-
-            var routeValues = new { email = user.Email, token = encodedToken };
-
+            var routeValues = new { email = user.Email, token = EncodeToken(token) };
             var url = this.linkGenerator.GetUriByPage(
                 this.accessor.HttpContext!,
                 "/ResetPassword",
                 null,
                 routeValues);
-
             var messageBody = "<h1>Follow this instructions on this page to reset your password</h1>" +
                 $"<p><a href=\"{url}\">Click here</a></p>";
 
-            await this.emailSender.SendEmailAsync(
+            try
+            {
+                await this.emailSender.SendEmailAsync(
                 new Message(
                     new string[] { email },
                     "Reset password",
                     messageBody));
 
-            return true;
+                return new AuthResponseModel
+                {
+                    Success = true,
+                    Message = "Check your mailbox",
+                };
+            }
+            catch (PomoMailException)
+            {
+                return new AuthResponseModel
+                {
+                    Success = false,
+                    Message = "Mail service unavailable, try again later",
+                };
+            }
         }
 
         /// <summary>
@@ -245,7 +288,8 @@ namespace Pomodoro.Api.Services
                 return new AuthResponseModel
                 {
                     Success = false,
-                    Message = "No user with those id.",
+                    Message = "No user with such email.",
+                    InvalidRequest = true,
                 };
             }
 

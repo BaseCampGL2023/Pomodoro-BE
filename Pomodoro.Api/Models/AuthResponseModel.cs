@@ -18,5 +18,10 @@ namespace Pomodoro.Api.Models
         /// Gets or sets message from service.
         /// </summary>
         public string Message { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether request data is invalid.
+        /// </summary>
+        public bool InvalidRequest { get; set; }
     }
 }

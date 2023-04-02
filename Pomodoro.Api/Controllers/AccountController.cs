@@ -86,9 +86,11 @@ namespace Pomodoro.Api.Controllers
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         [HttpGet("ConfirmEmail/{userId}/{token}", Name = "ConfirmEmail")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status302Found)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerResponse(200, "Registration was succesfull")]
+        [SwaggerResponse(302, "Html page with email confirmation result")]
         [SwaggerResponse(400, "Invalid data")]
         [SwaggerResponse(500, "Something went wrong")]
         public async Task<ActionResult> ConfirmEmail(
@@ -103,13 +105,37 @@ namespace Pomodoro.Api.Controllers
 
             var result = await this.authService.ConfirmEmailAsync(userId, token);
 
-            if (result)
+            if (result.Success)
             {
-                var url = $"{this.Request.Scheme}://{this.Request.Host}/ConfirmEmail.html";
+                var url = this.Url.PageLink(
+                    "/EmailConfirmed",
+                    null,
+                    new { Name = result.Message, IsSuccess = true });
+                if (url is null)
+                {
+                    return this.Ok("Email confirmed");
+                }
+
                 return this.Redirect(url);
             }
+            else
+            {
+                if (result.InvalidRequest)
+                {
+                    return this.BadRequest(result.Message);
+                }
 
-            return this.BadRequest();
+                var url = this.Url.PageLink(
+                    "/EmailConfirmed",
+                    null,
+                    new { Name = result.Message, IsSuccess = false });
+                if (url is null)
+                {
+                    return this.BadRequest(result.Message);
+                }
+
+                return this.Redirect(url);
+            }
         }
 
         /// <summary>
@@ -124,7 +150,7 @@ namespace Pomodoro.Api.Controllers
         [SwaggerResponse(200, "Registration was succesfull")]
         [SwaggerResponse(400, "Invalid data")]
         [SwaggerResponse(500, "Something went wrong")]
-        public async Task<ActionResult> ForgetPasswrod([FromBody]string email)
+        public async Task<ActionResult> ForgetPassword([FromBody]string email)
         {
             if (string.IsNullOrWhiteSpace(email))
             {
@@ -132,12 +158,12 @@ namespace Pomodoro.Api.Controllers
             }
 
             var result = await this.authService.ForgetPasswordAsync(email);
-            if (result)
+            if (result.Success)
             {
-                return this.Ok();
+                return this.Ok(result.Message);
             }
 
-            return this.BadRequest();
+            return this.BadRequest(result.Message);
         }
 
         /// <summary>
@@ -147,9 +173,11 @@ namespace Pomodoro.Api.Controllers
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         [HttpPost("ResetPassword", Name = "ResetPassword")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status302Found)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerResponse(200, "Registration was succesfull")]
+        [SwaggerResponse(302, "Html page with result of password reset")]
         [SwaggerResponse(400, "Invalid data")]
         [SwaggerResponse(500, "Something went wrong")]
         public async Task<ActionResult> ResetPassword([FromForm] ResetPasswordViewModel model)
@@ -163,20 +191,25 @@ namespace Pomodoro.Api.Controllers
                     new { Name = result.Message, IsSuccess = true });
                 if (url is null)
                 {
-                    return this.Ok();
+                    return this.Ok("Password reseted successfully.");
                 }
 
                 return this.Redirect(url);
             }
             else
             {
+                if (result.InvalidRequest)
+                {
+                    return this.BadRequest(result.Message);
+                }
+
                 var url = this.Url.PageLink(
                     "/ResetPasswordResult",
                     null,
                     new { Name = result.Message, IsSuccess = false });
                 if (url is null)
                 {
-                    return this.BadRequest();
+                    return this.BadRequest(result.Message);
                 }
 
                 return this.Redirect(url);

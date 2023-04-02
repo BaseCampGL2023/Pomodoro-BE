@@ -21,6 +21,7 @@ var pomodoroSpecificOrigins = "_pomodoroSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
 
+// TODO: exception middleware
 // Add services to the container.
 builder.Services
     .AddAppDbContext(builder.Configuration.GetConnectionString("LocalDB"));
@@ -135,8 +136,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-app.UseStaticFiles();
 
 app.UseCors(pomodoroSpecificOrigins);
 
