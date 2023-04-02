@@ -91,7 +91,9 @@ namespace Pomodoro.Api.Controllers
         [SwaggerResponse(200, "Registration was succesfull")]
         [SwaggerResponse(400, "Invalid data")]
         [SwaggerResponse(500, "Something went wrong")]
-        public async Task<ActionResult> ConfirmEmail(string userId, string token)
+        public async Task<ActionResult> ConfirmEmail(
+            [FromRoute] string userId,
+            [FromRoute]string token)
         {
             if (string.IsNullOrWhiteSpace(userId)
                 || string.IsNullOrWhiteSpace(token))
@@ -108,6 +110,77 @@ namespace Pomodoro.Api.Controllers
             }
 
             return this.BadRequest();
+        }
+
+        /// <summary>
+        /// Request reseting forgot password.
+        /// </summary>
+        /// <param name="email">User email.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        [HttpPost("ForgetPassword")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerResponse(200, "Registration was succesfull")]
+        [SwaggerResponse(400, "Invalid data")]
+        [SwaggerResponse(500, "Something went wrong")]
+        public async Task<ActionResult> ForgetPasswrod([FromBody]string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return this.BadRequest();
+            }
+
+            var result = await this.authService.ForgetPasswordAsync(email);
+            if (result)
+            {
+                return this.Ok();
+            }
+
+            return this.BadRequest();
+        }
+
+        /// <summary>
+        /// Reset user password.
+        /// </summary>
+        /// <param name="model">Reset password view model <see cref="ResetPasswordViewModel"/>.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        [HttpPost("ResetPassword", Name = "ResetPassword")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerResponse(200, "Registration was succesfull")]
+        [SwaggerResponse(400, "Invalid data")]
+        [SwaggerResponse(500, "Something went wrong")]
+        public async Task<ActionResult> ResetPassword([FromForm] ResetPasswordViewModel model)
+        {
+            var result = await this.authService.ResetPasswordAsync(model);
+            if (result.Success)
+            {
+                var url = this.Url.PageLink(
+                    "/ResetPasswordResult",
+                    null,
+                    new { Name = result.Message, IsSuccess = true });
+                if (url is null)
+                {
+                    return this.Ok();
+                }
+
+                return this.Redirect(url);
+            }
+            else
+            {
+                var url = this.Url.PageLink(
+                    "/ResetPasswordResult",
+                    null,
+                    new { Name = result.Message, IsSuccess = false });
+                if (url is null)
+                {
+                    return this.BadRequest();
+                }
+
+                return this.Redirect(url);
+            }
         }
     }
 }

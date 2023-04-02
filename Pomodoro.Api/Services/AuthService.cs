@@ -197,6 +197,100 @@ namespace Pomodoro.Api.Services
         }
 
         /// <summary>
+        /// Reset forgot password.
+        /// </summary>
+        /// <param name="email">User email.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<bool> ForgetPasswordAsync(string email)
+        {
+            var user = await this.userManager.FindByEmailAsync(email);
+            if (user is null)
+            {
+                return false;
+            }
+
+            var token = await this.userManager.GeneratePasswordResetTokenAsync(user);
+            var encodedToken = EncodeToken(token);
+
+            var routeValues = new { email = user.Email, token = encodedToken };
+
+            var url = this.linkGenerator.GetUriByPage(
+                this.accessor.HttpContext!,
+                "/ResetPassword",
+                null,
+                routeValues);
+
+            var messageBody = "<h1>Follow this instructions on this page to reset your password</h1>" +
+                $"<p><a href=\"{url}\">Click here</a></p>";
+
+            await this.emailSender.SendEmailAsync(
+                new Message(
+                    new string[] { email },
+                    "Reset password",
+                    messageBody));
+
+            return true;
+        }
+
+        /// <summary>
+        /// Reset user password.
+        /// </summary>
+        /// <param name="model">Reset password model <see cref="ResetPasswordViewModel"/>.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<AuthResponseModel> ResetPasswordAsync(ResetPasswordViewModel model)
+        {
+            var user = await this.userManager.FindByEmailAsync(model.Email);
+            if (user is null)
+            {
+                return new AuthResponseModel
+                {
+                    Success = false,
+                    Message = "No user with those id.",
+                };
+            }
+
+            var result = await this.userManager.ResetPasswordAsync(
+                user,
+                DecodeToken(model.Token),
+                model.NewPassword);
+
+            if (result.Succeeded)
+            {
+                return new AuthResponseModel
+                {
+                    Success = true,
+                    Message = user.AppUser!.Name,
+                };
+            }
+
+            return new AuthResponseModel { Success = false, Message = user.AppUser!.Name };
+        }
+
+        private static List<Claim> GetClaims(AppIdentityUser user)
+        {
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.AppUser!.Name),
+                new Claim("userId", user.AppUser!.Id.ToString()),
+                new Claim("signUpAt", user.AppUser!.CreatedDt.ToString()),
+            };
+            return claims;
+        }
+
+        private static string EncodeToken(string token)
+        {
+            var bytes = Encoding.UTF8.GetBytes(token);
+            return WebEncoders.Base64UrlEncode(bytes);
+        }
+
+        private static string DecodeToken(string token)
+        {
+            var bytes = WebEncoders.Base64UrlDecode(token);
+            return Encoding.UTF8.GetString(bytes);
+        }
+
+        /// <summary>
         /// Genererate JWT.
         /// </summary>
         /// <param name="user">Represent a user in identity system <see cref="IdentityUser{TKey}"/>.</param>
@@ -206,7 +300,7 @@ namespace Pomodoro.Api.Services
             JwtSecurityToken token = new (
                 issuer: this.configuration["JwtSettings:Issuer"],
                 audience: this.configuration["JwtSettings:Audience"],
-                claims: this.GetClaims(user),
+                claims: GetClaims(user),
                 expires: DateTime.Now.AddMinutes(Convert.ToDouble(
                     this.configuration["JwtSettings:ExpirationTimeMinutes"])),
                 signingCredentials: this.GetSigningCredentials());
@@ -221,18 +315,6 @@ namespace Pomodoro.Api.Services
             var key = Encoding.UTF8.GetBytes(this.configuration["JwtSettings:SecurityKey"]);
             var secret = new SymmetricSecurityKey(key);
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
-        }
-
-        private List<Claim> GetClaims(AppIdentityUser user)
-        {
-            var claims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.AppUser!.Name),
-                new Claim("userId", user.AppUser!.Id.ToString()),
-                new Claim("signUpAt", user.AppUser!.CreatedDt.ToString()),
-            };
-            return claims;
         }
     }
 }

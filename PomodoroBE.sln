@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pomodoro.Tests", "Pomodoro.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pomodoro.Dal", "Pomodoro.Dal\Pomodoro.Dal.csproj", "{45C6C0BB-431C-45D9-BEE5-40B8620CA90D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pomodoro.Services", "Pomodoro.Services\Pomodoro.Services.csproj", "{591C47F7-8EF2-4052-9D19-4A926122EF12}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pomodoro.Services", "Pomodoro.Services\Pomodoro.Services.csproj", "{591C47F7-8EF2-4052-9D19-4A926122EF12}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
