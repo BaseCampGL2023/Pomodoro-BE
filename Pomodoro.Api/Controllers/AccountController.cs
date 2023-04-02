@@ -156,6 +156,55 @@ namespace Pomodoro.Api.Controllers
                 ExternalLoginQueryString(returnUrl));
         }
 
+        /// <summary>
+        /// Validate user email.
+        /// </summary>
+        /// <param name="userId">User Id.</param>
+        /// <param name="token">Emal validation token.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        [HttpGet("ConfirmEmail/{userId}/{token}", Name = "ConfirmEmail")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status302Found)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerResponse(200, "Registration was succesfull")]
+        [SwaggerResponse(302, "Html page with email confirmation result")]
+        [SwaggerResponse(400, "Invalid data")]
+        [SwaggerResponse(500, "Something went wrong")]
+        public async Task<IActionResult> ConfirmEmail(
+            [FromRoute] string userId,
+            [FromRoute] string token)
+        {
+            if (string.IsNullOrWhiteSpace(userId)
+                || string.IsNullOrWhiteSpace(token))
+            {
+                return this.BadRequest();
+            }
+
+            var result = await this.authService.ConfirmEmailAsync(userId, token);
+            if (result.InvalidRequest)
+            {
+                return this.BadRequest(result.Message);
+            }
+
+            var url = this.Url.PageLink(
+                "/EmailConfirmed",
+                null,
+                new { Name = result.Message, IsSuccess = result.Success });
+
+            if (result.Success)
+            {
+                return url is null
+                    ? this.Ok("Email confirmed")
+                    : this.Redirect(url);
+            }
+
+            return url is null
+                ? this.BadRequest(result.Message
+                    + ", something went wrong, try again later")
+                : this.Redirect(url);
+        }
+
         private static string ExternalLoginQueryString(string returnUrl)
          => $"{ReturnUrlQueryParam}={returnUrl}";
     }

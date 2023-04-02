@@ -31,7 +31,7 @@ namespace Pomodoro.Services.Email
         }
 
         /// <inheritdoc/>
-        public async Task SendEnailAsync(Message message)
+        public async Task SendEmailAsync(Message message)
         {
             var email = this.CreateEmailMessage(message);
             await this.Send(email);

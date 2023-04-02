@@ -7,10 +7,13 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
 using Pomodoro.Api.ViewModels.Auth;
 using Pomodoro.Core.Exceptions;
 using Pomodoro.DataAccess.Entities;
+using Pomodoro.Services.Email;
+using Pomodoro.Services.Email.Models;
 
 namespace Pomodoro.Api.Services
 {
@@ -23,6 +26,9 @@ namespace Pomodoro.Api.Services
         private readonly ILogger<AuthService> logger;
         private readonly UserManager<PomoIdentityUser> userManager;
         private readonly SignInManager<PomoIdentityUser> signInManager;
+        private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly IEmailSender emailSender;
+        private readonly LinkGenerator linkGenerator;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthService"/> class.
@@ -31,16 +37,25 @@ namespace Pomodoro.Api.Services
         /// <param name="logger">Logger <see cref="ILogger"/>.</param>
         /// <param name="userManager">API for managing user in persistence store <see cref="UserManager{TUser}"/>.</param>
         /// <param name="signInManager">API for signing in user.</param>
+        /// <param name="httpContextAccessor">IHttpContextAccessor accessor.</param>
+        /// <param name="emailSender">Email sender service.</param>
+        /// <param name="linkGenerator">LinkGenerator instance.</param>
         public AuthService(
             IConfiguration configuration,
             ILogger<AuthService> logger,
             UserManager<PomoIdentityUser> userManager,
-            SignInManager<PomoIdentityUser> signInManager)
+            SignInManager<PomoIdentityUser> signInManager,
+            IHttpContextAccessor httpContextAccessor,
+            IEmailSender emailSender,
+            LinkGenerator linkGenerator)
         {
             this.configuration = configuration;
             this.logger = logger;
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this.httpContextAccessor = httpContextAccessor;
+            this.emailSender = emailSender;
+            this.linkGenerator = linkGenerator;
         }
 
         /// <summary>
@@ -68,7 +83,8 @@ namespace Pomodoro.Api.Services
                 },
             };
 
-            var result = await this.userManager.CreateAsync(pomoIdentityUser, registrationRequest.Password);
+            var result = await this.userManager
+                .CreateAsync(pomoIdentityUser, registrationRequest.Password);
 
             if (!result.Succeeded)
             {
@@ -80,7 +96,41 @@ namespace Pomodoro.Api.Services
                 };
             }
 
-            return new RegistrationResponseViewModel { Success = true };
+            var emailConfirmToken = await this.userManager
+                .GenerateEmailConfirmationTokenAsync(pomoIdentityUser);
+            var routeValues = new
+            {
+                userId = pomoIdentityUser.Id.ToString(),
+                token = EncodeToken(emailConfirmToken),
+            };
+            var url = this.linkGenerator.GetUriByName(
+                this.httpContextAccessor.HttpContext!,
+                "ConfirmEmail",
+                routeValues);
+            try
+            {
+                await this.emailSender.SendEmailAsync(new Message(
+                    new string[] { pomoIdentityUser.Email },
+                    "Confirm email",
+                    $"<h1>Please confirm your email</h1><p><a href=\"{url}\">Click here</a></p>"));
+
+                return new RegistrationResponseViewModel { Success = true };
+            }
+            catch (PomoMailException)
+            {
+                await this.userManager.DeleteAsync(pomoIdentityUser);
+                return new RegistrationResponseViewModel
+                {
+                    Success = false,
+                    Errors = new List<string> { "Mail service unavailable" },
+                };
+            }
+            catch (Exception ex)
+            {
+                await this.userManager.DeleteAsync(pomoIdentityUser);
+                this.logger.LogCritical(ex, "Unexpected behaviour");
+                throw new PomoException("Unexpected behaviour", ex);
+            }
         }
 
         /// <summary>
@@ -107,6 +157,15 @@ namespace Pomodoro.Api.Services
                 };
             }
 
+            if (!user.EmailConfirmed)
+            {
+                this.logger.LogWarning("Authorization attempt with non-confirmed email.");
+                return new LoginResponseViewModel
+                {
+                    Message = "Non confirm Email.",
+                };
+            }
+
             if (!await this.userManager.CheckPasswordAsync(user, loginRequest.Password))
             {
                 this.logger.LogWarning("Authorization attempt with invalid password.");
@@ -129,6 +188,48 @@ namespace Pomodoro.Api.Services
             {
                 Success = true,
                 Token = jwt,
+            };
+        }
+
+        /// <summary>
+        /// Confirm user email.
+        /// </summary>
+        /// <param name="userId">User id.</param>
+        /// <param name="token">Confirmation token.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<AuthResponseModel> ConfirmEmailAsync(string userId, string token)
+        {
+            var user = await this.userManager.FindByIdAsync(userId);
+            if (user is null)
+            {
+                return new AuthResponseModel
+                {
+                    Success = false,
+                    Message = "No user with such id.",
+                    InvalidRequest = true,
+                };
+            }
+
+            if (user.AppUser is null)
+            {
+                this.logger.LogCritical("Identity user doesn't contain AppUser property");
+                throw new BrokenModelDataException("Identity user doesn't contain AppUser property");
+            }
+
+            var result = await this.userManager.ConfirmEmailAsync(user, DecodeToken(token));
+            if (result.Succeeded)
+            {
+                return new AuthResponseModel
+                {
+                    Success = true,
+                    Message = user.AppUser!.Name,
+                };
+            }
+
+            return new AuthResponseModel
+            {
+                Success = false,
+                Message = user.AppUser.Name,
             };
         }
 
@@ -180,7 +281,7 @@ namespace Pomodoro.Api.Services
             if (info is null)
             {
                 this.logger.LogWarning("External login information is null.");
-                return this.FailedLoginResponse("External login information is null.");
+                return FailedLoginResponse("External login information is null.");
             }
 
             var signinResult = await this.signInManager.ExternalLoginSignInAsync(
@@ -203,7 +304,7 @@ namespace Pomodoro.Api.Services
             if (email is null)
             {
                 this.logger.LogWarning("Email retrieved by external login service is null.");
-                return this.FailedLoginResponse("Email retrieved by external login service is null.");
+                return FailedLoginResponse("Email retrieved by external login service is null.");
             }
 
             if (user is null)
@@ -218,6 +319,37 @@ namespace Pomodoro.Api.Services
             return this.SuccessfulLoginResponse(user);
         }
 
+        private static List<Claim> GetClaims(PomoIdentityUser user)
+        {
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.AppUser!.Name),
+                new Claim("userId", user.AppUser!.Id.ToString()),
+            };
+            return claims;
+        }
+
+        private static string EncodeToken(string token)
+        {
+            var bytes = Encoding.UTF8.GetBytes(token);
+            return WebEncoders.Base64UrlEncode(bytes);
+        }
+
+        private static string DecodeToken(string token)
+        {
+            var bytes = WebEncoders.Base64UrlDecode(token);
+            return Encoding.UTF8.GetString(bytes);
+        }
+
+        private static LoginResponseViewModel FailedLoginResponse(string message)
+        {
+            return new LoginResponseViewModel
+            {
+                Message = message,
+            };
+        }
+
         /// <summary>
         /// Genererate JWT.
         /// </summary>
@@ -228,7 +360,7 @@ namespace Pomodoro.Api.Services
             JwtSecurityToken token = new (
                 issuer: this.configuration["JwtSettings:Issuer"],
                 audience: this.configuration["JwtSettings:Audience"],
-                claims: this.GetClaims(user),
+                claims: GetClaims(user),
                 expires: DateTime.Now.AddMinutes(Convert.ToDouble(
                     this.configuration["JwtSettings:ExpirationTimeMinutes"])),
                 signingCredentials: this.GetSigningCredentials());
@@ -243,25 +375,6 @@ namespace Pomodoro.Api.Services
             var key = Encoding.UTF8.GetBytes(this.configuration["JwtSettings:SecurityKey"]);
             var secret = new SymmetricSecurityKey(key);
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
-        }
-
-        private List<Claim> GetClaims(PomoIdentityUser user)
-        {
-            var claims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.AppUser!.Name),
-                new Claim("userId", user.AppUser!.Id.ToString()),
-            };
-            return claims;
-        }
-
-        private LoginResponseViewModel FailedLoginResponse(string message)
-        {
-            return new LoginResponseViewModel
-            {
-                Message = message,
-            };
         }
 
         private LoginResponseViewModel SuccessfulLoginResponse(PomoIdentityUser user)

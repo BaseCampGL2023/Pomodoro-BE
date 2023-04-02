@@ -45,9 +45,11 @@ builder.Services
 
 builder.Services.AddCookiesForExternalAuth();
 
-builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfig"));
+var emailConfig = builder.Configuration.GetSection("EmailConfig")
+    .Get<EmailConfig>();
+builder.Services.AddSingleton(emailConfig);
 
-builder.Services.AddScoped<IEmailSender, EmailSender>
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 builder.Services.AddCors(options =>
 {
@@ -80,9 +82,12 @@ builder.Services.AddControllers(options =>
     options.Filters.Add<ValidateModelAttribute>();
 });
 
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddRazorPages();
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(option =>
@@ -152,5 +157,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapRazorPages();
 
 app.Run();

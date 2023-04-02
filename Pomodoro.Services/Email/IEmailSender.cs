@@ -16,6 +16,6 @@ namespace Pomodoro.Services.Email
         /// </summary>
         /// <param name="message">Message <see cref="Message"/>.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task SendEnailAsync(Message message);
+        Task SendEmailAsync(Message message);
     }
 }
