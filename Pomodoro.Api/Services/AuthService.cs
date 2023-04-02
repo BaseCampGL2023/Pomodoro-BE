@@ -134,6 +134,15 @@ namespace Pomodoro.Api.Services
                 };
             }
 
+            if (!user.EmailConfirmed)
+            {
+                this.logger.LogWarning("Authorization attempt with non-confirmed email.");
+                return new LoginResponseModel
+                {
+                    Message = "Non confirm Email.",
+                };
+            }
+
             if (!await this.userManager.CheckPasswordAsync(user, loginRequest.Password))
             {
                 this.logger.LogWarning("Authorization attempt with invalid password.");
