@@ -61,6 +61,7 @@ namespace Pomodoro.Api.Controllers
             }
 
             var task = await this.tasksService.GetTaskByIdAsync(id);
+
             if (task == null)
             {
                 return this.NotFound("Task wasn`t found.");
@@ -145,11 +146,9 @@ namespace Pomodoro.Api.Controllers
 
             taskModel.UserId = this.UserId;
 
-            try
-            {
-                taskModel = await this.tasksService.CreateTaskAsync(taskModel);
-            }
-            catch (Exception)
+            taskModel = await this.tasksService.CreateTaskAsync(taskModel);
+
+            if (taskModel == null)
             {
                 return this.BadRequest();
             }
@@ -191,14 +190,7 @@ namespace Pomodoro.Api.Controllers
                 return this.Forbid("Can`t delete the task that doesn`t related to current user.");
             }
 
-            try
-            {
-                await this.tasksService.DeleteTaskAsync(task);
-            }
-            catch (Exception)
-            {
-                return this.BadRequest();
-            }
+            await this.tasksService.DeleteTaskAsync(task);
 
             return this.Ok();
         }
@@ -240,11 +232,9 @@ namespace Pomodoro.Api.Controllers
 
             taskModel = this.mapper.Map<TaskModel>(task);
 
-            try
-            {
-                taskModel = await this.tasksService.UpdateTaskAsync(taskModel);
-            }
-            catch (Exception)
+            taskModel = await this.tasksService.UpdateTaskAsync(taskModel);
+
+            if (taskModel == null)
             {
                 return this.BadRequest();
             }
@@ -286,14 +276,7 @@ namespace Pomodoro.Api.Controllers
                 return this.Forbid("Can`t complete the task that doesn`t related to current user.");
             }
 
-            try
-            {
-                await this.tasksService.CompleteTaskAsync(id);
-            }
-            catch (Exception)
-            {
-                return this.BadRequest();
-            }
+            await this.tasksService.CompleteTaskAsync(id);
 
             return this.Ok();
         }
@@ -328,13 +311,9 @@ namespace Pomodoro.Api.Controllers
 
             var pomoModel = this.mapper.Map<PomodoroModel>(pomodoro);
 
-            TaskModel result;
+            var result = await this.tasksService.AddPomodoroToTaskAsync(pomoModel);
 
-            try
-            {
-                result = await this.tasksService.AddPomodoroToTaskAsync(pomoModel);
-            }
-            catch (Exception)
+            if (result == null)
             {
                 return this.BadRequest();
             }
