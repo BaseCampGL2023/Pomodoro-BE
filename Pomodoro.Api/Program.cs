@@ -47,6 +47,7 @@ builder.Services.AddCookiesForExternalAuth();
 
 var emailConfig = builder.Configuration.GetSection("EmailConfig")
     .Get<EmailConfig>();
+
 builder.Services.AddSingleton(emailConfig);
 
 builder.Services.AddScoped<IEmailSender, EmailSender>();
