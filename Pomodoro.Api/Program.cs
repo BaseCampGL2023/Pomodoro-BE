@@ -10,6 +10,8 @@ using Pomodoro.Api.Extensions;
 using Pomodoro.Api.Services;
 using Pomodoro.Core.Interfaces.IServices;
 using Pomodoro.DataAccess.Extensions;
+using Pomodoro.Services.Email;
+using Pomodoro.Services.Email.Options;
 using Pomodoro.Services.Realizations;
 using Serilog;
 using Serilog.Events;
@@ -43,6 +45,13 @@ builder.Services
 
 builder.Services.AddCookiesForExternalAuth();
 
+var emailConfig = builder.Configuration.GetSection("EmailConfig")
+    .Get<EmailConfig>();
+
+builder.Services.AddSingleton(emailConfig);
+
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
@@ -74,9 +83,12 @@ builder.Services.AddControllers(options =>
     options.Filters.Add<ValidateModelAttribute>();
 });
 
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddRazorPages();
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(option =>
@@ -146,5 +158,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapRazorPages();
 
 app.Run();
