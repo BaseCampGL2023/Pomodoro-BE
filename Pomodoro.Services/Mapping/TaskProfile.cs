@@ -24,7 +24,8 @@ namespace Pomodoro.Services.Mapping
             if (task.Pomodoros.Last().TaskIsDone)
                 return 100f;
 
-            var totalTimeSpent = task.Pomodoros.Sum(ct => ct.TimeSpent);
+            var totalTimeSpent = task.Pomodoros.Where(p => p.ActualDate.Date == DateTime.Now.Date)
+                                               .Sum(p => p.TimeSpent);
 
             if (task.AllocatedTime == 0 || totalTimeSpent >= task.AllocatedTime)
                 return 99f;
